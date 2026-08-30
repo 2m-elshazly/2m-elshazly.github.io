@@ -8,7 +8,7 @@
     <title>2M Elshazly Store | صيانة وتحديث ألعاب بلايستيشن</title>
     <meta
       name="description"
-      content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
+      content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان وااحترافية."
     />
     <meta name="author" content="I Fix Store" />
 
@@ -59,25 +59,43 @@
     <link rel="stylesheet" href="./assets/css/style.min.css" />
     
     <style>
-      /* تطبيق خط كايرو على الموقع ليدعم التعريب */
       body {
         font-family: 'Cairo', sans-serif !important;
+      }
+
+      .login-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #0070d1;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        transition: 0.3s;
+      }
+
+      .login-btn:hover {
+        background: #005bb5;
+        transform: translateY(-2px);
+      }
+
+      .login-btn img {
+        width: 18px;
+        height: 18px;
       }
     </style>
 </head>
 <body>
   
-  
-
 <!-- بانر الإعلان المنبثق -->
 <div id="promoPopup" class="popup-overlay">
     <div class="popup-content">
-        <!-- زر الإغلاق (X) -->
         <span class="close-btn" onclick="closePopup()">&times;</span>
-        
-        <!-- صورة المحل بالعرض -->
         <img src="images.jpeg" alt="2M Elshazly Store" class="popup-img">
-        
         <div class="popup-footer">
             <h3>2M Elshazly Store</h3>
             <p>الحجز فتح دلوقتي في 2M ElSHAZLY</p>
@@ -86,7 +104,6 @@
         </div>
     </div>
 </div>
-  
   
     <!--========== HEADER ===========-->
     <header class="header" id="header">
@@ -108,9 +125,7 @@
               <a href="#top" class="nav_link">Home</a>
             </li>
             <li class="nav_item">
-              <a href="soon.html" class="nav_link"
-                >About</a
-              >
+              <a href="soon.html" class="nav_link">About</a>
             </li>
             <li class="nav_item">
               <a href="./assets/html/produts.html" class="nav_link">Products</a>
@@ -128,51 +143,40 @@
           </div>
         </div>
 
-<!--
-<div id="userSection">
-    <button id="loginBtn" class="login-btn">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="">
-        <span translate="no">تسجيل الدخول</span>
-    </button>
+        <div id="userSection">
+            <button id="loginBtn" class="login-btn" onclick="loginWithGoogle()">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
+                <span>تسجيل الدخول</span>
+            </button>
 
-    <span id="userName"></span>
-</div>
---> 
-<div id="userSection">
+            <div id="userProfileBox" style="display:none; cursor:pointer;" onclick="window.location.href='profile.html'">
+                <img id="headerUserPhoto"
+                     referrerpolicy="no-referrer"
+                     style="
+                     width:42px;
+                     height:42px;
+                     border-radius:50%;
+                     border:2px solid #0070d1;
+                     object-fit:cover;
+                     display:none;">
+                     
+                <div id="headerUserLetter"
+                     style="
+                     width:42px;
+                     height:42px;
+                     border-radius:50%;
+                     border:2px solid #0070d1;
+                     display:none;
+                     align-items:center;
+                     justify-content:center;
+                     font-weight:900;
+                     color:white;
+                     font-size:1.1rem;
+                     line-height:0;
+                     background:#0070d1;"></div>
+            </div>
+        </div>
 
-    <button id="loginBtn" class="login-btn">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
-        <span>تسجيل الدخول</span>
-    </button>
-
-    <div id="userProfileBox" style="display:none; cursor:pointer;" onclick="window.location.href='profile.html'">
-        <img id="headerUserPhoto"
-             referrerpolicy="no-referrer"
-             style="
-             width:42px;
-             height:42px;
-             border-radius:50%;
-             border:2px solid #0070d1;
-             object-fit:cover;
-             display:none;">
-             
-        <div id="headerUserLetter"
-             style="
-             width:42px;
-             height:42px;
-             border-radius:50%;
-             border:2px solid #0070d1;
-             display:none;
-             align-items:center;
-             justify-content:center;
-             font-weight:900;
-             color:white;
-             font-size:1.1rem;
-             line-height:0;
-             background:#0070d1;"></div>
-    </div>
-
-</div>
         <div class="nav_btns">
           <i class="bx bx-moon change-theme" id="theme-button"></i>
           <div class="nav_toggle" id="nav-toggle">
@@ -200,56 +204,29 @@
   <img src="background.jpeg" alt="Mobile Banner">
 </div>
 
-
-
-
-
 <main class="main">
       <!--========== HOME ===========-->
       <section class="home" id="home">
-
-        
-        
         <div class="home_container bd-container bd-grid">
           <div class="home_data">
             
             <div class="hero-social">
-    <a
-        href="https://wa.me/201103661558"
-        target="_blank"
-        rel="noopener"
-        class="hero-social-link"
-    >
-        <i class="bx bxl-whatsapp"></i>
-    </a>
+              <a href="https://wa.me/201103661558" target="_blank" rel="noopener" class="hero-social-link">
+                  <i class="bx bxl-whatsapp"></i>
+              </a>
 
-    <a
-        href="https://www.facebook.com/share/198Z5rPvvX/"
-        target="_blank"
-        rel="noopener"
-        class="hero-social-link"
-    >
-        <i class="bx bxl-facebook"></i>
-    </a>
+              <a href="https://www.facebook.com/share/198Z5rPvvX/" target="_blank" rel="noopener" class="hero-social-link">
+                  <i class="bx bxl-facebook"></i>
+              </a>
 
-    <a
-        href="https://www.tiktok.com/@2m.elshazly"
-        target="_blank"
-        rel="noopener"
-        class="hero-social-link"
-    >
-        <i class="bx bxl-tiktok"></i>
-    </a>
+              <a href="https://www.tiktok.com/@2m.elshazly" target="_blank" rel="noopener" class="hero-social-link">
+                  <i class="bx bxl-tiktok"></i>
+              </a>
 
-    <a
-        href="https://www.instagram.com/2m_playstation_elshazly/"
-        target="_blank"
-        rel="noopener"
-        class="hero-social-link"
-    >
-        <i class="bx bxl-instagram"></i>
-    </a>
-</div>            
+              <a href="https://www.instagram.com/2m_playstation_elshazly/" target="_blank" rel="noopener" class="hero-social-link">
+                  <i class="bx bxl-instagram"></i>
+              </a>
+            </div>            
             <h1 class="home_title" translate="no">
               2M Elshazly<br />
               <span class="home_title-secondary" translate="no">Playstation</span>
@@ -258,41 +235,16 @@
               🎮 PS4 & PS5 Games • 🔧 Repairs • 💾 Storage Upgrades
             </p>
             <div class="home_buttons">
-              <a
-                href="soon.html"
-                class="button"
-                >About More</a
-              >
-              <a href="soon.html" class="button_secondary"
-                >Explore Produts
-                <i class="bx bx-right-arrow-alt button_icon"></i
-              ></a>
+              <a href="soon.html" class="button">About More</a>
+              <a href="soon.html" class="button_secondary">Explore Produts
+                <i class="bx bx-right-arrow-alt button_icon"></i>
+              </a>
             </div>
             <div class="home_company">
-              <img
-                src="./assets/img/sony.svg"
-                width="70"
-                height="18"
-                alt="Sony Logo"
-              />
-              <img
-                src="./assets/img/sony.svg"
-                width="70"
-                height="18"
-                alt="Sony Logo"
-              />
-              <img
-                src="./assets/img/sony.svg"
-                width="70"
-                height="18"
-                alt="Sony Logo"
-              />
-              <img
-                src="./assets/img/sony.svg"
-                width="70"
-                height="18"
-                alt="Sony Logo"
-              />
+              <img src="./assets/img/sony.svg" width="70" height="18" alt="Sony Logo" />
+              <img src="./assets/img/sony.svg" width="70" height="18" alt="Sony Logo" />
+              <img src="./assets/img/sony.svg" width="70" height="18" alt="Sony Logo" />
+              <img src="./assets/img/sony.svg" width="70" height="18" alt="Sony Logo" />
             </div>
           </div>
           <img
@@ -315,20 +267,18 @@
           />
           <div class="about_data">
             <h1 class="about_title">
-              خدمات احترافية بأعلى  <span class="about_title-secondary">جودة</span>
+              خدمات احترافية بأعلى <span class="about_title-secondary">جودة</span>
             </h1>
             <p class="about_subtitle">
               ألعابك مش بس على جهازك، استمتع بأقوى الألعاب وتحديثات الهاردوير بضمان وثقة. 🛠️
             </p>
             <ul class="about_list">
               <li>سجل دخول وتابع كل جديد</li>
-              <li>دلوقتي تقدر تتابع أكثر من 300 لعبة </li>
+              <li>دلوقتي تقدر تتابع أكثر من 300 لعبة</li>
               <li>عروض وخصومات علي كل منتجاتنا قريباً</li>
               <li>دلوقتي من خلال البروفايل لما تسجل دخول تقدر تراجع طلبك</li>
             </ul>
-            <a href="soon.html" class="button"
-              >Shop Now <i class="bx bx-right-arrow-alt about_icon"></i
-            ></a>
+            <a href="soon.html" class="button">Shop Now <i class="bx bx-right-arrow-alt about_icon"></i></a>
           </div>
         </div>
       </section>
@@ -401,30 +351,10 @@
               />
               <h2 class="produts_list-title">PS4 Controller</h2>
               <div class="produts_evaluation">
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
                 <span class="produts_evaluation-title">(11)</span>
               </div>
               <span class="produts_value">R$ 300</span>
@@ -437,8 +367,8 @@
                   alt="Recatangle"
                 />
                 <a class="produts_button" href="../assets/html/products.html">
-                  <i class="bx bx-plus"></i
-                ></a>
+                  <i class="bx bx-plus"></i>
+                </a>
               </div>
             </div>
             <div class="produts_list ps5_list">
@@ -452,36 +382,11 @@
               />
               <h2 class="produts_list-title">PS5 Controller</h2>
               <div class="produts_evaluation">
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
                 <span class="produts_evaluation-title">(41)</span>
               </div>
               <span class="produts_value">R$ 200</span>
@@ -494,8 +399,8 @@
                   alt="Recatangle"
                 />
                 <a class="produts_button" href="./assets/html/produts.html#ps5">
-                  <i class="bx bx-plus"></i
-                ></a>
+                  <i class="bx bx-plus"></i>
+                </a>
               </div>
             </div>
             <div class="produts_list">
@@ -509,18 +414,8 @@
               />
               <h2 class="produts_list-title">Control Covers</h2>
               <div class="produts_evaluation">
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
-                <img
-                  src="./assets/img/star.webp"
-                  width="20"
-                  height="20"
-                  alt="Star"
-                />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
+                <img src="./assets/img/star.webp" width="20" height="20" alt="Star" />
                 <span class="produts_evaluation-title">(1)</span>
               </div>
               <span class="produts_value">R$ 100</span>
@@ -532,12 +427,9 @@
                   height="62"
                   alt="Recatangle"
                 />
-                <a
-                  class="produts_button"
-                  href="./assets/html/produts.html#squid"
-                >
-                  <i class="bx bx-plus"></i
-                ></a>
+                <a class="produts_button" href="./assets/html/produts.html#squid">
+                  <i class="bx bx-plus"></i>
+                </a>
               </div>
             </div>
           </div>
@@ -650,39 +542,22 @@
           </a>
 
           <p class="footer_description">
-أهلاً بك في وجهتك الأولى لأحدث ألعاب PS4 و PS5 في الهانوفيل. عروض حصرية وخدمات صيانة فورية. 🔥قق
+أهلاً بك في وجهتك الأولى لأحدث ألعاب PS4 و PS5 في الهانوفيل. عروض حصرية وخدمات صيانة فورية. 🔥
           </p>
 
           <div class="footer_social">
-            <a
-              href="https://wa.me/201103661558?text"
-              target="_blank"
-              class="footer_social-link"
-            >
+            <a href="https://wa.me/201103661558?text" target="_blank" class="footer_social-link">
               <i class="bx bxl-whatsapp"></i>
             </a>
-            <a
-              href="https://www.facebook.com/share/198Z5rPvvX/"
-              target="_blank"
-              class="footer_social-link"
-            >
+            <a href="https://www.facebook.com/share/198Z5rPvvX/" target="_blank" class="footer_social-link">
               <i class="bx bxl-facebook"></i>
             </a>
-            <a
-              href="https://www.tiktok.com/@2m.elshazly?_r=1&_t=ZS-98xLa5BMftn"
-              target="_blank"
-              class="footer_social-link"
-            >
+            <a href="https://www.tiktok.com/@2m.elshazly?_r=1&_t=ZS-98xLa5BMftn" target="_blank" class="footer_social-link">
               <i class="bx bxl-tiktok"></i>
             </a>
-            <a
-              href="https://www.instagram.com/2m_playstation_elshazly?igsh=MW02N3VmcHV4cWZtZQ=="
-              target="_blank"
-              class="footer_social-link"
-            >
+            <a href="https://www.instagram.com/2m_playstation_elshazly?igsh=MW02N3VmcHV4cWZtZQ==" target="_blank" class="footer_social-link">
               <i class="bx bxl-instagram"></i>
             </a>
-   
           </div>
         </div>
 
@@ -691,9 +566,7 @@
 
           <ul class="footer_links">
             <li>
-              <a href="./assets/html/produts.html" class="footer_link"
-                >Produts</a
-              >
+              <a href="./assets/html/produts.html" class="footer_link">Produts</a>
             </li>
           </ul>
         </div>
@@ -706,9 +579,7 @@
               <a href="./index.html" class="footer_link">Home</a>
             </li>
             <li>
-              <a href="./assets/html/controllers.html" class="footer_link"
-                >About</a
-              >
+              <a href="./assets/html/controllers.html" class="footer_link">About</a>
             </li>
             <li>
               <a href="./index.html#faqs" class="footer_link">FAQs</a>
@@ -721,30 +592,20 @@
 
           <ul class="footer_links">
             <li>
-              <a href="./assets/html/terms.html" class="footer_link"
-                >Terms of Service</a
-              >
+              <a href="./assets/html/terms.html" class="footer_link">Terms of Service</a>
             </li>
             <li>
-              <a href="./assets/html/privacy.html" class="footer_link"
-                >Privacy Policy</a
-              >
+              <a href="./assets/html/privacy.html" class="footer_link">Privacy Policy</a>
             </li>
             <li>
-              <a href="./assets/html/contact.html" class="footer_link"
-                >Contact Us</a
-              >
+              <a href="./assets/html/contact.html" class="footer_link">Contact Us</a>
             </li>
           </ul>
         </div>
       </div>
       <hr class="hr_footer-secondary" />
-      <span class="footer_copy"
-        >Copyright 2026 2M Elshazly - All Rights Reserved 🎮</span
-      >
-            <span class="footer_copy"
-        >THE SITE WAS DEVELOPMENT BY SHAWKY</span
-      >
+      <span class="footer_copy">Copyright 2026 2M Elshazly - All Rights Reserved 🎮</span>
+      <span class="footer_copy">THE SITE WAS DEVELOPMENT BY SHAWKY</span>
     </footer>
     <!--========== SCROLL UP ===========-->
     <a href="#" class="scrollup" id="scroll-up">
@@ -769,8 +630,6 @@
       gsap.registerPlugin(ScrollTrigger);
 
       document.addEventListener('DOMContentLoaded', () => {
-        // PRELOADER
-
         var tl1 = gsap.timeline();
 
         tl1.to('.screen_loading', {
@@ -781,7 +640,7 @@
         });
       });
     </script>
-    <!--========== JAVASCRIPT ===========-->
+    
     <div class="bottom-nav">
     <a href="#top">
         <i class='bx bx-home'></i>
@@ -803,8 +662,9 @@
         <span>العروض</span>
     </a>
 </div>
+
 <script type="text/javascript" charset="utf-8">
-  // SHOW MENU
+// SHOW MENU
 const navMenu = document.getElementById('nav-menu'),
   navToggle = document.getElementById('nav-toggle'),
   navClose = document.getElementById('nav-close');
@@ -901,7 +761,6 @@ const sr = ScrollReveal({
   distance: '60px',
   duration: 2500,
   delay: 400,
-  // reset: true
 });
 
 sr.reveal(`.home_data`);
@@ -954,8 +813,6 @@ sr.reveal(
   }
 );
 
-// Activate Budget Items
-
 const parameters = new URLSearchParams(location.search);
 
 function activateProduct(parameter) {
@@ -963,15 +820,102 @@ function activateProduct(parameter) {
   if (elemento) {
     elemento.checked = true;
   }
-  console.log(elemento);
 }
 
 parameters.forEach(activateProduct);
 
+function closePopup() {
+  const popup = document.getElementById('promoPopup');
+  if (popup) popup.style.display = 'none';
+}
 </script>
 
-<script type="module" src="assets/js/main.js"></script>
+<!--========== FIREBASE AUTHENTICATION SCRIPT ===========-->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyByNFggmf6wJV_3kbeFh6tETMUm2xQkJ4U",
+    authDomain: "m-elshazly.firebaseapp.com",
+    projectId: "m-elshazly",
+    storageBucket: "m-elshazly.firebasestorage.app",
+    messagingSenderId: "262632433139",
+    appId: "1:262632433139:web:a2623254fb405c4d051e86",
+    measurementId: "G-6T1PEX65Q6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // دالة تسجيل الدخول بالـ Google وطلب رقم الهاتف
+  window.loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      let phone = "";
+
+      if (userSnap.exists() && userSnap.data().phone) {
+        phone = userSnap.data().phone;
+      } else {
+        phone = prompt("أهلاً بك! يرجى كتابة رقم تليفونك لتأكيد الحساب ومتابعة طلباتك:");
+        while (!phone || phone.trim() === "") {
+          phone = prompt("رقم التليفون مطلوب لتأكيد الحساب، يرجى كتابة الرقم بشكل صحيح:");
+        }
+      }
+
+      await setDoc(userRef, {
+        name: user.displayName,
+        email: user.email,
+        phone: phone,
+        photo: user.photoURL,
+        lastLogin: new Date()
+      }, { merge: true });
+
+      alert(`أهلاً بك يا ${user.displayName}! تم تسجيل الدخول بنجاح.`);
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة مرة أخرى.");
+    }
+  };
+
+  // متابعة حالة التسجيل وتحديث الهيدر
+  onAuthStateChanged(auth, (user) => {
+    const loginBtn = document.getElementById("loginBtn");
+    const userProfileBox = document.getElementById("userProfileBox");
+    const headerUserPhoto = document.getElementById("headerUserPhoto");
+    const headerUserLetter = document.getElementById("headerUserLetter");
+
+    if (user) {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (userProfileBox) userProfileBox.style.display = "flex";
+
+      if (user.photoURL) {
+        if (headerUserPhoto) {
+          headerUserPhoto.src = user.photoURL;
+          headerUserPhoto.style.display = "block";
+        }
+        if (headerUserLetter) headerUserLetter.style.display = "none";
+      } else {
+        if (headerUserPhoto) headerUserPhoto.style.display = "none";
+        if (headerUserLetter) {
+          headerUserLetter.innerText = user.displayName ? user.displayName.charAt(0).toUpperCase() : "U";
+          headerUserLetter.style.display = "flex";
+        }
+      }
+    } else {
+      if (loginBtn) loginBtn.style.display = "flex";
+      if (userProfileBox) userProfileBox.style.display = "none";
+    }
+  });
+</script>
 
   </body>
 </html>
