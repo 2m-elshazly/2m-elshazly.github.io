@@ -1,30 +1,12 @@
-// ==========================================
-// إعدادات وتوصيل Supabase مباشرة
-// ==========================================
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const supabaseUrl = 'https://egvocgzrlpbxcpktaqvv.supabase.co'
-const supabaseKey = 'sb_publishable_T5epu5tgjf9YalRvpGx42Q_Bg4jk3im'
-export const supabase = createClient(supabaseUrl, supabaseKey)
-
-export async function signInWithGoogle() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin
-    }
-  })
-  if (error) console.error('خطأ في تسجيل الدخول:', error.message)
-}
-
-// دالة إغلاق البانر
+    // دالة إغلاق البانر
 function closePopup() {
     const popup = document.getElementById('promoPopup');
     if (popup) {
         popup.style.opacity = '0';
         setTimeout(() => {
             popup.style.display = 'none';
-        }, 300); // إخفاء العنصر بعد انتهاء تأثير الاختفاء الناعم
+        }, 300); // إخفاء العنصر بعد انتهاء تأثير الاختفاء النعم
     }
 }
 
@@ -41,7 +23,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 3000); // 3000 ميللي ثانية = 3 ثواني
     }
 });
-
 // SHOW MENU
 const navMenu = document.getElementById('nav-menu'),
   navToggle = document.getElementById('nav-toggle'),
@@ -100,10 +81,8 @@ const toggleItem = (item) => {
 // SCROLL UP
 function scrollUp() {
   const scrollUp = document.getElementById('scroll-up');
-  if (scrollUp) {
-    if (this.scrollY >= 460) scrollUp.classList.add('show-scroll');
-    else scrollUp.classList.remove('show-scroll');
-  }
+  if (this.scrollY >= 460) scrollUp.classList.add('show-scroll');
+  else scrollUp.classList.remove('show-scroll');
 }
 window.addEventListener('scroll', scrollUp);
 
@@ -117,9 +96,9 @@ const selectedIcon = localStorage.getItem('selected-icon');
 const getCurrentTheme = () =>
   document.body.classList.contains(darkTheme) ? 'dark' : 'light';
 const getCurrentIcon = () =>
-  themeButton && themeButton.classList.contains(iconTheme) ? 'ri-moon-line' : 'ri-sun-line';
+  themeButton.classList.contains(iconTheme) ? 'ri-moon-line' : 'ri-sun-line';
 
-if (selectedTheme && themeButton) {
+if (selectedTheme) {
   document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](
     darkTheme
   );
@@ -128,77 +107,74 @@ if (selectedTheme && themeButton) {
   );
 }
 
-if (themeButton) {
-  themeButton.addEventListener('click', () => {
-    document.body.classList.toggle(darkTheme);
-    themeButton.classList.toggle(iconTheme);
-    localStorage.setItem('selected-theme', getCurrentTheme());
-    localStorage.setItem('selected-icon', getCurrentIcon());
-  });
-}
+themeButton.addEventListener('click', () => {
+  document.body.classList.toggle(darkTheme);
+  themeButton.classList.toggle(iconTheme);
+  localStorage.setItem('selected-theme', getCurrentTheme());
+  localStorage.setItem('selected-icon', getCurrentIcon());
+});
 
 // SCROLL REVEAL
-if (typeof ScrollReveal !== 'undefined') {
-  const sr = ScrollReveal({
-    origin: 'top',
-    distance: '60px',
-    duration: 2500,
-    delay: 400,
-    // reset: true
-  });
+const sr = ScrollReveal({
+  origin: 'top',
+  distance: '60px',
+  duration: 2500,
+  delay: 400,
+  // reset: true
+});
 
-  sr.reveal(`.home_data`);
-  sr.reveal(
-    `.home_img, .ps5_controller-produts h1, .ps5_info-produts h1,
-     .ps5_info-produts p, .ps5_list-produts li, .ps5_controller-produts a,
-      .ps5_controller-produts`,
-    { delay: 500 }
-  );
-  sr.reveal(
-    `.about_img, .ps5_controller-div, .ps4_controller-div, .squid_controller-div`,
-    {
-      origin: 'left',
-    }
-  );
-  sr.reveal(
-    `.about_data, .ps5_controller img, .ps4_controller img,
-   .squid_controller img, .ps4_controller-produts img, 
-   .squid_controller-produts img`,
-    {
-      origin: 'right',
-    }
-  );
-  sr.reveal(`.functions_title, .functions_subtitle`, { delay: 500 });
-  sr.reveal(`.functions_list`, {
-    origin: 'top',
-  });
-  sr.reveal(`.produts_list-container, .produts_title, .produts_subtitle`, {
+sr.reveal(`.home_data`);
+sr.reveal(
+  `.home_img, .ps5_controller-produts h1, .ps5_info-produts h1,
+   .ps5_info-produts p, .ps5_list-produts li, .ps5_controller-produts a,
+    .ps5_controller-produts`,
+  { delay: 500 }
+);
+sr.reveal(
+  `.about_img, .ps5_controller-div, .ps4_controller-div, .squid_controller-div`,
+  {
+    origin: 'left',
+  }
+);
+sr.reveal(
+  `.about_data, .ps5_controller img, .ps4_controller img,
+ .squid_controller img, .ps4_controller-produts img, 
+ .squid_controller-produts img`,
+  {
+    origin: 'right',
+  }
+);
+sr.reveal(`.functions_title, .functions_subtitle`, { delay: 500 });
+sr.reveal(`.functions_list`, {
+  origin: 'top',
+});
+sr.reveal(`.produts_list-container, .produts_title, .produts_subtitle`, {
+  delay: 500,
+});
+sr.reveal(`.faqs_title-center`, { delay: 500 });
+sr.reveal(`.faqs_container, .footer`, {
+  interval: 100,
+});
+sr.reveal(
+  `.terms_data, .privacy_data, .contact_data, .buy_form p, .buy_product h2,
+   .buy_product, .email_data, .hr_footer, .hr_footer-secondary`,
+  {
     delay: 500,
-  });
-  sr.reveal(`.faqs_title-center`, { delay: 500 });
-  sr.reveal(`.faqs_container, .footer`, {
-    interval: 100,
-  });
-  sr.reveal(
-    `.terms_data, .privacy_data, .contact_data, .buy_form p, .buy_product h2,
-     .buy_product, .email_data, .hr_footer, .hr_footer-secondary`,
-    {
-      delay: 500,
-    }
-  );
-  sr.reveal(
-    `.contact_dice h2, .contact_dice-subtitle, .contact_adress, .contact_office, 
-    .contact_chat, .contact_networks, .contact_form h2, .contact_form-subtitle, 
-    .form_name, .form_email, .form_mensage, .button_form, .form_state, .form_city,
-     .form_neighborhood, .form_place, .form_cep, .form_number, .form_cpf,
-      .form_name-2, .form_last-name`,
-    {
-      origin: 'top',
-    }
-  );
-}
+  }
+);
+sr.reveal(
+  `.contact_dice h2, .contact_dice-subtitle, .contact_adress, .contact_office, 
+  .contact_chat, .contact_networks, .contact_form h2, .contact_form-subtitle, 
+  .form_name, .form_email, .form_mensage, .button_form, .form_state, .form_city,
+   .form_neighborhood, .form_place, .form_cep, .form_number, .form_cpf,
+    .form_name-2, .form_last-name`,
+  {
+    origin: 'top',
+  }
+);
 
 // Activate Budget Items
+
 const parameters = new URLSearchParams(location.search);
 
 function activateProduct(parameter) {
@@ -206,55 +182,7 @@ function activateProduct(parameter) {
   if (elemento) {
     elemento.checked = true;
   }
+  console.log(elemento);
 }
 
 parameters.forEach(activateProduct);
-
-// ==========================================
-// ربط زر تسجيل الدخول وتسليم النقاط الترحيبية
-// ==========================================
-const loginBtn = document.getElementById('loginBtn');
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        signInWithGoogle();
-    });
-}
-
-supabase.auth.onAuthStateChange(async (event, session) => {
-    if (session && session.user) {
-        const user = session.user;
-        
-        const { data: existingUser, error: fetchError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-        if (!existingUser) {
-            let phone = prompt("أهلاً بيك يا بطل في 2M Elshazly! أدخل رقم التليفون لإتمام التسجيل:");
-            
-            if (!phone) {
-                phone = "غير محدد";
-            }
-
-            const { error: insertError } = await supabase
-                .from('users')
-                .insert([
-                    { 
-                        id: user.id, 
-                        name: user.user_metadata.full_name || 'User', 
-                        email: user.email, 
-                        phone: phone,
-                        cashPoints: 50,
-                        gamePoints: 10
-                    }
-                ]);
-
-            if (insertError) {
-                console.error('خطأ أثناء حفظ بيانات المستخدم:', insertError.message);
-            } else {
-                alert('مبروك! حصلت على هدية الترحيب: 50 نقطة كاش و 10 نقاط ألعاب 🎉');
-            }
-        }
-    }
-});
