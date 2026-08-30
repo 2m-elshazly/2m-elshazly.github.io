@@ -1,3 +1,8 @@
+// ==========================================
+// استيراد إعدادات Supabase (ضبط المسار الصحيح للمجلد الفرعي)
+// ==========================================
+import { supabase, signInWithGoogle } from '../../supabase-config.js';
+
 // دالة إغلاق البانر
 function closePopup() {
     const popup = document.getElementById('promoPopup');
@@ -5,7 +10,7 @@ function closePopup() {
         popup.style.opacity = '0';
         setTimeout(() => {
             popup.style.display = 'none';
-        }, 300); // إخفاء العنصر بعد انتهاء تأثير الاختفاء النعم
+        }, 300); // إخفاء العنصر بعد انتهاء تأثير الاختفاء الناعم
     }
 }
 
@@ -187,10 +192,8 @@ function activateProduct(parameter) {
 parameters.forEach(activateProduct);
 
 // ==========================================
-// ربط Supabase وتسلُّم هدايا النقاط وتسجيل الدخول
+// ربط زر الدخول وتسلُّم هدايا النقاط وتسجيل الدخول
 // ==========================================
-import { supabase, signInWithGoogle } from './supabase-config.js';
-
 const loginBtn = document.getElementById('loginBtn');
 if (loginBtn) {
     loginBtn.addEventListener('click', () => {
