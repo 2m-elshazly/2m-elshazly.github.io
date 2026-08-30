@@ -8,7 +8,7 @@
     <title>2M Elshazly Store | صيانة وتحديث ألعاب بلايستيشن</title>
     <meta
       name="description"
-      content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان وااحترافية."
+      content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
     />
     <meta name="author" content="I Fix Store" />
 
@@ -63,29 +63,31 @@
         font-family: 'Cairo', sans-serif !important;
       }
 
-      .login-btn {
-        display: flex;
+      /* تنسيق زر تسجيل الدخول المتناسق مع الموبايل والكمبيوتر */
+      .login-nav-link {
+        display: inline-flex !important;
         align-items: center;
-        gap: 8px;
-        background: #0070d1;
-        color: white;
+        justify-content: center;
+        gap: 6px;
+        background: transparent;
         border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
         cursor: pointer;
         font-family: 'Cairo', sans-serif;
-        font-weight: 700;
-        transition: 0.3s;
+        font-size: var(--normal-font-size);
+        font-weight: var(--font-medium);
+        color: var(--title-color);
+        padding: 0;
+        transition: .3s;
       }
 
-      .login-btn:hover {
-        background: #005bb5;
-        transform: translateY(-2px);
+      .login-nav-link:hover {
+        color: var(--first-color);
       }
 
-      .login-btn img {
+      .login-nav-link img {
         width: 18px;
         height: 18px;
+        display: block;
       }
     </style>
 </head>
@@ -136,25 +138,20 @@
             <li class="nav_item">
               <a href="soon.html" class="nav_link">Contact</a>
             </li>
-          </ul>
 
-          <div class="nav_close" id="nav-close">
-            <i class="bx bx-x"></i>
-          </div>
-        </div>
-
-        <div id="userSection">
-            <button id="loginBtn" class="login-btn" onclick="loginWithGoogle()">
+            <!-- قسم تسجيل الدخول / بروفايل المستخدم -->
+            <li class="nav_item" id="userSection">
+              <button id="loginBtn" class="login-nav-link nav_link" onclick="loginWithGoogle()">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
                 <span>تسجيل الدخول</span>
-            </button>
+              </button>
 
-            <div id="userProfileBox" style="display:none; cursor:pointer;" onclick="window.location.href='profile.html'">
+              <div id="userProfileBox" style="display:none; cursor:pointer; align-items:center;" onclick="window.location.href='profile.html'">
                 <img id="headerUserPhoto"
                      referrerpolicy="no-referrer"
                      style="
-                     width:42px;
-                     height:42px;
+                     width:35px;
+                     height:35px;
                      border-radius:50%;
                      border:2px solid #0070d1;
                      object-fit:cover;
@@ -162,8 +159,8 @@
                      
                 <div id="headerUserLetter"
                      style="
-                     width:42px;
-                     height:42px;
+                     width:35px;
+                     height:35px;
                      border-radius:50%;
                      border:2px solid #0070d1;
                      display:none;
@@ -171,10 +168,16 @@
                      justify-content:center;
                      font-weight:900;
                      color:white;
-                     font-size:1.1rem;
+                     font-size:1rem;
                      line-height:0;
                      background:#0070d1;"></div>
-            </div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="nav_close" id="nav-close">
+            <i class="bx bx-x"></i>
+          </div>
         </div>
 
         <div class="nav_btns">
@@ -851,7 +854,6 @@ function closePopup() {
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // دالة تسجيل الدخول بالـ Google وطلب رقم الهاتف
   window.loginWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -882,11 +884,11 @@ function closePopup() {
       alert(`أهلاً بك يا ${user.displayName}! تم تسجيل الدخول بنجاح.`);
     } catch (error) {
       console.error("Login Error:", error);
-      alert("حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة مرة أخرى.");
+      // إظهار كود الخطأ والرسالة بالتفصيل لمعرفة السبب مباشرة عند الضغط
+      alert("كود الخطأ: " + error.code + "\nالرسالة التفصيلية: " + error.message);
     }
   };
 
-  // متابعة حالة التسجيل وتحديث الهيدر
   onAuthStateChanged(auth, (user) => {
     const loginBtn = document.getElementById("loginBtn");
     const userProfileBox = document.getElementById("userProfileBox");
@@ -911,11 +913,11 @@ function closePopup() {
         }
       }
     } else {
-      if (loginBtn) loginBtn.style.display = "flex";
+      if (loginBtn) loginBtn.style.display = "inline-flex";
       if (userProfileBox) userProfileBox.style.display = "none";
     }
   });
 </script>
 
-  </body>
+</body>
 </html>
