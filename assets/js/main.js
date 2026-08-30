@@ -1,5 +1,4 @@
-
-    // دالة إغلاق البانر
+// دالة إغلاق البانر
 function closePopup() {
     const popup = document.getElementById('promoPopup');
     if (popup) {
@@ -186,3 +185,54 @@ function activateProduct(parameter) {
 }
 
 parameters.forEach(activateProduct);
+
+// ==========================================
+// ربط Supabase وتسلُّم هدايا النقاط وتسجيل الدخول
+// ==========================================
+import { supabase, signInWithGoogle } from './supabase-config.js';
+
+const loginBtn = document.getElementById('loginBtn');
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        signInWithGoogle();
+    });
+}
+
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (session && session.user) {
+        const user = session.user;
+        
+        const { data: existingUser, error: fetchError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (!existingUser) {
+            let phone = prompt("أهلاً بيك يا بطل في 2M Elshazly! أدخل رقم التليفون لإتمام التسجيل:");
+            
+            if (!phone) {
+                phone = "غير محدد";
+            }
+
+            const { error: insertError } = await supabase
+                .from('users')
+                .insert([
+                    { 
+                        id: user.id, 
+                        name: user.user_metadata.full_name || 'User', 
+                        email: user.email, 
+                        phone: phone,
+                        cashPoints: 50,
+                        gamePoints: 10
+                    }
+                ]);
+
+            if (insertError) {
+                console.error('خطأ أثناء حفظ بيانات المستخدم:', insertError.message);
+            } else {
+                alert('مبروك! حصلت على هدية الترحيب: 50 نقطة كاش و 10 نقاط ألعاب 🎉');
+            }
+        }
+    }
+});
