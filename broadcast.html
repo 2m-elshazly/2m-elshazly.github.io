@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة التسجيل اليدوي | I Fix Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#121212] text-white p-4 md:p-6">
+
+    <div class="max-w-3xl mx-auto">
+        <h1 class="text-3xl font-black mb-2 text-blue-500 text-center">📋 تجهيز الأرقام للتسجيل اليدوي</h1>
+        <p class="text-neutral-400 text-center mb-6 text-sm">انسخ رقم كل عميل لتسجيله في دليل الهاتف، ثم أرسل لهم العروض عبر قائمة البث (Broadcast)</p>
+
+        <div class="bg-neutral-900 rounded-2xl p-6 border border-neutral-800 shadow-2xl space-y-6">
+            
+            <div class="flex justify-between items-center bg-black/40 p-4 rounded-xl border border-neutral-800">
+                <span class="text-neutral-400 font-bold">إجمالي عدد أرقام العملاء الفريدة:</span>
+                <span id="users-count" class="text-emerald-400 font-black text-xl">جاري التحميل... ⏱️</span>
+            </div>
+
+            <div>
+                <label class="block mb-3 font-bold text-neutral-300 text-sm border-b border-neutral-800 pb-2">أرقام العملاء المسجلين:</label>
+                <div id="phones-list" class="space-y-3 max-h-[350px] overflow-y-auto pl-1">
+                    </div>
+            </div>
+
+            <div class="pt-4 border-t border-neutral-800">
+                <label class="block mb-2 font-bold text-neutral-400 text-sm">نص الرسالة المقترحة للبث:</label>
+                <textarea 
+                    id="broadcast-msg" 
+                    rows="4" 
+                    class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500 transition text-right text-sm"
+                    readonly
+                >*طلب تنزيل ألعاب - I Fix Store* 🎮
+
+بشرى سارة لعملائنا الكرام! فرعنا في الهانوفيل مستنيكم بأقوى العروض وأحدث ألعاب البلايستيشن 🔥🎮</textarea>
+                <button
+                    id="copyMsgBtn"
+                    class="w-full bg-neutral-700 hover:bg-neutral-600 py-3 mt-3 rounded-xl font-bold text-base shadow transition duration-200 flex justify-center items-center gap-2"
+                >
+                    📝 نسخ نص الرسالة
+                </button>
+            </div>
+
+        </div>
+
+        <a href="index.html" class="block text-center text-neutral-500 hover:text-white transition font-semibold text-sm mt-6">
+            ← العودة للرئيسية
+        </a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
+          authDomain: "ifix-store-eecd9.firebaseapp.com",
+          projectId: "ifix-store-eecd9",
+          storageBucket: "ifix-store-eecd9.firebasestorage.app",
+          messagingSenderId: "862863699996",
+          appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadCustomerPhones() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "orders"));
+                let uniquePhones = new Set();
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.userPhone) {
+                        let phone = data.userPhone.trim();
+                        // تنظيف الرقم ليظهر بصيغته المصرية العادية (01xxxxxxxxx)
+                        if (phone.startsWith("+2")) {
+                            phone = phone.substring(2);
+                        } else if (phone.startsWith("2")) {
+                            phone = phone.substring(1);
+                        }
+                        uniquePhones.add(phone);
+                    }
+                });
+                
+                const phonesArray = Array.from(uniquePhones);
+                document.getElementById('users-count').innerText = `${phonesArray.length} عميل مستهدف 👥`;
+
+                const phonesListDiv = document.getElementById('phones-list');
+                
+                if (phonesArray.length === 0) {
+                    phonesListDiv.innerHTML = "<p class='text-center text-neutral-500 py-6'>مفيش أرقام مسجلة في الداتابيز حالياً ⚠️</p>";
+                    return;
+                }
+
+                // بناء العناصر بحيث كل رقم ليه زرار نسخ خاص بيه
+                phonesListDiv.innerHTML = phonesArray.map((phone, index) => `
+                    <div class="flex items-center justify-between bg-black/50 p-3.5 rounded-xl border border-neutral-800">
+                        <span class="font-mono text-base font-bold text-neutral-200" dir="ltr">${phone}</span>
+                        <button 
+                            class="copy-single-btn bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-1.5"
+                            data-phone="${phone}"
+                        >
+                            📋 نسخ الرقم
+                        </button>
+                    </div>
+                `).join('');
+
+                // تفعيل زراير النسخ
+                document.querySelectorAll('.copy-single-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const phoneToCopy = e.currentTarget.getAttribute('data-phone');
+                        navigator.clipboard.writeText(phoneToCopy).then(() => {
+                            // تغيير نص الزر مؤقتاً للتأكيد
+                            const originalText = btn.innerHTML;
+                            btn.innerHTML = "✅ تم النسخ!";
+                            btn.className = "bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition";
+                            
+                            setTimeout(() => {
+                                btn.innerHTML = originalText;
+                                btn.className = "copy-single-btn bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-1.5";
+                            }, 1500);
+                        });
+                    });
+                });
+
+            } catch (error) {
+                console.error("خطأ أثناء جلب الأرقام:", error);
+                document.getElementById('users-count').innerText = "خطأ في التحميل ❌";
+            }
+        }
+
+        loadCustomerPhones();
+
+        // زر نسخ الرسالة
+        document.getElementById('copyMsgBtn').addEventListener('click', () => {
+            const msgText = document.getElementById('broadcast-msg').value;
+            navigator.clipboard.writeText(msgText).then(() => {
+                alert("تم نسخ نص الرسالة بنجاح! ✅");
+            });
+        });
+    </script>
+</body>
+</html>

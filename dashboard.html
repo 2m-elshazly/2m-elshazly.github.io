@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>لوحة تحكم iFix Store 📊</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <script
+        type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#0b0b0b] text-white min-h-screen p-4 md:p-8">
+
+    <!-- صوت وصول طلب جديد -->
+    <audio
+        id="notification-sound"
+        src="https://assets.mixkit.co/active_storage/sfx/2869/2869-100.wav"
+        preload="auto">
+    </audio>
+
+
+    <div class="max-w-5xl mx-auto space-y-8">
+
+
+        <!-- HEADER -->
+        <div class="border-b border-neutral-800 pb-6 text-center sm:text-right">
+
+            <h1 class="text-3xl font-black text-blue-500">
+                لوحة تحكم iFix Store 🛠️🎮
+            </h1>
+
+            <p class="text-sm text-neutral-400 mt-1">
+                إدارة طلبات البلايستيشن وإرسال حملات الـ Gmail للعملاء
+            </p>
+
+        </div>
+
+
+        <!-- ORDERS -->
+        <div class="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-800">
+
+            <!-- TABS -->
+            <div class="flex border-b border-neutral-800 mb-6 font-bold text-sm">
+
+                <button
+                    id="tab-pending"
+                    class="border-b-2 border-blue-500 px-6 py-3 text-blue-500 flex items-center gap-2"
+                >
+                    طلبات قيد الانتظار ⏳
+
+                    <span
+                        id="count-pending"
+                        class="bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 rounded-full"
+                    >
+                        0
+                    </span>
+                </button>
+
+
+                <button
+                    id="tab-completed"
+                    class="border-b-2 border-transparent text-neutral-400 px-6 py-3 hover:text-white flex items-center gap-2 transition"
+                >
+                    طلبات تم تنفيذها ✅
+
+                    <span
+                        id="count-completed"
+                        class="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full"
+                    >
+                        0
+                    </span>
+                </button>
+
+            </div>
+
+
+            <!-- ORDERS LIST -->
+            <div
+                id="orders-list"
+                class="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+
+                <div
+                    class="col-span-full text-center text-neutral-500 py-12 animate-pulse"
+                >
+                    جاري جلب الطلبات... 🔄
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- GMAIL BROADCAST -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6">
+
+            <h2 class="text-xl font-black text-blue-400 mb-2 flex items-center gap-2">
+                حملة إعلانات وعروض Gmail 📢✉️
+            </h2>
+
+            <p class="text-xs text-neutral-400 mb-4">
+                اكتب رسالة أو عرض أو تنويه بنقل الفرع لتوصل لكل الزباين المسجلين في الموقع فوراً
+            </p>
+
+
+            <div class="space-y-4">
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-neutral-400 mb-1">
+                        عنوان العرض أو الموضوع:
+                    </label>
+
+                    <input
+                        id="email-subject"
+                        type="text"
+                        placeholder="مثال: متاح الآن تعديل لعبه GTA VI في فرع الهانوفيل! 🔥"
+                        class="w-full bg-black border border-neutral-800 rounded-xl p-3 text-sm focus:border-blue-500 outline-none text-white"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-neutral-400 mb-1">
+                        تفاصيل الرسالة:
+                    </label>
+
+                    <textarea
+                        id="email-message"
+                        rows="4"
+                        placeholder="اكتب تفاصيل العرض هنا أو التنويه بنقل الفرع..."
+                        class="w-full bg-black border border-neutral-800 rounded-xl p-3 text-sm focus:border-blue-500 outline-none text-white"
+                    ></textarea>
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-xs font-bold text-neutral-400 mb-1">
+                        رابط صورة العرض أو اللوجو:
+                    </label>
+
+                    <input
+                        id="email-image"
+                        type="url"
+                        placeholder="ضع رابط الصورة هنا"
+                        class="w-full bg-black border border-neutral-800 rounded-xl p-3 text-sm focus:border-blue-500 outline-none text-white"
+                    >
+
+                </div>
+
+
+                <button
+                    id="send-broadcast-btn"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-3 rounded-xl transition active:scale-[0.98]"
+                >
+                    إرسال الحملة لكل المشتركين الآن 🚀
+                </button>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+
+import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    doc,
+    updateDoc,
+    getDocs,
+    query,
+    where,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
+
+    authDomain: "ifix-store-eecd9.firebaseapp.com",
+
+    projectId: "ifix-store-eecd9",
+
+    storageBucket: "ifix-store-eecd9.firebasestorage.app",
+
+    messagingSenderId: "862863699996",
+
+    appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+/* =========================================================
+   EMAIL JS
+========================================================= */
+
+emailjs.init("KFJqs9B5bnZLoQavD");
+
+
+
+/* =========================================================
+   نظام النقاط
+========================================================= */
+
+/*
+   كل لعبة = نقطة واحدة
+
+   كل 10 نقاط = لعبة مجانية
+
+   مثال:
+
+   العميل عنده 7 نقاط
+   عمل طلب فيه 5 ألعاب
+
+   يصبح عنده:
+
+   12 نقطة
+
+   يتحول منهم:
+
+   10 نقاط = لعبة مجانية
+
+   ويتبقى:
+
+   2 نقطة
+*/
+
+const POINTS_PER_GAME = 1;
+
+const POINTS_FOR_FREE_GAME = 10;
+
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let allOrders = [];
+
+let currentTab = "pending";
+
+let firstLoad = true;
+
+
+
+const ordersListContainer =
+    document.getElementById('orders-list');
+
+const countPendingBadge =
+    document.getElementById('count-pending');
+
+const countCompletedBadge =
+    document.getElementById('count-completed');
+
+const audioNotification =
+    document.getElementById('notification-sound');
+
+
+
+/* =========================================================
+   جلب الطلبات
+========================================================= */
+
+onSnapshot(
+    collection(db, "orders"),
+    (snapshot) => {
+
+        allOrders = [];
+
+        snapshot.forEach((orderDoc) => {
+
+            allOrders.push({
+                id: orderDoc.id,
+                ...orderDoc.data()
+            });
+
+        });
+
+
+        /*
+           تشغيل صوت عند وصول طلب جديد
+        */
+
+        if (
+            !firstLoad &&
+            snapshot.docChanges().some(
+                change => change.type === "added"
+            )
+        ) {
+
+            audioNotification
+                .play()
+                .catch(
+                    e => console.log("الصوت محتاج تفاعل")
+                );
+
+        }
+
+
+        firstLoad = false;
+
+
+        updateBadgesCount();
+
+        renderOrders();
+
+    }
+);
+
+
+
+/* =========================================================
+   العدادات
+========================================================= */
+
+function updateBadgesCount() {
+
+    countPendingBadge.innerText =
+        allOrders.filter(
+            o => (o.status || 'pending') === 'pending'
+        ).length;
+
+
+    countCompletedBadge.innerText =
+        allOrders.filter(
+            o => o.status === 'completed'
+        ).length;
+
+}
+
+
+
+/* =========================================================
+   عرض الطلبات
+========================================================= */
+
+function renderOrders() {
+
+    let filtered =
+        allOrders.filter(
+            order =>
+                (order.status || "pending") === currentTab
+        );
+
+
+    if (filtered.length === 0) {
+
+        ordersListContainer.innerHTML = `
+
+            <div
+                class="col-span-full bg-neutral-900/30 border border-neutral-800 rounded-2xl p-12 text-center text-neutral-500 font-bold"
+            >
+                📦 مفيش طلبات في هذا القسم حالياً.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    ordersListContainer.innerHTML = filtered.map(order => {
+
+
+        /* ==========================================
+           الألعاب
+        ========================================== */
+
+        let gamesItems = "";
+
+
+        if (Array.isArray(order.games)) {
+
+            gamesItems =
+                order.games.map((g, i) => {
+
+                    const gameName =
+                        typeof g === 'object'
+                            ? (
+                                g.name ||
+                                g.gameName ||
+                                'لعبة'
+                            )
+                            : g;
+
+
+                    return `
+
+                        <div
+                            class="flex justify-between items-center bg-black/40 p-2 rounded-lg text-xs border border-neutral-800/40 font-bold"
+                        >
+
+                            <span class="text-neutral-300">
+                                ${i + 1}. ${gameName}
+                            </span>
+
+                        </div>
+
+                    `;
+
+                }).join('');
+
+        }
+
+
+
+        /* ==========================================
+           النقاط التي تم الحصول عليها
+        ========================================== */
+
+        const gamesCount =
+            Array.isArray(order.games)
+                ? order.games.length
+                : 0;
+
+
+        const possiblePoints =
+            gamesCount * POINTS_PER_GAME;
+
+
+
+        return `
+
+            <div
+                class="bg-neutral-900 border ${
+                    order.status === 'completed'
+                        ? 'border-emerald-900/40'
+                        : 'border-neutral-800'
+                }
+                rounded-2xl p-5 flex flex-col justify-between space-y-4"
+            >
+
+
+                <div class="space-y-3">
+
+
+                    <!-- اسم العميل -->
+
+                    <div class="flex justify-between items-start">
+
+                        <div>
+
+                            <h3 class="text-lg font-black text-white">
+
+                                ${order.userName || 'عميل'}
+
+                            </h3>
+
+
+                            <span
+                                class="text-[11px] text-neutral-500 font-semibold"
+                            >
+
+                                ${order.userEmail || 'بدون إيميل'}
+
+                            </span>
+
+                        </div>
+
+
+                        <span
+                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                        >
+
+                            ${order.branch || 'الهانوفيل'} 📍
+
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- الألعاب -->
+
+                    <div class="space-y-1.5">
+
+                        <div
+                            class="grid grid-cols-1 gap-1 max-h-[160px] overflow-y-auto pr-1"
+                        >
+
+                            ${gamesItems}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- معلومات النقاط -->
+
+                    ${
+                        order.status === 'completed'
+                            ? `
+
+                                <div
+                                    class="bg-emerald-950/30 border border-emerald-900/40 rounded-xl p-3"
+                                >
+
+                                    <div class="flex justify-between items-center">
+
+                                        <span
+                                            class="text-xs font-bold text-neutral-400"
+                                        >
+                                            نقاط الطلب 🎯
+                                        </span>
+
+                                        <span
+                                            class="text-sm font-black text-emerald-400"
+                                        >
+                                            +${order.pointsAwardedCount || possiblePoints}
+                                            نقطة
+                                        </span>
+
+                                    </div>
+
+
+                                    ${
+                                        order.freeGamesAwarded
+                                            ? `
+
+                                                <div
+                                                    class="text-xs font-bold text-yellow-400 mt-2"
+                                                >
+                                                    🎁 العميل حصل على
+                                                    ${order.freeGamesAwarded}
+                                                    لعبة مجانية
+                                                </div>
+
+                                            `
+                                            : ''
+                                    }
+
+                                </div>
+
+                            `
+                            : `
+
+                                <div
+                                    class="bg-blue-950/20 border border-blue-900/30 rounded-xl p-3"
+                                >
+
+                                    <div class="flex justify-between items-center">
+
+                                        <span
+                                            class="text-xs font-bold text-neutral-400"
+                                        >
+                                            العميل سيحصل عند التنفيذ 🎯
+                                        </span>
+
+                                        <span
+                                            class="text-sm font-black text-blue-400"
+                                        >
+                                            +${possiblePoints} نقطة
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            `
+                    }
+
+
+                </div>
+
+
+
+                <!-- FOOTER -->
+
+                <div
+                    class="pt-3 border-t border-neutral-800/60 flex justify-between items-center gap-2"
+                >
+
+
+                    <div>
+
+                        <span
+                            class="text-xl font-black text-emerald-400"
+                        >
+
+                            ${order.totalPrice || 0} ج.م
+
+                        </span>
+
+                    </div>
+
+
+
+                    ${
+                        (order.status || 'pending') !== 'completed'
+
+                        ?
+
+                        `
+
+                            <button
+                                data-id="${order.id}"
+                                class="complete-btn bg-green-600 hover:bg-green-500 text-white text-xs font-black px-4 py-3 rounded-xl transition"
+                            >
+
+                                تم التنفيذ + النقاط 🎯✅
+
+                            </button>
+
+                        `
+
+                        :
+
+                        `
+
+                            <span
+                                class="text-xs font-bold text-neutral-500 bg-neutral-950 px-3 py-2 rounded-xl"
+                            >
+
+                                جاهز ومقفل 🔒
+
+                            </span>
+
+                        `
+                    }
+
+
+                </div>
+
+
+            </div>
+
+        `;
+
+    }).join('');
+
+
+
+    /* =====================================================
+       أزرار تم التنفيذ
+    ===================================================== */
+
+    document
+        .querySelectorAll('.complete-btn')
+        .forEach(btn => {
+
+            btn.addEventListener(
+                'click',
+                completeOrder
+            );
+
+        });
+
+}
+
+
+
+/* =========================================================
+   تنفيذ الطلب + إضافة النقاط
+========================================================= */
+
+async function completeOrder(e) {
+
+    const button =
+        e.currentTarget;
+
+
+    const orderId =
+        button.getAttribute('data-id');
+
+
+    const order =
+        allOrders.find(
+            item => item.id === orderId
+        );
+
+
+    if (!order) {
+
+        alert("الطلب غير موجود!");
+
+        return;
+
+    }
+
+
+
+    /*
+       حماية إضافية
+
+       لو الطلب اتنفذ بالفعل
+       لا نضيف نقاط مرة أخرى
+    */
+
+    if (
+        order.status === "completed" ||
+        order.pointsAwarded === true
+    ) {
+
+        alert("الطلب ده تم تنفيذه والنقاط اتحسبت بالفعل 🎯");
+
+        return;
+
+    }
+
+
+
+    const gamesCount =
+        Array.isArray(order.games)
+            ? order.games.length
+            : 0;
+
+
+    if (gamesCount <= 0) {
+
+        alert("الطلب مفيهوش ألعاب لحساب النقاط!");
+
+        return;
+
+    }
+
+
+
+    const pointsToAdd =
+        gamesCount * POINTS_PER_GAME;
+
+
+
+    /* تعطيل الزر أثناء التنفيذ */
+
+    button.disabled = true;
+
+    button.innerText =
+        "جاري إضافة النقاط... ⏳";
+
+
+
+    try {
+
+
+        /* =================================================
+           تحديد العميل
+        ================================================= */
+
+        let userId = order.userId || null;
+
+
+        /*
+           لو الطلب الجديد فيه userId
+           نستخدمه مباشرة.
+
+           الطلبات القديمة عندك غالباً فيها email فقط،
+           لذلك نحاول نجيب المستخدم من users بواسطة الإيميل.
+        */
+
+        if (!userId && order.userEmail) {
+
+            const usersQuery =
+                query(
+                    collection(db, "users"),
+                    where(
+                        "email",
+                        "==",
+                        order.userEmail
+                    )
+                );
+
+
+            const usersSnapshot =
+                await getDocs(usersQuery);
+
+
+            if (!usersSnapshot.empty) {
+
+                userId =
+                    usersSnapshot.docs[0].id;
+
+            }
+
+        }
+
+
+
+        if (!userId) {
+
+            throw new Error(
+                "لم يتم العثور على حساب العميل في users"
+            );
+
+        }
+
+
+
+        /* =================================================
+           مرجع العميل
+        ================================================= */
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                userId
+            );
+
+
+
+        /* =================================================
+           مرجع الطلب
+        ================================================= */
+
+        const orderRef =
+            doc(
+                db,
+                "orders",
+                orderId
+            );
+
+
+
+        /* =================================================
+           TRANSACTION
+           
+           مهمة جداً:
+           تمنع تكرار النقاط إذا حصل ضغط مزدوج
+           أو أكثر من شخص حاول تنفيذ نفس الطلب.
+        ================================================= */
+
+        let result =
+            await runTransaction(
+                db,
+                async (transaction) => {
+
+
+                    /* قراءة الطلب */
+
+                    const freshOrder =
+                        await transaction.get(
+                            orderRef
+                        );
+
+
+                    if (!freshOrder.exists()) {
+
+                        throw new Error(
+                            "الطلب غير موجود"
+                        );
+
+                    }
+
+
+                    const freshOrderData =
+                        freshOrder.data();
+
+
+
+                    /*
+                       الطلب اتنفذ بالفعل
+                    */
+
+                    if (
+                        freshOrderData.pointsAwarded === true ||
+                        freshOrderData.status === "completed"
+                    ) {
+
+                        return {
+                            alreadyCompleted: true,
+                            pointsAdded: 0,
+                            freeGames: 0
+                        };
+
+                    }
+
+
+
+                    /* قراءة بيانات العميل */
+
+                    const userSnap =
+                        await transaction.get(
+                            userRef
+                        );
+
+
+                    const userData =
+                        userSnap.exists()
+                            ? userSnap.data()
+                            : {};
+
+
+
+                    /*
+                       النقاط الحالية
+                    */
+
+                    const currentPoints =
+                        Number(
+                            userData.points || 0
+                        );
+
+
+
+                    /*
+                       الألعاب المجانية الحالية
+                    */
+
+                    const currentFreeGames =
+                        Number(
+                            userData.freeGames || 0
+                        );
+
+
+
+                    /*
+                       إضافة نقاط الطلب
+                    */
+
+                    const newTotalPoints =
+                        currentPoints +
+                        pointsToAdd;
+
+
+
+                    /*
+                       حساب عدد الألعاب المجانية
+                    */
+
+                    const freeGamesEarned =
+                        Math.floor(
+                            newTotalPoints /
+                            POINTS_FOR_FREE_GAME
+                        );
+
+
+
+                    /*
+                       النقاط المتبقية بعد تحويل
+                       كل 10 نقاط إلى لعبة مجانية
+                    */
+
+                    const remainingPoints =
+                        newTotalPoints %
+                        POINTS_FOR_FREE_GAME;
+
+
+
+                    /*
+                       إجمالي الألعاب المجانية
+                    */
+
+                    const newFreeGames =
+                        currentFreeGames +
+                        freeGamesEarned;
+
+
+
+                    /* ======================================
+                       تحديث العميل
+                    ====================================== */
+
+                    transaction.set(
+                        userRef,
+                        {
+
+                            points:
+                                remainingPoints,
+
+                            freeGames:
+                                newFreeGames,
+
+                            totalPointsEarned:
+                                Number(
+                                    userData.totalPointsEarned || 0
+                                ) + pointsToAdd,
+
+                            updatedAt:
+                                new Date()
+
+                        },
+
+                        {
+                            merge: true
+                        }
+                    );
+
+
+
+                    /* ======================================
+                       تحديث الطلب
+                    ====================================== */
+
+                    transaction.update(
+                        orderRef,
+                        {
+
+                            status:
+                                "completed",
+
+                            pointsAwarded:
+                                true,
+
+                            pointsAwardedCount:
+                                pointsToAdd,
+
+                            freeGamesAwarded:
+                                freeGamesEarned,
+
+                            completedAt:
+                                new Date(),
+
+                            userId:
+                                userId
+
+                        }
+                    );
+
+
+
+                    return {
+
+                        alreadyCompleted:
+                            false,
+
+                        pointsAdded:
+                            pointsToAdd,
+
+                        freeGames:
+                            freeGamesEarned,
+
+                        remainingPoints:
+                            remainingPoints
+
+                    };
+
+                }
+            );
+
+
+
+        /* =================================================
+           النتيجة
+        ================================================= */
+
+        if (result.alreadyCompleted) {
+
+            alert(
+                "الطلب ده اتنفذ قبل كده والنقاط اتحسبت بالفعل 🎯"
+            );
+
+        }
+
+        else {
+
+            let message =
+                `✅ تم تنفيذ الطلب بنجاح!\n\n` +
+                `🎯 تمت إضافة ${result.pointsAdded} نقطة للعميل.`;
+
+
+
+            if (result.freeGames > 0) {
+
+                message +=
+                    `\n\n🎁 مبروك! العميل كسب ` +
+                    `${result.freeGames} لعبة مجانية!`;
+
+            }
+
+
+
+            message +=
+                `\n\n⭐ النقاط المتبقية: ${result.remainingPoints}`;
+
+            
+            alert(message);
+
+        }
+
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "خطأ في تنفيذ الطلب والنقاط:",
+            error
+        );
+
+
+        alert(
+            "حصل خطأ أثناء إضافة النقاط ❌\n\n" +
+            "اتأكد إن حساب العميل موجود في users وإن Firestore Rules سامحة بالتعديل."
+        );
+
+
+        button.disabled = false;
+
+        button.innerText =
+            "تم التنفيذ + النقاط 🎯✅";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   GMAIL BROADCAST
+========================================================= */
+
+document
+    .getElementById('send-broadcast-btn')
+    .addEventListener(
+        'click',
+        async (e) => {
+
+
+            const subject =
+                document
+                    .getElementById('email-subject')
+                    .value
+                    .trim();
+
+
+            const message =
+                document
+                    .getElementById('email-message')
+                    .value
+                    .trim();
+
+
+            const imageUrl =
+                document
+                    .getElementById('email-image')
+                    .value
+                    .trim();
+
+
+
+            if (!subject || !message) {
+
+                alert(
+                    "يا غالي لازم تكتب العنوان وتفاصيل الرسالة الأول! ⚠️"
+                );
+
+                return;
+
+            }
+
+
+
+            e.target.innerText =
+                "جاري سحب إيميلات الحسابات المسجلة... ⏳";
+
+            e.target.disabled = true;
+
+
+
+            try {
+
+
+                const uniqueUsers = [];
+
+                const seenEmails =
+                    new Set();
+
+
+
+                /* ==========================================
+                   سحب المستخدمين
+                ========================================== */
+
+                const usersSnapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "users"
+                        )
+                    );
+
+
+
+                usersSnapshot.forEach(
+                    userDoc => {
+
+                        const userData =
+                            userDoc.data();
+
+
+                        const emailAddress =
+                            userData.email ||
+                            userData.userEmail ||
+                            userData.gmail ||
+                            userData.Email ||
+                            userData.UserEmail;
+
+
+
+                        if (
+                            emailAddress &&
+                            typeof emailAddress === 'string' &&
+                            emailAddress.includes('@')
+                        ) {
+
+                            const cleanEmail =
+                                emailAddress
+                                    .trim()
+                                    .toLowerCase();
+
+
+
+                            if (
+                                !seenEmails.has(
+                                    cleanEmail
+                                )
+                            ) {
+
+                                seenEmails.add(
+                                    cleanEmail
+                                );
+
+
+                                uniqueUsers.push({
+
+                                    name:
+                                        userData.name ||
+                                        userData.userName ||
+                                        userData.Name ||
+                                        'عميل iFix Store المميز',
+
+                                    email:
+                                        cleanEmail
+
+                                });
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+
+                if (
+                    uniqueUsers.length === 0
+                ) {
+
+                    alert(
+                        "مفيش أي حسابات عملاء تحتوي على إيميلات صحيحة جوه كولكشن users حالياً! 📦"
+                    );
+
+
+                    e.target.innerText =
+                        "إرسال الحملة لكل المشتركين الآن 🚀";
+
+                    e.target.disabled =
+                        false;
+
+                    return;
+
+                }
+
+
+
+                e.target.innerText =
+                    `جاري إرسال الإيميلات لـ (${uniqueUsers.length}) حساب مسجل... ⏳`;
+
+
+
+                let successCount = 0;
+
+
+
+                for (
+                    const user
+                    of uniqueUsers
+                ) {
+
+                    try {
+
+                        await emailjs.send(
+                            "service_iq6rh5k",
+                            "template_sxbaue",
+                            {
+
+                                to_name:
+                                    user.name,
+
+                                email:
+                                    user.email,
+
+                                subject:
+                                    subject,
+
+                                message:
+                                    message,
+
+                                image_url:
+                                    imageUrl
+
+                            }
+                        );
+
+
+                        successCount++;
+
+                    }
+
+                    catch (err) {
+
+                        console.error(
+                            "فشل الإرسال للحساب: " +
+                            user.email,
+                            err
+                        );
+
+                    }
+
+                }
+
+
+
+                alert(
+                    `🚀 تسلم إيدك! تم بنجاح إرسال العرض لـ ${successCount} مستخدم مسجل في الموقع بالـ Gmail!`
+                );
+
+
+
+                document
+                    .getElementById('email-subject')
+                    .value = "";
+
+
+                document
+                    .getElementById('email-message')
+                    .value = "";
+
+
+                document
+                    .getElementById('email-image')
+                    .value = "";
+
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "خطأ في جلب بيانات المستخدمين:",
+                    error
+                );
+
+
+                alert(
+                    "حصلت مشكلة أثناء قراءة الإيميلات من الفايربيس، اتأكد من الـ Rules لكولكشن users."
+                );
+
+            }
+
+            finally {
+
+                e.target.innerText =
+                    "إرسال الحملة لكل المشتركين الآن 🚀";
+
+                e.target.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+
+
+/* =========================================================
+   TAB - PENDING
+========================================================= */
+
+document
+    .getElementById('tab-pending')
+    .addEventListener(
+        'click',
+        (e) => {
+
+            currentTab =
+                "pending";
+
+
+            e.currentTarget.className =
+                "border-b-2 border-blue-500 px-6 py-3 text-blue-500 flex items-center gap-2";
+
+
+            document
+                .getElementById('tab-completed')
+                .className =
+                "border-b-2 border-transparent text-neutral-400 px-6 py-3 hover:text-white flex items-center gap-2 transition";
+
+
+            renderOrders();
+
+        }
+    );
+
+
+
+/* =========================================================
+   TAB - COMPLETED
+========================================================= */
+
+document
+    .getElementById('tab-completed')
+    .addEventListener(
+        'click',
+        (e) => {
+
+            currentTab =
+                "completed";
+
+
+            e.currentTarget.className =
+                "border-b-2 border-blue-500 px-6 py-3 text-blue-500 flex items-center gap-2";
+
+
+            document
+                .getElementById('tab-pending')
+                .className =
+                "border-b-2 border-transparent text-neutral-400 px-6 py-3 hover:text-white flex items-center gap-2 transition";
+
+
+            renderOrders();
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

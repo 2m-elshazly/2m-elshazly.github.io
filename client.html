@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>بحث عن الطلب</title>
+
+    <!-- PapaParse -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.3/papaparse.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .box {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #ff8a00;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(.98);
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 15px;
+            line-height: 2;
+        }
+
+        .error {
+            color: #d00;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>متابعة الطلب</h2>
+
+    <input
+        type="text"
+        id="name"
+        placeholder="اكتب اسم العميل"
+    >
+
+    <input
+        type="tel"
+        id="phone"
+        placeholder="اكتب رقم الموبايل"
+    >
+
+    <button onclick="searchCustomer()">
+        بحث
+    </button>
+
+    <div id="result"></div>
+
+</div>
+
+
+<script>
+
+    // رابط Google Sheets CSV
+    const SHEET_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVXwP5mmxIeFLMRgVlgFH6ezhYhU-mJ2hxnjtvOUyHHUfP_TrjEFI4es1zHg93KY2drW2nmITcKA-/pub?output=csv";
+
+
+    let sheetData = [];
+
+
+    // -----------------------------
+    // تنظيف رقم الهاتف
+    // -----------------------------
+    function normalizePhone(phone) {
+
+        if (!phone) return "";
+
+        let number = String(phone)
+            .trim()
+            .replace(/\s+/g, "")
+            .replace(/[^\d]/g, "");
+
+        // لو الرقم مكتوب +20
+        if (number.startsWith("20")) {
+            number = number.substring(2);
+        }
+
+        // إزالة الصفر من البداية
+        if (number.startsWith("0")) {
+            number = number.substring(1);
+        }
+
+        return number;
+    }
+
+
+    // -----------------------------
+    // تحميل الشيت
+    // -----------------------------
+    function loadSheet() {
+
+        document.getElementById("result").innerHTML =
+            '<div class="loading">جاري تحميل البيانات...</div>';
+
+        Papa.parse(SHEET_URL, {
+
+            download: true,
+
+            header: true,
+
+            skipEmptyLines: true,
+
+            complete: function(results) {
+
+                console.log("بيانات الشيت:", results.data);
+
+                sheetData = results.data;
+
+                document.getElementById("result").innerHTML =
+                    '<div style="text-align:center;color:green;">تم تحميل البيانات بنجاح</div>';
+
+            },
+
+            error: function(error) {
+
+                console.error(error);
+
+                document.getElementById("result").innerHTML =
+                    '<div class="error">حدث خطأ أثناء تحميل الشيت</div>';
+            }
+
+        });
+    }
+
+
+    // -----------------------------
+    // البحث
+    // -----------------------------
+    function searchCustomer() {
+
+        const nameInput =
+            document.getElementById("name").value.trim();
+
+        const phoneInput =
+            document.getElementById("phone").value.trim();
+
+
+        if (!phoneInput) {
+
+            document.getElementById("result").innerHTML =
+                '<div class="error">اكتب رقم الموبايل</div>';
+
+            return;
+        }
+
+
+        if (!sheetData.length) {
+
+            document.getElementById("result").innerHTML =
+                '<div class="error">البيانات لسه محملتش، استنى ثانية وجرب تاني</div>';
+
+            return;
+        }
+
+
+        const searchedPhone =
+            normalizePhone(phoneInput);
+
+
+        console.log("الرقم بعد التنظيف:", searchedPhone);
+
+
+        // -----------------------------
+        // البحث في كل العمليات
+        // -----------------------------
+
+        const matches = sheetData.filter(row => {
+
+            const rowPhone =
+                normalizePhone(row["رقم التليفون"]);
+
+            return rowPhone === searchedPhone;
+
+        });
+
+
+        console.log("العمليات المطابقة:", matches);
+
+
+        if (!matches.length) {
+
+            document.getElementById("result").innerHTML = `
+                <div class="error">
+                    لا توجد عملية بهذا الرقم
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // -----------------------------
+        // الحصول على آخر عملية
+        // -----------------------------
+
+        matches.sort(function(a, b) {
+
+            const dateA =
+                new Date(a["التاريخ والوقت"]);
+
+            const dateB =
+                new Date(b["التاريخ والوقت"]);
+
+            return dateB - dateA;
+
+        });
+
+
+        const latest = matches[0];
+
+
+        // -----------------------------
+        // البيانات
+        // -----------------------------
+
+        const customerName =
+            latest["اسم العميل"] || nameInput || "غير مسجل";
+
+        const phone =
+            latest["رقم التليفون"] || phoneInput;
+
+        const price =
+            latest["السعر"] || "غير محدد";
+
+        const status =
+            latest["الحالة"] || "غير محدد";
+
+        const notes =
+            latest["الملاحظات"] || "لا توجد ملاحظات";
+
+        const date =
+            latest["التاريخ والوقت"] || "غير محدد";
+
+
+        // -----------------------------
+        // عرض النتيجة
+        // -----------------------------
+
+        document.getElementById("result").innerHTML = `
+
+            <div class="result-box">
+
+                <div>
+                    <strong>الاسم:</strong>
+                    ${customerName}
+                </div>
+
+                <div>
+                    <strong>رقم الهاتف:</strong>
+                    ${phone}
+                </div>
+
+                <div>
+                    <strong>التاريخ:</strong>
+                    ${date}
+                </div>
+
+                <div>
+                    <strong>السعر:</strong>
+                    ${price}
+                </div>
+
+                <div>
+                    <strong>الحالة:</strong>
+                    ${status}
+                </div>
+
+                <div>
+                    <strong>الملاحظات:</strong>
+                    ${notes}
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // تحميل الشيت بمجرد فتح الصفحة
+    loadSheet();
+
+</script>
+
+</body>
+</html>
