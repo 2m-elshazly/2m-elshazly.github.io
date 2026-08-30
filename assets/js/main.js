@@ -1,7 +1,7 @@
 // ==========================================
 // استيراد إعدادات Supabase (ضبط المسار الصحيح للمجلد الفرعي)
 // ==========================================
-import { supabase, signInWithGoogle } from '../../supabase-config.js';
+import { supabase, signInWithGoogle } from '../supabase-config.js';
 
 // دالة إغلاق البانر
 function closePopup() {
