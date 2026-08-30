@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -17,18 +17,18 @@
       content="https://fix-store.github.io/"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta property="og:title" content="2M Elshazly Store | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       property="og:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
     />
-    <meta property="og:image" content="رابط_الصورة_المباشر_هنا.png" />
+    <meta property="og:image" content="images.jpeg" />
 
     <meta
       property="canonical"
       content="https://fix-store.github.io/"
     />
-    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, I Fix Store, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
+    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, 2M Elshazly, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
     <meta property="robots" content="index, follow" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -40,14 +40,14 @@
       property="twitter:url"
       content="https://fix-store.github.io/"
     />
-    <meta name="twitter:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta name="twitter:title" content="2M Elshazly Store | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       name="twitter:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
     />
-    <meta name="twitter:image" content="ifixs.png" />
+    <meta name="twitter:image" content="images.jpeg" />
 
-    <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/logo.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -63,31 +63,29 @@
         font-family: 'Cairo', sans-serif !important;
       }
 
-      /* تنسيق زر تسجيل الدخول المتناسق مع الموبايل والكمبيوتر */
-      .login-nav-link {
-        display: inline-flex !important;
+      .login-btn {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: transparent;
+        gap: 8px;
+        background: #0070d1;
+        color: white;
         border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
         cursor: pointer;
         font-family: 'Cairo', sans-serif;
-        font-size: var(--normal-font-size);
-        font-weight: var(--font-medium);
-        color: var(--title-color);
-        padding: 0;
-        transition: .3s;
+        font-weight: 700;
+        transition: 0.3s;
       }
 
-      .login-nav-link:hover {
-        color: var(--first-color);
+      .login-btn:hover {
+        background: #005bb5;
+        transform: translateY(-2px);
       }
 
-      .login-nav-link img {
+      .login-btn img {
         width: 18px;
         height: 18px;
-        display: block;
       }
     </style>
 </head>
@@ -138,20 +136,25 @@
             <li class="nav_item">
               <a href="soon.html" class="nav_link">Contact</a>
             </li>
+          </ul>
 
-            <!-- قسم تسجيل الدخول / بروفايل المستخدم -->
-            <li class="nav_item" id="userSection">
-              <button id="loginBtn" class="login-nav-link nav_link" onclick="loginWithGoogle()">
+          <div class="nav_close" id="nav-close">
+            <i class="bx bx-x"></i>
+          </div>
+        </div>
+
+        <div id="userSection">
+            <button id="loginBtn" class="login-btn" onclick="loginWithGoogle()">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google">
                 <span>تسجيل الدخول</span>
-              </button>
+            </button>
 
-              <div id="userProfileBox" style="display:none; cursor:pointer; align-items:center;" onclick="window.location.href='profile.html'">
+            <div id="userProfileBox" style="display:none; cursor:pointer;" onclick="window.location.href='profile.html'">
                 <img id="headerUserPhoto"
                      referrerpolicy="no-referrer"
                      style="
-                     width:35px;
-                     height:35px;
+                     width:42px;
+                     height:42px;
                      border-radius:50%;
                      border:2px solid #0070d1;
                      object-fit:cover;
@@ -159,8 +162,8 @@
                      
                 <div id="headerUserLetter"
                      style="
-                     width:35px;
-                     height:35px;
+                     width:42px;
+                     height:42px;
                      border-radius:50%;
                      border:2px solid #0070d1;
                      display:none;
@@ -168,16 +171,10 @@
                      justify-content:center;
                      font-weight:900;
                      color:white;
-                     font-size:1rem;
+                     font-size:1.1rem;
                      line-height:0;
                      background:#0070d1;"></div>
-              </div>
-            </li>
-          </ul>
-
-          <div class="nav_close" id="nav-close">
-            <i class="bx bx-x"></i>
-          </div>
+            </div>
         </div>
 
         <div class="nav_btns">
@@ -854,6 +851,7 @@ function closePopup() {
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
+  // دالة تسجيل الدخول بالـ Google وطلب رقم الهاتف
   window.loginWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -884,11 +882,11 @@ function closePopup() {
       alert(`أهلاً بك يا ${user.displayName}! تم تسجيل الدخول بنجاح.`);
     } catch (error) {
       console.error("Login Error:", error);
-      // إظهار كود الخطأ والرسالة بالتفصيل لمعرفة السبب مباشرة عند الضغط
-      alert("كود الخطأ: " + error.code + "\nالرسالة التفصيلية: " + error.message);
+      alert("حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة مرة أخرى.");
     }
   };
 
+  // متابعة حالة التسجيل وتحديث الهيدر
   onAuthStateChanged(auth, (user) => {
     const loginBtn = document.getElementById("loginBtn");
     const userProfileBox = document.getElementById("userProfileBox");
@@ -913,7 +911,7 @@ function closePopup() {
         }
       }
     } else {
-      if (loginBtn) loginBtn.style.display = "inline-flex";
+      if (loginBtn) loginBtn.style.display = "flex";
       if (userProfileBox) userProfileBox.style.display = "none";
     }
   });
