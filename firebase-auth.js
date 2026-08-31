@@ -56,3 +56,11 @@ onAuthStateChanged(auth, (user) => {
     if (userProfileBox) userProfileBox.style.display = 'none';
   }
 });
+
+// الانتقال لصفحة الملف الشخصي عند الضغط على الـ Box الخاص بالمستخدم
+const profileBox = document.getElementById("userProfileBox");
+if (profileBox) {
+    profileBox.addEventListener("click", () => {
+        window.location.href = "profile.html";
+    });
+}
