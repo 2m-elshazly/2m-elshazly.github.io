@@ -1,71 +1,72 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-// حط البيانات اللي طلعتلك في الشاشة هنا:
 const firebaseConfig = {
-  apiKey: "AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
-  authDomain: "m-elshazly-e19a2.firebaseapp.com",
-  projectId: "m-elshazly-e19a2",
-  storageBucket: "m-elshazly-e19a2.appspot.com",
-  messagingSenderId: "1006926908276",
-  appId: "1:1006926908276:web:ff1274fcea961f251afa21",
-  measurementId: "G-HWXPWBV75"
+  apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
+  authDomain: "ifix-store-eecd9.firebaseapp.com",
+  projectId: "ifix-store-eecd9",
+  storageBucket: "ifix-store-eecd9.firebasestorage.app",
+  messagingSenderId: "862863699996",
+  appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-const loginBtn = document.getElementById('loginBtn');
-const userProfileBox = document.getElementById('userProfileBox');
-const headerUserPhoto = document.getElementById('headerUserPhoto');
-const headerUserLetter = document.getElementById('headerUserLetter');
-
-if (loginBtn) {
-  loginBtn.addEventListener('click', () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log("تم تسجيل الدخول بنجاح:", result.user);
-      })
-      .catch((error) => {
-        console.error("خطأ في تسجيل الدخول:", error);
-      });
-  });
-}
-
+// 1. مراقبة حالة تسجيل الدخول (حل مشكلة الزر المختفي في أي متصفح)
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    if (loginBtn) loginBtn.style.display = 'none';
-    if (userProfileBox) userProfileBox.style.display = 'flex';
+    const loginBtn = document.getElementById("loginBtn");
+    const profileBox = document.getElementById("userProfileBox");
+    const photoEl = document.getElementById("headerUserPhoto");
+    const letterEl = document.getElementById("headerUserLetter");
 
-    if (user.photoURL) {
-      if (headerUserPhoto) {
-        headerUserPhoto.src = user.photoURL;
-        headerUserPhoto.style.display = 'block';
-      }
-      if (headerUserLetter) headerUserLetter.style.display = 'none';
+    if (user) {
+        // العميل مسجل دخول: اخفي زر الدخول وظهر البروفايل
+        if (loginBtn) loginBtn.style.display = "none";
+        if (profileBox) profileBox.style.display = "flex";
+
+        const displayName = user.displayName || "مستخدم";
+        
+        if (user.photoURL) {
+            let cleanUrl = user.photoURL.replace("http://", "https://");
+            if (cleanUrl.includes("googleusercontent.com")) {
+                cleanUrl = cleanUrl.replace(/=s\d+-c/, "=s0");
+            }
+            if (photoEl) {
+                photoEl.src = cleanUrl;
+                photoEl.style.display = "block";
+            }
+            if (letterEl) letterEl.style.display = "none";
+        } else {
+            if (photoEl) photoEl.style.display = "none";
+            if (letterEl) {
+                const firstLetter = displayName.trim().charAt(0).toUpperCase();
+                letterEl.innerText = firstLetter;
+                letterEl.style.display = "flex";
+            }
+        }
     } else {
-      if (headerUserPhoto) headerUserPhoto.style.display = 'none';
-      if (headerUserLetter) {
-        headerUserLetter.style.display = 'flex';
-        headerUserLetter.textContent = user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U';
-      }
+        // العميل مش مسجل دخول: ظهر زر تسجيل الدخول فوراً في أي متصفح
+        if (loginBtn) loginBtn.style.display = "flex";
+        if (profileBox) profileBox.style.display = "none";
     }
-  } else {
-    if (loginBtn) loginBtn.style.display = 'flex';
-    if (userProfileBox) userProfileBox.style.display = 'none';
-  }
 });
 
-// الانتقال لصفحة الملف الشخصي عند الضغط على الـ Box الخاص بالمستخدم
-const profileBox = document.getElementById("userProfileBox");
-if (profileBox) {
-    profileBox.addEventListener("click", () => {
-        window.location.href = "profile.html";
+// 2. حدث تسجيل الدخول عند الضغط على الزر
+const loginBtn = document.getElementById("loginBtn");
+if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+        try {
+            await signInWithPopup(auth, provider);
+            window.location.reload();
+        } catch (error) {
+            console.error("خطأ في تسجيل الدخول:", error);
+        }
     });
 }
 
-// ربط الانتقال لصفحة البروفايل بطريقة مضمونة
+// 3. الانتقال لصفحة البروفايل عند الضغط على الصورة (بدون ريفرش أو تعليق)
 document.addEventListener("click", (e) => {
     const profileBox = e.target.closest("#userProfileBox");
     if (profileBox) {
