@@ -64,3 +64,12 @@ if (profileBox) {
         window.location.href = "profile.html";
     });
 }
+
+// ربط الانتقال لصفحة البروفايل بطريقة مضمونة
+document.addEventListener("click", (e) => {
+    const profileBox = e.target.closest("#userProfileBox");
+    if (profileBox) {
+        e.preventDefault();
+        window.location.href = "profile.html";
+    }
+});
