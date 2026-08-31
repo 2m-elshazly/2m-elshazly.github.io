@@ -43,6 +43,7 @@ body {
     border-radius: 25px;
     padding: 30px;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .profile-photo {
@@ -62,6 +63,54 @@ body {
 .profile-card p {
     color: var(--muted);
     margin: 0;
+}
+
+/* قسم إدخال رقم الهاتف */
+.phone-section {
+    background: rgba(0,0,0,0.3);
+    border: 1px dashed var(--ps-blue);
+    border-radius: 18px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.phone-section p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.phone-box {
+    display: flex;
+    gap: 10px;
+}
+
+.phone-box input {
+    background: #121212;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 15px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    flex: 1;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.phone-box button {
+    background: var(--ps-blue);
+    border: none;
+    border-radius: 12px;
+    padding: 0 20px;
+    font-weight: 800;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.2s;
+}
+
+.phone-box button:hover {
+    opacity: 0.9;
 }
 
 .stats-grid {
@@ -97,7 +146,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* ستايل قسم الطلبات الجديد */
 .orders-section {
     background: var(--card);
     border: 1px solid var(--border);
@@ -195,6 +243,15 @@ body {
         
         <h2 id="userDisplayName">جاري التحميل...</h2>
         <p id="userEmail">...</p>
+
+        <!-- صندوق رقم التليفون المطور -->
+        <div class="phone-section">
+            <p>📱 أدخل رقم الواتساب لتلقي العروض والجوائز:</p>
+            <div class="phone-box">
+                <input type="tel" id="phoneInput" placeholder="01xxxxxxxxx">
+                <button id="savePhoneBtn">حفظ</button>
+            </div>
+        </div>
     </div>
 
     <div class="stats-grid">
@@ -214,7 +271,7 @@ body {
     <div class="orders-section">
         <h2>📦 طلباتي</h2>
         <div id="orders-list">
-            <p style="text-center; color: var(--muted); font-size: 0.9rem; margin:0;">جاري تحميل طلباتك... 🔄</p>
+            <p style="text-align:center; color: var(--muted); font-size: 0.9rem; margin:0;">جاري تحميل طلباتك... 🔄</p>
         </div>
     </div>
 
@@ -229,7 +286,7 @@ body {
 <script type="module" charset="utf-8">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
@@ -283,9 +340,44 @@ onAuthStateChanged(auth, async(user)=>{
         showFallbackAvatar();
     }
 
+    // جلب رقم الهاتف المسجل سابقاً إن وجد
+    try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+        if(userSnap.exists()){
+            const data = userSnap.data();
+            if(data.phone) {
+                document.getElementById("phoneInput").value = data.phone;
+            }
+        }
+    } catch(e) {
+        console.error("خطأ في جلب بيانات المستخدم:", e);
+    }
+
+    // حفظ رقم الهاتف في قاعدة البيانات (users collection)
+    document.getElementById("savePhoneBtn").addEventListener("click", async () => {
+        const phoneVal = document.getElementById("phoneInput").value.trim();
+        if(!phoneVal) {
+            alert("الرجاء إدخال رقم هاتف صحيح");
+            return;
+        }
+        try {
+            await setDoc(doc(db, "users", user.uid), {
+                phone: phoneVal,
+                email: user.email,
+                name: displayName,
+                updatedAt: new Date()
+            }, { merge: true });
+            alert("تم حفظ رقم الهاتف بنجاح! 🎉");
+        } catch(err) {
+            console.error(err);
+            alert("حدث خطأ أثناء الحفظ، حاول مرة أخرى.");
+        }
+    });
+
     // 1. جلب المفضلة
     try {
-        const favSnap = await getDoc(doc(db, "favorites", user.uid));
+        const favSnap = await getDoc(doc(doc(db, "favorites", user.uid)));
         let favCount = 0;
         if(favSnap.exists()){
             favCount = (favSnap.data().games || []).length;
@@ -299,31 +391,24 @@ onAuthStateChanged(auth, async(user)=>{
     const cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
     document.getElementById("cartCountProfile").innerText = cart.length;
 
-    // 3. 🔍 جلب وفلترة الطلبات الخاصة بالعميل من الفايربيس عرضها ديناميكياً
+    // 3. جلب الطلبات
     try {
         const ordersListEl = document.getElementById("orders-list");
-        
-        // استعلام لجلب الطلبات اللي فيها الـ userEmail يساوي إيميل المستخدم الحالي، مرتبة بالأحدث
         const q = query(
             collection(db, "orders"), 
             where("userEmail", "==", user.email),
             orderBy("createdAt", "desc")
         );
-        
         const querySnapshot = await getDocs(q);
         
         if (querySnapshot.empty) {
             ordersListEl.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:0.9rem; margin:0;">لم تقم بأي طلبات حتى الآن 🎮</p>`;
         } else {
             let htmlContent = "";
-            let orderNumber = querySnapshot.size; // عدد الطلبات الكلي للعد التنازلي
-
+            let orderNumber = querySnapshot.size;
             querySnapshot.forEach((docSnap) => {
                 const orderData = docSnap.data();
-                
-                // تحديد حالة الطلب (إذا لم تكن محددة بالفايربيس نعتبرها قيد الانتظار)
                 const status = orderData.status || "pending"; 
-                
                 let statusText = "⏳ قيد الانتظار";
                 let statusClass = "status-pending";
 
@@ -331,10 +416,7 @@ onAuthStateChanged(auth, async(user)=>{
                     statusText = "✅ تم التنفيذ";
                     statusClass = "status-completed";
                 }
-
-                // حساب عدد ألعاب هذا الطلب
                 const gamesCount = (orderData.games || []).length;
-
                 htmlContent += `
                     <div class="order-item">
                         <div class="order-info">
@@ -346,13 +428,9 @@ onAuthStateChanged(auth, async(user)=>{
                 `;
                 orderNumber--;
             });
-
             ordersListEl.innerHTML = htmlContent;
         }
-
     } catch (error) {
-        console.error("حدث خطأ أثناء جلب الطلبات:", error);
-        // في حال عدم عمل الـ Index الخاص بالترتيب نضع كود احتياطي بدون ترتيب
         try {
             const ordersListEl = document.getElementById("orders-list");
             const qSimple = query(collection(db, "orders"), where("userEmail", "==", user.email));
@@ -371,7 +449,7 @@ onAuthStateChanged(auth, async(user)=>{
                 ordersListEl.innerHTML = htmlContent;
             }
         } catch(e) {
-            document.getElementById("orders-list").innerHTML = `<p style="color:var(--danger); font-size:0.8rem;">خطأ في جلب الطلبات.</p>`;
+            document.getElementById("orders-list").innerHTML = `<p style="color:var(--danger); font-size:0.8rem; text-align:center;">خطأ في جلب الطلبات.</p>`;
         }
     }
 });
@@ -385,5 +463,4 @@ document.getElementById("logoutBtn").addEventListener("click", async()=>{
 });
 </script>
 </body>
-
 </html>
