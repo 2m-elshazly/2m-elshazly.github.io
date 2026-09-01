@@ -30,7 +30,7 @@
         .profile-card {
             background: #1e1e1e;
             width: 100%;
-            max-width: 480px;
+            max-width: 420px;
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -51,14 +51,14 @@
 
         .profile-img-container {
             position: relative;
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 15px auto;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px auto;
         }
 
         #userAvatar {
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #0070d1;
@@ -66,12 +66,12 @@
         }
 
         #userLetter {
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: #0070d1;
             color: white;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             display: none;
             align-items: center;
@@ -81,89 +81,19 @@
         }
 
         .profile-info {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .profile-info h2 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
             color: #fff;
         }
 
         .profile-info p {
             color: #aaa;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             word-break: break-all;
-        }
-
-        /* قسم الطلبات */
-        .orders-section {
-            margin-top: 20px;
-            text-align: right;
-            border-top: 1px solid #2f2f2f;
-            padding-top: 15px;
-        }
-
-        .orders-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            color: #60a5fa;
-        }
-
-        .orders-list {
-            max-height: 220px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-left: 5px;
-        }
-
-        .order-item {
-            background: #151515;
-            border: 1px solid #2f2f2f;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .order-status {
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .status-pending {
-            background: rgba(234, 179, 8, 0.15);
-            color: #facc15;
-            border: 1px solid rgba(234, 179, 8, 0.3);
-        }
-
-        .status-completed {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .order-games {
-            color: #bbb;
-            font-size: 0.8rem;
-            line-height: 1.4;
-        }
-
-        .no-orders {
-            color: #777;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 15px 0;
         }
 
         .logout-btn {
@@ -171,9 +101,9 @@
             color: white;
             border: none;
             width: 100%;
-            padding: 11px;
+            padding: 12px;
             border-radius: 10px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: background 0.3s ease;
@@ -181,7 +111,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-top: 20px;
         }
 
         .logout-btn:hover {
@@ -206,35 +135,34 @@
         </div>
     </div>
 
-    <!-- جافاسكريبت لربط الفايربيس وعرض البيانات والطلبات -->
+    <!-- جافاسكريبت لربط الفايربيس وعرض البيانات -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
-          authDomain: "ifix-store-eecd9.firebaseapp.com",
-          projectId: "ifix-store-eecd9",
-          storageBucket: "ifix-store-eecd9.firebasestorage.app",
-          messagingSenderId: "862863699996",
-          appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
+          apiKey: "AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
+          authDomain: "m-elshazly-e19a2.firebaseapp.com",
+          projectId: "m-elshazly-e19a2",
+          storageBucket: "m-elshazly-e19a2.firebasestorage.app",
+          messagingSenderId: "1006926908276",
+          appId: "1:1006926908276:web:ff1274fcea961f251afa21",
+          measurementId: "G-HWXPWBVB75"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
 
         const profileContent = document.getElementById("profileContent");
 
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             if (user) {
+                // المستخدم مسجل دخول، عرض بياناته
                 const displayName = user.displayName || "مستخدم 2M";
                 const email = user.email || "لا يوجد بريد إلكتروني";
                 const photoURL = user.photoURL;
                 const firstLetter = displayName.trim().charAt(0).toUpperCase();
 
-                // رسم الهيكل الأساسي للبروفايل مع مكان عرض الطلبات
                 profileContent.innerHTML = `
                     <div class="profile-img-container">
                         <img id="userAvatar" src="" alt="صورة البروفايل">
@@ -244,14 +172,6 @@
                         <h2 id="userName">${displayName}</h2>
                         <p id="userEmail">${email}</p>
                     </div>
-
-                    <div class="orders-section">
-                        <h3>📦 طلباتك الحالية</h3>
-                        <div id="userOrdersList" class="orders-list">
-                            <p class="no-orders">جاري تحميل الطلبات...</p>
-                        </div>
-                    </div>
-
                     <button id="logoutBtn" class="logout-btn">
                         <i class='bx bx-log-out'></i> تسجيل خروج
                     </button>
@@ -270,45 +190,6 @@
                     letterDiv.style.display = "flex";
                 }
 
-                // جلب طلبات المستخدم من قاعدة البيانات (Firestore)
-                try {
-                    const q = query(collection(db, "orders"), where("userId", "==", user.uid));
-                    const querySnapshot = await getDocs(q);
-                    const ordersContainer = document.getElementById("userOrdersList");
-
-                    if (querySnapshot.empty) {
-                        ordersContainer.innerHTML = `<p class="no-orders">ليس لديك أي طلبات مسجلة حتى الآن.</p>`;
-                    } else {
-                        let ordersHtml = "";
-                        querySnapshot.forEach((docSnap) => {
-                            const order = docSnap.data();
-                            const status = order.status || "pending";
-                            const statusText = status === "completed" ? "مكتملة ✅" : "قيد التنفيذ ⏳";
-                            const statusClass = status === "completed" ? "status-completed" : "status-pending";
-                            
-                            const gamesNames = Array.isArray(order.games) 
-                                ? order.games.map(g => typeof g === 'string' ? g : g.name).join('، ') 
-                                : "ألعاب متعددة";
-
-                            ordersHtml += `
-                                <div class="order-item">
-                                    <div class="order-header">
-                                        <span class="font-bold text-neutral-300">السعر: ${order.totalPrice || 0} ج.م</span>
-                                        <span class="order-status ${statusClass}">${statusText}</span>
-                                    </div>
-                                    <div class="order-orders text-right">
-                                        <span class="order-games">الألعاب: ${gamesNames}</span>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        ordersContainer.innerHTML = ordersHtml;
-                    }
-                } catch (err) {
-                    console.error("خطأ في جلب الطلبات:", err);
-                    document.getElementById("userOrdersList").innerHTML = `<p class="no-orders">تعسّر تحميل الطلبات حالياً.</p>`;
-                }
-
                 // زر تسجيل الخروج
                 document.getElementById("logoutBtn").addEventListener("click", async () => {
                     try {
@@ -320,6 +201,7 @@
                 });
 
             } else {
+                // لو مفيش مستخدم مسجل دخول وحاول يفتح الصفحة، يرجع للرئيسية
                 window.location.href = "index.html";
             }
         });
