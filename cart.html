@@ -257,16 +257,21 @@
             const storePhoneNumber = "201281398314"; 
             const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodedMsg}`;
 
+            // جلب الـ UID الحالي للمستخدم لتسجيله مع الطلب
+            const currentUserId = auth.currentUser ? auth.currentUser.uid : "visitor";
+
             addDoc(collection(db, "orders"), {
+                userId: currentUserId,
                 userName: name,
                 userPhone: phone,
                 userEmail: currentUserEmail,
-                branch: "الهانوفيل",
+                hardSize: currentLimit,
                 games: cart, 
                 totalPrice: totalPrice,
+                status: "pending", // حالة الطلب قيد التنفيذ لتظهر في البروفايل
                 createdAt: new Date()
             }).then(() => {
-                console.log("تم الحفظ بنجاح في قاعدة البيانات.");
+                console.log("تم حفظ الطلب بنجاح في قاعدة البيانات.");
             }).catch((err) => {
                 console.error("خطأ في حفظ الفايربيس:", err);
             });
