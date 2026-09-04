@@ -66,7 +66,80 @@
     </style>
 </head>
 <body>
-  
+<!-- Modal أو شاشة إدخال رقم الواتساب الإجبارية -->
+<div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #1e1e1e; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; color: #fff; font-family: 'Cairo', sans-serif;">
+        <h3 style="margin-bottom: 10px; color: #60a5fa;">أهلاً بيك يا فنان! 🎮</h3>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">لإتمام تسجيل الدخول ومتابعة طلبات الألعاب، برجاء إدخال رقم الواتساب الخاص بك:</p>
+        
+        <input type="tel" id="whatsappInput" placeholder="مثال: 01012345678" style="width: 100%; padding: 12px; background: #121212; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 1rem; text-align: right; margin-bottom: 15px; outline: none;">
+        
+        <button id="saveWhatsappBtn" style="background: #0070d1; color: #white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.3s;">حفظ ومتابعة</button>
+        <p id="whatsappError" style="color: #f87171; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+</div>
+
+<script type="module">
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+    
+    // (هنا بنفترض إنك عامل import للـ auth و db من فايل إعدادات الـ firebase عندك)
+    const db = getFirestore(app);
+
+    // دالة فحص الواتساب أثناء مراقبة حالة تسجيل الدخول
+    async function checkUserWhatsapp(user) {
+        if (!user) return;
+
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        const modal = document.getElementById("whatsappModal");
+
+        if (userSnap.exists() && userSnap.data().whatsapp) {
+            // لو العميل مسجل ومعه واتساب، اخفي المودال وخليها طلق
+            modal.style.display = "none";
+        } else {
+            // لو أول مرة أو ملوش رقم، اظهر له الشاشة الإجبارية
+            modal.style.display = "flex";
+        }
+    }
+
+    // زر حفظ الواتساب
+    document.getElementById("saveWhatsappBtn").addEventListener("click", async () => {
+        const whatsappVal = document.getElementById("whatsappInput").value.trim();
+        const errorP = document.getElementById("whatsappError");
+
+        if (whatsappVal.length < 10) {
+            errorP.style.display = "block";
+            errorP.innerText = "برجاء إدخال رقم واتساب صحيح ومكون من أرقام صحيحة.";
+            return;
+        }
+
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                // حفظ الرقم في مجموعة users برقم الـ UID بتاع العميل
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: user.displayName || "مستخدم",
+                    email: user.email || "",
+                    whatsapp: whatsappVal,
+                    createdAt: new Date()
+                }, { merge: true });
+
+                // إخفاء المودال بعد الحفظ بنجاح
+                document.getElementById("whatsappModal").style.display = "none";
+                location.reload(); // إعادة تحميل خفيفة عشان الموقع يقرأ البيانات الجديدة
+            }
+        } catch (err) {
+            console.error("خطأ أثناء حفظ الواتساب:", err);
+            errorP.style.display = "block";
+            errorP.innerText = "حدث خطأ ما، حاول مرة أخرى.";
+        }
+    });
+</script>
+
+
+    
   
 
 <!-- بانر الإعلان المنبثق -->
