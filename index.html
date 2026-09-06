@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,14 @@ here<!DOCTYPE html>
       name="description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
     />
-    <meta name="author" content="I Fix Store" />
+    <meta name="author" content="2M Elshazly" />
 
     <meta
       property="og:url"
       content="https://fix-store.github.io/"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta property="og:title" content="2M Elshazly | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       property="og:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
@@ -28,7 +28,7 @@ here<!DOCTYPE html>
       property="canonical"
       content="https://fix-store.github.io/"
     />
-    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, I Fix Store, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
+    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, 2M Elshazly, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
     <meta property="robots" content="index, follow" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -40,7 +40,7 @@ here<!DOCTYPE html>
       property="twitter:url"
       content="https://fix-store.github.io/"
     />
-    <meta name="twitter:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta name="twitter:title" content="2M Elshazly | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       name="twitter:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
@@ -819,30 +819,30 @@ here<!DOCTYPE html>
 </div>
 <script type="text/javascript" charset="utf-8">
   // SHOW MENU
-const navMenu = document.getElementById('nav-menu'),
-  navToggle = document.getElementById('nav-toggle'),
-  navClose = document.getElementById('nav-close');
+const indexNavMenu = document.getElementById('nav-menu'),
+  indexNavToggle = document.getElementById('nav-toggle'),
+  indexNavClose = document.getElementById('nav-close');
 
-if (navToggle) {
-  navToggle.addEventListener('click', () => {
-    navMenu.classList.add('show-menu');
+if (indexNavToggle) {
+  indexNavToggle.addEventListener('click', () => {
+    indexNavMenu.classList.add('show-menu');
   });
 }
 
-if (navClose) {
-  navClose.addEventListener('click', () => {
-    navMenu.classList.remove('show-menu');
+if (indexNavClose) {
+  indexNavClose.addEventListener('click', () => {
+    indexNavMenu.classList.remove('show-menu');
   });
 }
 
 // REMOVE MENU MOBILE
-const navLink = document.querySelectorAll('.nav_link');
+const indexNavLinks = document.querySelectorAll('.nav_link');
 
 function linkAction() {
   const navMenu = document.getElementById('nav-menu');
   navMenu.classList.remove('show-menu');
 }
-navLink.forEach((n) => n.addEventListener('click', linkAction));
+indexNavLinks.forEach((n) => n.addEventListener('click', linkAction));
 
 // FAQS
 const accordionItems = document.querySelectorAll('.faqs_item');
@@ -984,7 +984,27 @@ parameters.forEach(activateProduct);
 
 </script>
 
-<script type="module" src="firebase-auth.js"></script>
+<script type="module" src="./firebase-auth.js"></script>
+
+<!-- مودال هدية أول تسجيل - 2M Elshazly -->
+<div id="welcomeGiftModal">
+  <div class="wg-box">
+    <h2>🎁 هدية تسجيلك من 2M Elshazly</h2>
+    <div class="wg-sub">
+      مبروك! اختار هديتك الترحيبية مرة واحدة فقط:
+    </div>
+
+    <button id="chooseDiscountGift" class="wg-option" type="button">
+      <strong>🏷️ خصم 20% على أول طلب</strong>
+      <span>الخصم يتطبق على أول طلب فقط.</span>
+    </button>
+
+    <button id="chooseFreeGamesGift" class="wg-option" type="button">
+      <strong>🎮 10 ألعاب مجانية</strong>
+      <span>اختار الـ10 ألعاب بنفسك من صفحة الألعاب.</span>
+    </button>
+  </div>
+</div>
 
 <!-- مودال إدخال رقم الواتساب الإجباري -->
 <div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; direction: rtl;">
