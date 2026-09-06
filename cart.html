@@ -1,284 +1,58 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>طلبك | 2M Elshazly</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلبك | 2M Elshazly</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,sans-serif}.gift{background:#241700;border:1px solid #f59e0b}.discount{background:#0b1d2e;border:1px solid #2563eb}</style>
 </head>
-
 <body class="bg-[#121212] text-white p-4 md:p-6">
+<div class="max-w-2xl mx-auto">
+<h1 class="text-3xl font-black mb-6 text-blue-500 text-center">قائمة طلباتك 🎮</h1>
+<div id="loginNotice" class="hidden bg-red-950/30 border border-red-900/50 rounded-2xl p-4 mb-5 text-center font-bold">لازم تسجل دخول بحساب Google قبل إرسال الطلب.</div>
+<div class="bg-neutral-900 rounded-2xl p-5 mb-6 border border-neutral-800 shadow-2xl space-y-5">
+<div><label class="block mb-2 font-bold text-neutral-400 text-sm">اسمك الثنائي:</label><input type="text" id="user-name" class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500" placeholder="اكتب اسمك هنا..."></div>
+<div><label class="block mb-2 font-bold text-neutral-400 text-sm">رقم الموبايل (واتساب):</label><input type="tel" id="user-phone" class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500 text-right" placeholder="01xxxxxxxxx" dir="ltr"></div>
+<div><label class="block mb-2 font-bold text-neutral-400 text-sm">مساحة هارد جهازك (PS4):</label><select id="hard-size" class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500"><option value="390">500 جيجا (المتاح: 390GB)</option><option value="760">1 تيرا (المتاح: 760GB)</option></select></div>
+<div class="bg-black/50 p-4 rounded-xl border border-neutral-800"><div class="flex justify-between items-center mb-1.5 text-xs"><span class="text-neutral-400 font-bold">مساحة الألعاب المختارة:</span><span id="space-text" class="text-orange-400 font-black">0 / 390 جيجا</span></div><div class="w-full bg-neutral-950 rounded-full h-3.5 overflow-hidden"><div id="space-bar" class="bg-gradient-to-r from-orange-500 to-red-600 h-full w-0 transition-all"></div></div><p id="space-warning" class="text-[11px] text-red-500 font-bold mt-1.5 hidden">⚠️ إجمالي المساحة تخطى السعة المتاحة.</p></div>
+<div id="pointsBox" class="bg-blue-950/30 border border-blue-900/50 rounded-2xl p-4 space-y-3">
+<div class="flex justify-between items-center"><b>🎁 نقاطك</b><span id="pointsBalance" class="text-blue-400 font-black">0 نقطة</span></div>
+<div class="text-xs text-neutral-400">كل 100 نقطة = 5 جنيه خصم • الحد الأدنى للاستبدال 1000 نقطة.</div>
+<input id="redeemPoints" type="number" min="0" step="100" value="0" class="w-full p-3 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500" placeholder="مثال: 1000">
+<div id="redeemHint" class="text-xs text-neutral-500"></div>
+</div>
+<div id="benefitBox" class="hidden rounded-2xl p-4"></div>
+<div><h2 class="text-lg font-bold mb-3 border-b border-neutral-800 pb-2 text-neutral-300">الألعاب المختارة:</h2><ul id="cart-list" class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1"></ul></div>
+<div id="priceDetails" class="space-y-2"></div>
+<div class="text-2xl font-black text-emerald-400 text-center py-3 bg-emerald-950/20 rounded-xl border border-emerald-900/40" id="total-price">الإجمالي: 0 ج.م</div>
+<button id="sendOrderBtn" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-lg shadow-lg transition flex justify-center items-center gap-2">إرسال الطلب للمحل عبر واتساب ✅</button>
+</div>
+<a href="games.html" class="block text-center text-neutral-500 hover:text-white transition font-semibold text-sm mb-6">← العودة لاختيار الألعاب</a>
+</div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import {getFirestore,doc,getDoc,addDoc,collection,runTransaction,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",authDomain:"m-elshazly-e19a2.firebaseapp.com",projectId:"m-elshazly-e19a2",storageBucket:"m-elshazly-e19a2.firebasestorage.app",messagingSenderId:"1006926908276",appId:"1:1006926908276:web:ff1274fcea961f251afa21",measurementId:"G-HWXPWBVB75"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vRRVnRxp4qoV0Bcalik_KJx3ITqdm-b4HyVjATJCbveQ3VmTKfMIqrLYJvJnPMh0XW_XjSGCP6Bx9UL/pub?output=csv';
+const BASE_PRICE=25,VIP_PRICE=15,POINTS_PER_GAME=100,POINTS_VALUE_EGP=5,POINTS_PER_EGP=20,MIN_REDEEM_POINTS=1000; let cart=JSON.parse(localStorage.getItem('ifix_cart'))||[],currentUser=null,userData={},allGames=[];
+let limit=390;
+function gameSizeByName(name){const g=allGames.find(x=>(x.name||'').trim()===name);if(!g)return 0;const k=Object.keys(g).find(x=>x.trim().toLowerCase()==='size');const raw=k?g[k]:0;return Math.round(parseFloat(String(raw||0).replace(/,/g,'.').replace(/[^0-9.]/g,'')))||0;}
+function giftNames(){return Array.isArray(userData.welcomeGiftGames)?userData.welcomeGiftGames:[];}
+function isFree(name){return userData.welcomeGiftStatus==='free10_selected' && giftNames().includes(name);}
+function priceInfo(){const vip=userData.level==='VIP'||Number(userData.lifetimePoints||0)>=10000;const gift=userData.welcomeGiftStatus==='free10_selected';const discount=userData.welcomeGiftStatus==='discount20';let freeCount=gift?cart.filter(x=>isFree(x.name)).length:0;let paidCount=cart.length-freeCount;let subtotal=paidCount*(vip?VIP_PRICE:BASE_PRICE);let welcomeDiscount=discount?Math.round(subtotal*.20):0;let beforePoints=subtotal-welcomeDiscount;let requested=Math.floor(Number(document.getElementById('redeemPoints')?.value||0));let redeemable=Math.floor(Math.min(requested,Number(userData.points||0),Math.floor(beforePoints*POINTS_PER_EGP))/100)*100;let pointsDiscount=redeemable>=MIN_REDEEM_POINTS?Math.min(beforePoints,redeemable/POINTS_PER_EGP):0;let total=Math.max(0,beforePoints-pointsDiscount);return {vip,gift,discount,freeCount,paidCount,subtotal,welcomeDiscount,discountAmount:welcomeDiscount,redeemable,pointsDiscount,total};}
+function updateSpace(){limit=parseInt(document.getElementById('hard-size').value);const total=cart.reduce((s,x)=>s+(Number(x.size)||0),0);document.getElementById('space-text').innerText=`${total} / ${limit} جيجا`;document.getElementById('space-bar').style.width=`${Math.min(total/limit*100,100)}%`;document.getElementById('space-warning').classList.toggle('hidden',total<=limit);}
+function render(){const list=document.getElementById('cart-list');if(!cart.length){list.innerHTML='<li class="text-center text-neutral-500 py-6">السلة فاضية.. ارجع اختار ألعابك 🛒</li>';document.getElementById('total-price').innerText='الإجمالي: 0 ج.م';updateSpace();return;}list.innerHTML=cart.map((x,i)=>`<li class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-neutral-800"><div><div class="font-bold text-sm">${x.name}</div><div class="text-[11px] text-neutral-500">💾 ${x.size||0} جيجا ${isFree(x.name)?' • 🎁 مجانية':''}</div></div><button data-i="${i}" class="remove bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white w-9 h-9 rounded-xl">🗑️</button></li>`).join('');document.querySelectorAll('.remove').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.i),1);localStorage.setItem('ifix_cart',JSON.stringify(cart));render();});const p=priceInfo();let html=`<div class="flex justify-between text-sm text-neutral-400"><span>الألعاب المدفوعة</span><b>${p.paidCount}</b></div>`;if(p.gift)html+=`<div class="flex justify-between text-sm text-yellow-400"><span>ألعاب الهدية</span><b>${p.freeCount} مجانية</b></div>`;html+=`<div class="flex justify-between text-sm text-neutral-400"><span>قبل الخصم</span><b>${p.subtotal} ج.م</b></div>`;if(p.discount)html+=`<div class="flex justify-between text-sm text-blue-400"><span>خصم 20% ترحيبي</span><b>- ${p.discountAmount} ج.م</b></div>`;if(p.pointsDiscount)html+=`<div class="flex justify-between text-sm text-purple-400"><span>خصم بالنقاط (${p.redeemable})</span><b>- ${p.pointsDiscount} ج.م</b></div>`;if(p.vip)html+=`<div class="flex justify-between text-sm text-amber-400"><span>سعر VIP</span><b>15 ج.م للعبة</b></div>`;document.getElementById('priceDetails').innerHTML=html;document.getElementById('total-price').innerText=`الإجمالي: ${p.total} ج.م`;const box=document.getElementById('benefitBox');if(p.gift){box.className='gift rounded-2xl p-4';box.innerHTML='🎁 <b>هدية التسجيل مفعلة:</b> الألعاب التي اخترتها كهدية هتتحسب مجانًا.';box.classList.remove('hidden');}else if(p.discount){box.className='discount rounded-2xl p-4';box.innerHTML='🏷️ <b>خصم 20% مفعّل:</b> الخصم هيتطبق على أول طلب مؤهل.';box.classList.remove('hidden');}else{box.classList.add('hidden');}document.getElementById('pointsBalance').innerText=`${Number(userData.points||0).toLocaleString()} نقطة`;document.getElementById('redeemHint').innerText=p.redeemable>=MIN_REDEEM_POINTS?`هتستخدم ${p.redeemable} نقطة = ${p.pointsDiscount} ج.م خصم.`:(Number(document.getElementById('redeemPoints')?.value||0)>0?'الاستبدال يبدأ من 1000 نقطة وبمضاعفات 100 نقطة.':'');document.getElementById('redeemPoints').disabled=!!p.discount; if(p.discount) document.getElementById('redeemHint').innerText='لا يمكن جمع خصم الترحيب 20% مع خصم النقاط في نفس الطلب.';updateSpace();}
 
-    <div class="max-w-2xl mx-auto">
+document.getElementById('hard-size').addEventListener('change',updateSpace);document.getElementById('redeemPoints').addEventListener('input',render);
+Papa.parse(SHEET,{download:true,header:true,skipEmptyLines:true,complete:r=>{allGames=r.data;cart=cart.map(x=>({...x,size:Number(x.size)||gameSizeByName(x.name)}));localStorage.setItem('ifix_cart',JSON.stringify(cart));render();}});
+onAuthStateChanged(auth,async user=>{currentUser=user;if(!user){document.getElementById('loginNotice').classList.remove('hidden');document.getElementById('sendOrderBtn').disabled=true;render();return;}document.getElementById('loginNotice').classList.add('hidden');document.getElementById('sendOrderBtn').disabled=false;if(!document.getElementById('user-name').value)document.getElementById('user-name').value=user.displayName||'';const snap=await getDoc(doc(db,'users',user.uid));userData=snap.exists()?snap.data():{};if(userData.whatsapp)document.getElementById('user-phone').value=userData.whatsapp;render();});
 
-        <h1 class="text-3xl font-black mb-6 text-blue-500 text-center">
-            قائمة طلباتك 🎮
-        </h1>
-
-        <div class="bg-neutral-900 rounded-2xl p-5 mb-6 border border-neutral-800 shadow-2xl space-y-5">
-
-            <div>
-                <label class="block mb-2 font-bold text-neutral-400 text-sm">
-                    اسمك الثنائي:
-                </label>
-                <input
-                    type="text"
-                    id="user-name"
-                    class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500 transition"
-                    placeholder="اكتب اسمك هنا..."
-                >
-            </div>
-
-            <div>
-                <label class="block mb-2 font-bold text-neutral-400 text-sm">
-                    رقم الموبايل (واتساب):
-                </label>
-                <input
-                    type="tel"
-                    id="user-phone"
-                    class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500 transition text-right"
-                    placeholder="01xxxxxxxxx"
-                    dir="ltr"
-                >
-            </div>
-
-            <div>
-                <label class="block mb-2 font-bold text-neutral-400 text-sm">
-                    مساحة هارد جهازك (PS4):
-                </label>
-                <select
-                    id="hard-size"
-                    class="w-full p-4 rounded-xl bg-black border border-neutral-700 text-white outline-none focus:border-blue-500 transition"
-                >
-                    <option value="390">500 جيجا (المتاح: 390GB)</option>
-                    <option value="760">1 تيرا (المتاح: 760GB)</option>
-                </select>
-            </div>
-
-            <div class="bg-black/50 p-4 rounded-xl border border-neutral-800">
-                <div class="flex justify-between items-center mb-1.5 text-xs">
-                    <span class="text-neutral-400 font-bold">مساحة الالعاب المختارة:</span>
-                    <span id="space-text" class="text-orange-400 font-black">0 / 390 جيجا</span>
-                </div>
-                <div class="w-full bg-neutral-950 rounded-full h-3.5 border border-neutral-800 overflow-hidden">
-                    <div id="space-bar" class="bg-gradient-to-r from-orange-500 to-red-600 h-full w-0 transition-all duration-300"></div>
-                </div>
-                <p id="space-warning" class="text-[11px] text-red-500 font-bold mt-1.5 hidden animate-pulse">
-                    ⚠️ تنبيه: إجمالي المساحة تخطى السعة المتاحة لهذا الهارد! يرجى حذف بعض الألعاب.
-                </p>
-            </div>
-
-            <div>
-                <h2 class="text-lg font-bold mb-3 border-b border-neutral-800 pb-2 text-neutral-300">
-                    الألعاب المختارة:
-                </h2>
-                <ul id="cart-list" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1"></ul>
-            </div>
-
-            <div class="text-2xl font-black text-emerald-400 text-center py-2 bg-emerald-950/20 rounded-xl border border-emerald-900/40" id="total-price">
-                الإجمالي: 0 ج.م
-            </div>
-
-            <button
-                id="sendOrderBtn"
-                class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-xl font-black text-lg shadow-lg transition duration-200 flex justify-center items-center gap-2"
-            >
-                إرسال الطلب للمحل عبر واتساب ✅
-            </button>
-
-        </div>
-
-        <a
-            href="index.html"
-            class="block text-center text-neutral-500 hover:text-white transition font-semibold text-sm mb-6"
-        >
-            ← العودة لإضافة المزيد من الألعاب
-        </a>
-
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
-          authDomain: "ifix-store-eecd9.firebaseapp.com",
-          projectId: "ifix-store-eecd9",
-          storageBucket: "ifix-store-eecd9.firebasestorage.app",
-          messagingSenderId: "862863699996",
-          appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
-        const pricePerGame = 25;
-        let currentLimit = 390;
-        let currentUserEmail = "لا يوجد بريد الكتروني (زائر)";
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserEmail = user.email;
-                if(!document.getElementById('user-name').value) {
-                    document.getElementById('user-name').value = user.displayName || "";
-                }
-            }
-        });
-
-        function updateSpaceCalculation() {
-            const hardSelect = document.getElementById('hard-size');
-            if(!hardSelect) return;
-            currentLimit = parseInt(hardSelect.value);
-            
-            const totalSpace = cart.reduce((sum, item) => sum + (item.size || 0), 0);
-            document.getElementById('space-text').innerText = `${totalSpace} / ${currentLimit} جيجا`;
-            
-            const percentage = Math.min((totalSpace / currentLimit) * 100, 100);
-            const bar = document.getElementById('space-bar');
-            bar.style.width = `${percentage}%`;
-
-            const warning = document.getElementById('space-warning');
-            if (totalSpace > currentLimit) {
-                warning.classList.remove('hidden');
-                bar.className = "bg-red-600 h-full transition-all duration-300";
-            } else {
-                warning.classList.add('hidden');
-                bar.className = "bg-gradient-to-r from-orange-500 to-red-600 h-full transition-all duration-300";
-            }
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cart-list');
-
-            if (cart.length === 0) {
-                list.innerHTML = `
-                    <li class="text-center text-neutral-500 py-6">
-                        السلة فاضية.. ارجع اختار ألعابك المفضلة 🛒
-                    </li>
-                `;
-                document.getElementById('total-price').innerText = "الإجمالي: 0 ج.م";
-                updateSpaceCalculation();
-                return;
-            }
-
-            list.innerHTML = cart.map((item, index) => `
-                <li class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-neutral-800 hover:border-neutral-700 transition">
-                    <div class="flex flex-col gap-0.5 text-right">
-                        <span class="font-bold text-sm text-neutral-200">${item.name}</span>
-                        <span class="text-[11px] text-neutral-500 font-semibold">💾 المساحة: ${item.size} جيجا</span>
-                    </div>
-                    <button
-                        data-index="${index}"
-                        class="remove-game-btn bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white transition w-9 h-9 flex items-center justify-center rounded-xl text-sm"
-                    >
-                        🗑️
-                    </button>
-                </li>
-            `).join('');
-
-            document.getElementById('total-price').innerText = `الإجمالي: ${cart.length * pricePerGame} ج.م`;
-            updateSpaceCalculation();
-
-            document.querySelectorAll('.remove-game-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const idx = parseInt(e.currentTarget.getAttribute('data-index'));
-                    cart.splice(idx, 1);
-                    localStorage.setItem('ifix_cart', JSON.stringify(cart));
-                    renderCart();
-                });
-            });
-        }
-
-        document.getElementById('hard-size').addEventListener('change', updateSpaceCalculation);
-        renderCart();
-
-        document.getElementById("sendOrderBtn").addEventListener("click", () => {
-            const name = document.getElementById('user-name').value.trim();
-            const phone = document.getElementById('user-phone').value.trim();
-            const hardText = currentLimit === 390 ? "500 جيجا (الحد المتاح 390GB)" : "1 تيرا (الحد المتاح 760GB)";
-            const totalSpace = cart.reduce((sum, item) => sum + (item.size || 0), 0);
-            const totalPrice = cart.length * pricePerGame;
-
-            if (!name) {
-                alert('من فضلك اكتب اسمك الثنائي أولاً 📝');
-                return;
-            }
-
-            if (!phone) {
-                alert('من فضلك اكتب رقم الموبايل لتأكيد الطلب 📱');
-                return;
-            }
-
-            const phoneRegex = /^01[0125][0-9]{8}$/;
-            if (!phoneRegex.test(phone)) {
-                alert('يرجى كتابة رقم موبايل صحيح مكون من 11 رقم (01xxxxxxxxx) ⚠️');
-                return;
-            }
-
-            if (cart.length === 0) {
-                alert('السلة فاضية تماماً! يرجى إضافة ألعاب أولاً.');
-                return;
-            }
-
-            if (totalSpace > currentLimit) {
-                alert(`❌ عذراً يا بطل! مساحة الألعاب المختارة (${totalSpace} جيجا) أكبر من سعة الهارد المتاحة (${currentLimit} جيجا). يرجى مسح بعض الألعاب.`);
-                return;
-            }
-
-            let message = `*طلب تنزيل ألعاب - I Fix Store* 🎮\n\n`;
-            message += `👤 *اسم العميل:* ${name}\n`;
-            message += `📞 *رقم الهاتف:* ${phone}\n`;
-            message += `💾 *سعة هارد الجهاز الحالي:* ${hardText}\n`;
-            message += `📊 *إجمالي مساحة الطلب:* ${totalSpace} جيجا\n`;
-            message += `-------------------------------------------\n`;
-            message += `📋 *الألعاب المطلوبة بالتفصيل:* \n`;
-
-            cart.forEach((item, index) => {
-                message += `${index + 1}. ${item.name} (${item.size} جيجا)\n`;
-            });
-
-            message += `\n-------------------------------------------\n`;
-            message += `💰 *عدد الألعاب الكلي:* ${cart.length} لعبة\n`;
-            message += `💵 *حساب التنزيل الإجمالي:* ${totalPrice} ج.م`;
-
-            const encodedMsg = encodeURIComponent(message);
-            const storePhoneNumber = "201281398314"; 
-            const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodedMsg}`;
-
-            // جلب الـ UID الحالي للمستخدم لتسجيله مع الطلب
-            const currentUserId = auth.currentUser ? auth.currentUser.uid : "visitor";
-
-            addDoc(collection(db, "orders"), {
-                userId: currentUserId,
-                userName: name,
-                userPhone: phone,
-                userEmail: currentUserEmail,
-                hardSize: currentLimit,
-                games: cart, 
-                totalPrice: totalPrice,
-                status: "pending", // حالة الطلب قيد التنفيذ لتظهر في البروفايل
-                createdAt: new Date()
-            }).then(() => {
-                console.log("تم حفظ الطلب بنجاح في قاعدة البيانات.");
-            }).catch((err) => {
-                console.error("خطأ في حفظ الفايربيس:", err);
-            });
-
-            localStorage.removeItem('ifix_cart');
-            window.location.href = whatsappUrl;
-        });
-    </script>
-</body>
-</html>
+document.getElementById('sendOrderBtn').addEventListener('click',async()=>{if(!currentUser){alert('سجل دخول أولاً.');return;}if(!cart.length){alert('السلة فاضية.');return;}const name=document.getElementById('user-name').value.trim(),phone=document.getElementById('user-phone').value.trim();if(!name||!/^01[0125][0-9]{8}$/.test(phone)){alert('اكتب الاسم ورقم موبايل مصري صحيح.');return;}const totalSpace=cart.reduce((s,x)=>s+(Number(x.size)||0),0);if(totalSpace>limit){alert('مساحة الألعاب أكبر من سعة الهارد.');return;}const p=priceInfo();if(Number(document.getElementById('redeemPoints').value||0)>0 && p.redeemable<MIN_REDEEM_POINTS){alert('الحد الأدنى لاستبدال النقاط هو 1000 نقطة.');return;}const giftStatus=userData.welcomeGiftStatus||'used';if(['discount20','free10_selected'].includes(giftStatus)){try{await runTransaction(db,async t=>{const ref=doc(db,'users',currentUser.uid);const snap=await t.get(ref);if(!snap.exists())throw new Error('الحساب غير موجود');const d=snap.data();if(d.welcomeGiftStatus!==giftStatus)throw new Error('الهدية تم استخدامها أو حجزها بالفعل.');t.set(ref,{welcomeGiftStatus:giftStatus==='discount20'?'discount20_reserved':'free10_reserved',updatedAt:serverTimestamp()},{merge:true});});}catch(e){alert(e.message||'تعذر حجز الهدية.');return;}}
+const hardText=limit===390?'500 جيجا (الحد المتاح 390GB)':'1 تيرا (الحد المتاح 760GB)';let message=`*طلب تنزيل ألعاب - 2M Elshazly* 🎮\n\n👤 *اسم العميل:* ${name}\n📞 *رقم الهاتف:* ${phone}\n💾 *سعة الهارد:* ${hardText}\n📊 *إجمالي المساحة:* ${totalSpace} جيجا\n-------------------------------------------\n📋 *الألعاب:*\n`;cart.forEach((x,i)=>{message+=`${i+1}. ${x.name} (${x.size||0} جيجا)${isFree(x.name)?' - 🎁 مجانًا':''}\n`;});message+=`\n-------------------------------------------\n💰 *عدد الألعاب:* ${cart.length}\n💵 *الإجمالي المطلوب:* ${p.total} ج.م`;if(p.discount)message+=`\n🏷️ خصم 20%: -${p.discountAmount} ج.م`;if(p.vip)message+='\n🏆 سعر VIP: 15 ج.م للعبة';
+try{await addDoc(collection(db,'orders'),{userId:currentUser.uid,userName:name,userPhone:phone,userEmail:currentUser.email||'',hardSize:limit,games:cart,totalPrice:p.total,originalTotal:p.subtotal,discountAmount:p.discountAmount||0,vip:p.vip||false,welcomeGiftType:p.gift?'free10':p.discount?'discount20':'',welcomeGiftGames:p.gift?giftNames():[],pointsToUse:p.redeemable||0,pointsDiscount:p.pointsDiscount||0,paidGamesCount:p.paidCount,pointsToAward:p.paidCount*POINTS_PER_GAME,status:'pending',pointsAwarded:false,createdAt:serverTimestamp()});localStorage.removeItem('ifix_cart');window.location.href=`https://wa.me/201281398314?text=${encodeURIComponent(message)}`;}catch(e){console.error(e);alert('حصل خطأ أثناء تسجيل الطلب.');}});
+</script></body></html>
