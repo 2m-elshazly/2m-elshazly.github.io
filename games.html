@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -462,21 +462,32 @@
             <div class="info-card">
                 <span>نقاطك 🎁</span>
                 <h3 id="points-count">0 نقطة</h3>
+                <div id="points-value" style="color:#9ca3af;font-size:.78rem;margin-top:4px;">القيمة: 0 ج.م</div>
                 <div class="gift-progress">
                     <div class="gift-progress-top">
-                        <span>التقدم نحو اللعبة المجانية</span>
-                        <span id="gift-progress-text">0 / 10</span>
+                        <span id="points-label">رصيد النقاط</span>
+                        <span id="gift-progress-text">0 / 10000</span>
                     </div>
                     <div class="gift-progress-bar"><div id="gift-progress-fill" class="gift-progress-fill"></div></div>
                 </div>
             </div>
             <div class="info-card">
                 <span>سعر اللعبة</span>
-                <h3>25 ج.م</h3>
+                <h3 id="game-price-label">25 ج.م</h3>
+                <div id="vip-label" style="color:#fbbf24;font-size:.78rem;font-weight:800;margin-top:4px;">السعر العادي</div>
             </div>
         </div>
 
-        <div class="game-grid" id="all-games-container">
+        <div id="welcomeFreeGiftBox" style="display:none;margin-bottom:22px;background:linear-gradient(135deg,#2a1800,#171717);border:1px solid #f59e0b;border-radius:22px;padding:18px;box-shadow:0 12px 35px rgba(0,0,0,.25);">
+  <div style="font-size:1.15rem;font-weight:900;color:#fbbf24">🎁 هديتك من 2M Elshazly: اختار 10 ألعاب مجانًا</div>
+  <div style="color:#d1d5db;font-size:.9rem;margin-top:5px;line-height:1.6">اختار 10 ألعاب بالظبط ثم اضغط تأكيد الهدية. الألعاب المختارة هتظهر مجانًا في طلبك الأول.</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+    <strong id="freeGiftSelectedCount">0 / 10</strong>
+    <button id="confirmFreeGiftBtn" style="display:none;background:#f59e0b;color:#111;border:0;border-radius:12px;padding:10px 16px;font-weight:900;cursor:pointer">تأكيد الـ10 ألعاب 🎁</button>
+  </div>
+</div>
+
+<div class="game-grid" id="all-games-container">
             <div class="loader">جاري تحميل الألعاب...</div>
         </div>
     </div>
@@ -488,270 +499,118 @@
 </div>
 
 <script>
-    const mySheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRVnRxp4qoV0Bcalik_KJx3ITqdm-b4HyVjATJCbveQ3VmTKfMIqrLYJvJnPMh0XW_XjSGCP6Bx9UL/pub?output=csv';
-    const DEFAULT_PRICE = "25";
-
-    let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
-    let allGames = [];
-    let currentUser = null;
+let db=null; const mySheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRVnRxp4qoV0Bcalik_KJx3ITqdm-b4HyVjATJCbveQ3VmTKfMIqrLYJvJnPMh0XW_XjSGCP6Bx9UL/pub?output=csv';
+const DEFAULT_PRICE = "25";
+const POINTS_PER_GAME = 100;
+const POINTS_VALUE_EGP = 5;
+const POINTS_PER_EGP = 20;
+const MIN_REDEEM_POINTS = 1000;
+let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
+let allGames = [];
+let currentUser = null;
 let favorites = [];
-    let userPoints = 0;
-    const GIFT_POINTS = 10;
-    let bestSellingGames = new Set();
+let userPoints = 0;
+let lifetimePoints = 0;
+let userLevel = 'NORMAL';
+let bestSellingGames = new Set();
+let welcomeGiftType = '';
+let welcomeGiftGames = [];
 
-    function updatePointsUI(){
-        const p = document.getElementById('points-count');
-        const t = document.getElementById('gift-progress-text');
-        const f = document.getElementById('gift-progress-fill');
-        if(p) p.innerText = `${userPoints} نقطة`;
-        const shown = userPoints % GIFT_POINTS;
-        if(t) t.innerText = `${shown} / ${GIFT_POINTS}`;
-        if(f) f.style.width = `${Math.min((shown / GIFT_POINTS) * 100, 100)}%`;
-    }
-
-    /* UPDATE CART */
-    function updateCartUI(){
-        localStorage.setItem('ifix_cart', JSON.stringify(cart));
-        document.getElementById('cart-count').innerText = cart.length;
-        document.getElementById('top-cart-count').innerText = cart.length;
-        document.getElementById('selected-count').innerText = `${cart.length} لعبة`;
-    }
-
-    /* TOAST */
-    function showToast(message, type='success'){
-        const toast = document.getElementById('toast');
-        toast.innerText = message;
-        toast.className = `toast show ${type}`;
-        setTimeout(()=>{
-            toast.classList.remove('show');
-        },2000);
-    }
-
-    /* CART */
-    function toggleCart(btn, gameName, gameSize){
-        const parsedSize = parseInt(gameSize) || 0;
-        const index = cart.findIndex(item => item.name === gameName);
-
-        if(index > -1){
-            cart.splice(index, 1);
-            btn.classList.remove('added');
-            btn.innerHTML = '➕ إضافة للطلب';
-            showToast('تم حذف اللعبة من السلة ❌', 'remove');
-        } else {
-            cart.push({ name: gameName, size: parsedSize });
-            btn.classList.add('added');
-            btn.innerHTML = '✅ تم الاختيار';
-            showToast('تمت إضافة اللعبة للسلة 🎉');
-        }
-        updateCartUI();
-    }
-
-    /* GO CART */
-    function goToCart(){
-        if(cart.length === 0){
-            showToast('السلة فاضية 🛒', 'remove');
-            return;
-        }
-        window.location.href = 'cart.html';
-    }
-
-    /* RENDER */
-    function renderGames(games){
-        const container = document.getElementById('all-games-container');
-
-        if(games.length === 0){
-            container.innerHTML = `
-                <div class="loader">
-                    لا توجد نتائج 😢
-                </div>
-            `;
-            return;
-        }
-
-        let html = '';
-
-        games.forEach(game=>{
-            if(game.name && game.img){
-                const gameName = game.name.trim();
-                
-                let gameSize = 0;
-                const sizeKey = Object.keys(game).find(key => key.trim().toLowerCase() === 'size');
-                const rawValue = sizeKey ? game[sizeKey] : '0';
-                
-                if (rawValue) {
-                    const cleanSizeRaw = rawValue.toString().replace(/,/g, '.').replace(/[^0-9.]/g, '');
-                    gameSize = Math.round(parseFloat(cleanSizeRaw)) || 0;
-                }
-
-                const isAdded = cart.some(item => item.name === gameName);
-                const price = (game.price && game.price.trim() !== "") ? game.price : DEFAULT_PRICE;
-                const cleanName = gameName.replace(/'/g, "\\'");
-
-                html += `
-                    <div class="game-card">
-                        ${bestSellingGames.has(gameName) ? '<div class="best-seller-badge">🔥 الأكثر مبيعًا</div>' : ''}
-                        <a href="details.html?game=${encodeURIComponent(gameName)}" class="game-link">
-                            <div class="game-img">
-                                <img src="${game.img.trim()}" loading="lazy" alt="${gameName}">
-                                <div class="overlay"></div>
-                            </div>
-                            <div class="game-info">
-                                <h3>${gameName}</h3>
-                                <div class="game-meta-row">
-                                    <p class="game-price">${price} ج.م</p>
-                                    <span class="game-size-badge">💾 ${gameSize} جيجا</span>
-                                </div>
-                            </div>
-                        </a>
-                        <div class="card-actions">
-
-    <button
-        class="favorite-btn ${favorites.includes(gameName) ? 'active' : ''}"
-        onclick="toggleFavorite('${cleanName}', this)">
-        ${favorites.includes(gameName) ? '❤️' : '🤍'}
-    </button>
-
-    <button class="add-btn ${isAdded ? 'added' : ''}"
-        onclick="toggleCart(this, '${cleanName}', '${gameSize}')">
-        ${isAdded ? '✅ تم الاختيار' : '➕ إضافة للطلب'}
-    </button>
-
-</div>
-                    </div>
-                `;
-            }
-        });
-
-        container.innerHTML = html;
-        document.getElementById('games-count').innerText = `${games.length} لعبة`;
-    }
-
-    /* SEARCH */
-    document.getElementById('searchInput').addEventListener('input', function(){
-        const value = this.value.toLowerCase();
-        const filtered = allGames.filter(game =>
-            game.name && game.name.toLowerCase().includes(value)
-        );
-        renderGames(filtered);
-    });
-
-    updatePointsUI();
-
-    /* FETCH */
-    Papa.parse(mySheetURL, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results){
-            allGames = results.data;
-            renderGames(allGames);
-            updateCartUI();
-        },
-        error: function(error){
-            console.error('خطأ في تحميل الألعاب من Google Sheets:', error);
-            document.getElementById('all-games-container').innerHTML = '<div class="loader">حصل خطأ أثناء تحميل الألعاب ❌<br><small>افتح Console لمعرفة الخطأ</small></div>';
-        }
-    });
-</script>
+function updatePointsUI(){
+  const p=document.getElementById('points-count');
+  const t=document.getElementById('gift-progress-text');
+  const f=document.getElementById('gift-progress-fill');
+  const l=document.getElementById('level-count');
+  const price=document.getElementById('price-info');
+  if(p) p.innerText=`${userPoints.toLocaleString('en-US')} نقطة`;
+  const pv=document.getElementById('points-value'); if(pv) pv.innerText=`القيمة: ${Math.floor(userPoints/100)*5} ج.م خصم • الحد الأدنى للاستبدال 1000 نقطة`;
+  if(l) l.innerText=userLevel==='VIP'?'🏆 VIP':'NORMAL';
+  if(price) price.innerText=userLevel==='VIP'?'15 ج.م 🔥':'25 ج.م';
+  const shown=Math.min(lifetimePoints,10000);
+  if(t) t.innerText=`${shown.toLocaleString('en-US')} / 10,000`;
+  if(f) f.style.width=`${Math.min(shown/10000*100,100)}%`;
+}
+function updateCartUI(){
+  localStorage.setItem('ifix_cart',JSON.stringify(cart));
+  document.getElementById('cart-count').innerText=cart.length;
+  document.getElementById('top-cart-count').innerText=cart.length;
+  document.getElementById('selected-count').innerText=`${cart.length} لعبة`;
+}
+function showToast(message,type='success'){const toast=document.getElementById('toast');toast.innerText=message;toast.className=`toast show ${type}`;setTimeout(()=>toast.classList.remove('show'),2000);}
+function toggleCart(btn,gameName,gameSize){
+  const parsedSize=parseInt(gameSize)||0; const index=cart.findIndex(item=>item.name===gameName);
+  if(index>-1){cart.splice(index,1);btn.classList.remove('added');btn.innerHTML='➕ إضافة للطلب';showToast('تم حذف اللعبة من السلة ❌','remove');}
+  else{cart.push({name:gameName,size:parsedSize});btn.classList.add('added');btn.innerHTML='✅ تم الاختيار';showToast('تمت إضافة اللعبة للسلة 🎉');}
+  updateCartUI(); renderGames(allGames.filter(g=>g.name&&g.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())));
+}
+function goToCart(){if(cart.length===0){showToast('السلة فاضية 🛒','remove');return;}window.location.href='cart.html';}
+function updateWelcomeGiftUI(){
+  const box=document.getElementById('welcomeFreeGiftBox'); if(!box) return;
+  if(welcomeGiftType!=='free10') { box.style.display='none'; return; }
+  box.style.display='block';
+  const c=document.getElementById('freeGiftSelectedCount'); c.innerText=`${welcomeGiftGames.length} / 10`;
+  const b=document.getElementById('confirmFreeGiftBtn'); b.style.display=welcomeGiftGames.length===10?'block':'none';
+}
+function renderGames(games){
+  const container=document.getElementById('all-games-container');
+  if(games.length===0){container.innerHTML='<div class="loader">لا توجد نتائج 😢</div>';return;}
+  let html='';
+  games.forEach(game=>{
+    if(!game.name||!game.img)return;
+    const gameName=game.name.trim();
+    const sizeKey=Object.keys(game).find(key=>key.trim().toLowerCase()==='size');
+    const rawValue=sizeKey?game[sizeKey]:'0';
+    const cleanSizeRaw=(rawValue||'').toString().replace(/,/g,'.').replace(/[^0-9.]/g,'');
+    const gameSize=Math.round(parseFloat(cleanSizeRaw))||0;
+    const isAdded=cart.some(item=>item.name===gameName);
+    const isGiftSelected=welcomeGiftGames.includes(gameName);
+    const price=userLevel==='VIP'?15:((game.price&&game.price.trim()!=='')?game.price:DEFAULT_PRICE);
+    const cleanName=gameName.replace(/'/g,"\\'");
+    html+=`<div class="game-card">
+      ${bestSellingGames.has(gameName)?'<div class="best-seller-badge">🔥 الأكثر مبيعًا</div>':''}
+      ${isGiftSelected?'<div class="best-seller-badge" style="background:#16a34a">🎁 هدية</div>':''}
+      <a href="details.html?game=${encodeURIComponent(gameName)}" class="game-link"><div class="game-img"><img src="${game.img.trim()}" loading="lazy" alt="${gameName}"><div class="overlay"></div></div><div class="game-info"><h3>${gameName}</h3><div class="game-meta-row"><p class="game-price">${price} ج.م</p><span class="game-size-badge">💾 ${gameSize} جيجا</span></div></div></a>
+      <div class="card-actions"><button class="favorite-btn ${favorites.includes(gameName)?'active':''}" onclick="toggleFavorite('${cleanName}',this)">${favorites.includes(gameName)?'❤️':'🤍'}</button>
+      <button class="add-btn ${isAdded?'added':''}" onclick="${welcomeGiftType==='free10'?'toggleWelcomeGame(this,\''+cleanName+'\',\''+gameSize+'\')':'toggleCart(this,\''+cleanName+'\',\''+gameSize+'\')'}">${welcomeGiftType==='free10'?(isGiftSelected?'🎁 هدية مختارة':'🎁 اختار كهدية'):isAdded?'✅ تم الاختيار':'➕ إضافة للطلب'}</button></div></div>`;
+  });
+  container.innerHTML=html; document.getElementById('games-count').innerText=`${games.length} لعبة`; updateWelcomeGiftUI();
+}
+window.toggleWelcomeGame=function(btn,gameName,gameSize){
+  if(welcomeGiftGames.includes(gameName)){welcomeGiftGames=welcomeGiftGames.filter(n=>n!==gameName);btn.classList.remove('added');btn.innerText='🎁 اختار كهدية';}
+  else{if(welcomeGiftGames.length>=10){showToast('اختار 10 ألعاب فقط 🎁','remove');return;}welcomeGiftGames.push(gameName);btn.classList.add('added');btn.innerText='🎁 هدية مختارة';}
+  updateWelcomeGiftUI();
+};
+document.getElementById('confirmFreeGiftBtn').addEventListener('click',async()=>{
+  if(welcomeGiftGames.length!==10)return;
+  if(!currentUser){alert('سجل دخول أولاً');return;}
+  const {doc,getDoc,runTransaction,serverTimestamp}=await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+  const userRef=doc(window.__2mDb,'users',currentUser.uid);
+  try{await runTransaction(window.__2mDb,async(t)=>{const snap=await t.get(userRef);if(!snap.exists())throw new Error('حساب العميل غير موجود');const d=snap.data();if(d.welcomeGiftStatus!=='free10_pending')throw new Error('الهدية ليست متاحة');t.set(userRef,{welcomeGiftStatus:'free10_selected',welcomeGiftType:'free10',welcomeGiftGames:[...welcomeGiftGames],updatedAt:serverTimestamp()},{merge:true});}); welcomeGiftType='free10_selected'; updateWelcomeGiftUI(); renderGames(allGames); showToast('تم حفظ الـ10 ألعاب هدية 🎁'); alert('🎉 تم حفظ هديتك! عند الطلب القادم، الـ10 ألعاب المختارة هتتحسب مجانًا.');}catch(e){console.error(e);alert(e.message||'حصل خطأ في حفظ الهدية');}
+});
+document.getElementById('searchInput').addEventListener('input',function(){const value=this.value.toLowerCase();renderGames(allGames.filter(g=>g.name&&g.name.toLowerCase().includes(value)));});
+Papa.parse(mySheetURL,{download:true,header:true,skipEmptyLines:true,complete:r=>{allGames=r.data;renderGames(allGames);updateCartUI();},error:e=>{console.error(e);document.getElementById('all-games-container').innerHTML='<div class="loader">حصل خطأ في تحميل الألعاب ❌</div>';}});
+</script></script>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  getDocs,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
-  authDomain: "ifix-store-eecd9.firebaseapp.com",
-  projectId: "ifix-store-eecd9",
-  storageBucket: "ifix-store-eecd9.firebasestorage.app",
-  messagingSenderId: "862863699996",
-  appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-onAuthStateChanged(auth, async (user)=>{
-    if(!user){ userPoints=0; updatePointsUI(); return; }
-    currentUser=user;
-    try{
-        const favSnap=await getDoc(doc(db,"favorites",user.uid));
-        if(favSnap.exists()) favorites=favSnap.data().games || [];
-
-        const userSnap=await getDoc(doc(db,"users",user.uid));
-        if(userSnap.exists()) userPoints=Number(userSnap.data().points || 0);
-        updatePointsUI();
-
-        const q=query(collection(db,"orders"),where("status","==","completed"));
-        const ordersSnap=await getDocs(q);
-        const sales={};
-        ordersSnap.forEach(d=>{
-            const games=d.data().games;
-            if(!Array.isArray(games)) return;
-            games.forEach(game=>{
-                const name=typeof game==="string" ? game : game?.name;
-                if(name){ const n=name.trim(); sales[n]=(sales[n]||0)+1; }
-            });
-        });
-        bestSellingGames=new Set(Object.entries(sales).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name])=>name));
-    }catch(error){ console.error("خطأ في تحميل بيانات العميل:",error); }
-    renderGames(allGames);
+import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore,doc,getDoc,setDoc,collection,getDocs,query,where } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",authDomain:"m-elshazly-e19a2.firebaseapp.com",projectId:"m-elshazly-e19a2",storageBucket:"m-elshazly-e19a2.firebasestorage.app",messagingSenderId:"1006926908276",appId:"1:1006926908276:web:ff1274fcea961f251afa21",measurementId:"G-HWXPWBVB75"};
+const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);window.__2mDb=db; window.db=db;
+onAuthStateChanged(auth,async user=>{
+ if(!user){currentUser=null;userPoints=0;lifetimePoints=0;userLevel='NORMAL';welcomeGiftType='';welcomeGiftGames=[];updatePointsUI();updateWelcomeGiftUI();renderGames(allGames);return;}
+ currentUser=user;
+ try{
+   const favSnap=await getDoc(doc(db,'favorites',user.uid));favorites=favSnap.exists()?favSnap.data().games||[]:[];
+   const userSnap=await getDoc(doc(db,'users',user.uid));
+   if(userSnap.exists()){
+     const d=userSnap.data();userPoints=Number(d.points||0);lifetimePoints=Number(d.lifetimePoints||d.totalPointsEarned||0);userLevel=d.level|| (lifetimePoints>=10000?'VIP':'NORMAL');welcomeGiftType=d.welcomeGiftStatus||'';welcomeGiftGames=Array.isArray(d.welcomeGiftGames)?d.welcomeGiftGames:[];
+   }
+   updatePointsUI();updateWelcomeGiftUI();
+   const q=query(collection(db,'orders'),where('status','==','completed'));const ordersSnap=await getDocs(q);const sales={};ordersSnap.forEach(d=>{const games=d.data().games;if(!Array.isArray(games))return;games.forEach(g=>{const n=typeof g==='string'?g:g?.name;if(n){const k=n.trim();sales[k]=(sales[k]||0)+1;}})});bestSellingGames=new Set(Object.entries(sales).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n])=>n));
+ }catch(error){console.error('2M Elshazly customer data error:',error)}
+ renderGames(allGames);
 });
-
-window.toggleFavorite = async function(gameName, btn){
-
-    if(!currentUser){
-        alert("سجل دخول أولاً ❤️");
-        return;
-    }
-
-    const index = favorites.indexOf(gameName);
-
-    if(index > -1){
-
-        favorites.splice(index,1);
-
-        btn.innerHTML = "🤍";
-        btn.classList.remove("active");
-
-        showToast("تم حذف اللعبة من المفضلة");
-
-    }else{
-
-        favorites.push(gameName);
-
-        btn.innerHTML = "❤️";
-        btn.classList.add("active");
-
-        showToast("تمت الإضافة للمفضلة ❤️");
-    }
-
-    await setDoc(
-      doc(db,"favorites",currentUser.uid),
-      {
-        games:favorites
-      },
-      {merge:true}
-    );
-}
-
-</script>
-
-</body>
+window.toggleFavorite=async function(gameName,btn){if(!currentUser){alert('سجل دخول أولاً ❤️');return;}const i=favorites.indexOf(gameName);if(i>-1){favorites.splice(i,1);btn.innerHTML='🤍';btn.classList.remove('active');showToast('تم حذف اللعبة من المفضلة')}else{favorites.push(gameName);btn.innerHTML='❤️';btn.classList.add('active');showToast('تمت الإضافة للمفضلة ❤️')}await setDoc(doc(db,'favorites',currentUser.uid),{games:favorites},{merge:true});};
+</script></body>
 </html>
