@@ -31,6 +31,7 @@ const whatsappModal = document.getElementById("whatsappModal");
 const whatsappInput = document.getElementById("whatsappInput");
 const saveWhatsappBtn = document.getElementById("saveWhatsappBtn");
 const whatsappError = document.getElementById("whatsappError");
+const customerTypeInputs = document.querySelectorAll('input[name="customerType"]');
 const welcomeGiftModal = document.getElementById("welcomeGiftModal");
 const chooseDiscountGift = document.getElementById("chooseDiscountGift");
 const chooseFreeGamesGift = document.getElementById("chooseFreeGamesGift");
@@ -89,6 +90,7 @@ async function prepareUserDocument(user) {
         email: user.email || "",
         photoURL: user.photoURL || "",
         whatsapp: "",
+        customerType: "",
         points: FIRST_LOGIN_BONUS,
         lifetimePoints: FIRST_LOGIN_BONUS,
         totalPointsEarned: FIRST_LOGIN_BONUS,
@@ -199,25 +201,41 @@ if (saveWhatsappBtn) {
 async function chooseWelcomeGift(type) {
   const user = auth.currentUser;
   if (!user) return;
+
+  const isLater = type === "later";
   chooseDiscountGift && (chooseDiscountGift.disabled = true);
   chooseFreeGamesGift && (chooseFreeGamesGift.disabled = true);
+  const laterBtn = document.getElementById("chooseGiftLater");
+  laterBtn && (laterBtn.disabled = true);
+
   try {
     const userRef = doc(db, "users", user.uid);
+
     await runTransaction(db, async transaction => {
       const snap = await transaction.get(userRef);
       if (!snap.exists()) throw new Error("حساب العميل غير موجود");
+
       const d = snap.data();
-      if ((d.welcomeGiftStatus || "used") !== "available") throw new Error("الهدية تم استخدامها بالفعل");
+      const current = d.welcomeGiftStatus || "used";
+
+      // التأجيل لا يلغي الهدية ولا يحرقها.
+      if (!isLater && current !== "available") {
+        throw new Error("الهدية تم اختيارها أو استخدامها بالفعل");
+      }
+
       transaction.set(userRef, {
-        welcomeGiftStatus: type === "discount20" ? "discount20" : "free10_pending",
-        welcomeGiftType: type,
-        welcomeGiftGames: [],
+        welcomeGiftStatus: isLater ? "deferred" : (type === "discount20" ? "discount20" : "free10_pending"),
+        welcomeGiftType: isLater ? "" : type,
+        welcomeGiftGames: isLater ? (d.welcomeGiftGames || []) : [],
         updatedAt: serverTimestamp()
       }, {merge:true});
     });
 
     if (welcomeGiftModal) welcomeGiftModal.style.display = "none";
-    if (type === "free10") {
+
+    if (isLater) {
+      alert("تمام 👍 العرض محفوظ لحسابك. تقدر تختاره لاحقًا من صفحة البروفايل.");
+    } else if (type === "free10") {
       window.location.href = "games.html?welcomeGift=free10";
     } else {
       alert("🎉 تم تفعيل خصم 20% لأول طلب لك في 2M Elshazly!");
@@ -229,10 +247,12 @@ async function chooseWelcomeGift(type) {
   } finally {
     chooseDiscountGift && (chooseDiscountGift.disabled = false);
     chooseFreeGamesGift && (chooseFreeGamesGift.disabled = false);
+    laterBtn && (laterBtn.disabled = false);
   }
 }
 
 chooseDiscountGift?.addEventListener("click", () => chooseWelcomeGift("discount20"));
 chooseFreeGamesGift?.addEventListener("click", () => chooseWelcomeGift("free10"));
+document.getElementById("chooseGiftLater")?.addEventListener("click", () => chooseWelcomeGift("later"));
 
 export { auth, db, VIP_THRESHOLD, FIRST_LOGIN_BONUS };
