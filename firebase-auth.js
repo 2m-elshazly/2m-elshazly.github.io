@@ -31,7 +31,6 @@ const whatsappModal = document.getElementById("whatsappModal");
 const whatsappInput = document.getElementById("whatsappInput");
 const saveWhatsappBtn = document.getElementById("saveWhatsappBtn");
 const whatsappError = document.getElementById("whatsappError");
-const customerTypeInputs = document.querySelectorAll('input[name="customerType"]');
 const welcomeGiftModal = document.getElementById("welcomeGiftModal");
 const chooseDiscountGift = document.getElementById("chooseDiscountGift");
 const chooseFreeGamesGift = document.getElementById("chooseFreeGamesGift");
@@ -90,7 +89,6 @@ async function prepareUserDocument(user) {
         email: user.email || "",
         photoURL: user.photoURL || "",
         whatsapp: "",
-        customerType: "",
         points: FIRST_LOGIN_BONUS,
         lifetimePoints: FIRST_LOGIN_BONUS,
         totalPointsEarned: FIRST_LOGIN_BONUS,
@@ -103,7 +101,7 @@ async function prepareUserDocument(user) {
         updatedAt: serverTimestamp()
       });
     });
-    return { points: FIRST_LOGIN_BONUS, lifetimePoints: FIRST_LOGIN_BONUS, whatsapp: "", customerType: "", welcomeGiftStatus: "available" };
+    return { points: FIRST_LOGIN_BONUS, lifetimePoints: FIRST_LOGIN_BONUS, whatsapp: "", welcomeGiftStatus: "available" };
   }
 
   // تحديث الحسابات القديمة بدون لمس الرصيد الموجود.
@@ -114,7 +112,6 @@ async function prepareUserDocument(user) {
     if (d.lifetimePoints === undefined) patch.lifetimePoints = Number(d.totalPointsEarned || d.points || 0);
     if (d.totalPointsEarned === undefined) patch.totalPointsEarned = Number(d.lifetimePoints || d.points || 0);
     if (d.level === undefined) patch.level = Number(d.lifetimePoints || d.totalPointsEarned || d.points || 0) >= VIP_THRESHOLD ? "VIP" : "NORMAL";
-    if (d.customerType === undefined) patch.customerType = "";
     if (d.welcomeGiftStatus === undefined) patch.welcomeGiftStatus = "used"; // الحسابات القديمة لا تأخذ هدية بأثر رجعي.
     if (Object.keys(patch).length) await runTransaction(db, async t => t.set(userRef, {...patch, updatedAt: serverTimestamp()}, {merge:true}));
     return {...d, ...patch};
@@ -124,13 +121,9 @@ async function prepareUserDocument(user) {
 async function checkPhoneAndGift(user) {
   const data = await prepareUserDocument(user);
   const phone = String(data?.whatsapp || "").trim();
-  const customerType = String(data?.customerType || "").trim();
 
-  if (!phone || !customerType) {
-    if (whatsappInput) whatsappInput.value = phone;
-    customerTypeInputs.forEach(input => {
-      input.checked = input.value === customerType;
-    });
+  if (!phone) {
+    if (whatsappInput) whatsappInput.value = "";
     if (whatsappModal) whatsappModal.style.display = "flex";
     return;
   }
@@ -168,13 +161,6 @@ if (saveWhatsappBtn) {
       if (whatsappError) { whatsappError.style.display = "block"; whatsappError.innerText = "اكتب رقم موبايل مصري صحيح مثل: 01012345678"; }
       return;
     }
-
-    const selectedCustomerType = document.querySelector('input[name="customerType"]:checked')?.value || "";
-    if (!selectedCustomerType) {
-      if (whatsappError) { whatsappError.style.display = "block"; whatsappError.innerText = "اختار الأول: صاحب محل ولا عميل بيت."; }
-      return;
-    }
-
     const user = auth.currentUser;
     if (!user) return;
     saveWhatsappBtn.disabled = true;
@@ -190,7 +176,6 @@ if (saveWhatsappBtn) {
           email: user.email || old.email || "",
           photoURL: user.photoURL || old.photoURL || "",
           whatsapp: cleanNumber,
-          customerType: selectedCustomerType,
           points: Number(old.points || 0),
           lifetimePoints: Number(old.lifetimePoints ?? old.totalPointsEarned ?? 0),
           totalPointsEarned: Number(old.totalPointsEarned || old.lifetimePoints || 0),
@@ -251,4 +236,3 @@ chooseDiscountGift?.addEventListener("click", () => chooseWelcomeGift("discount2
 chooseFreeGamesGift?.addEventListener("click", () => chooseWelcomeGift("free10"));
 
 export { auth, db, VIP_THRESHOLD, FIRST_LOGIN_BONUS };
-
