@@ -10,14 +10,14 @@
       name="description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
     />
-    <meta name="author" content="2M Elshazly" />
+    <meta name="author" content="I Fix Store" />
 
     <meta
       property="og:url"
       content="https://fix-store.github.io/"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="2M Elshazly | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta property="og:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       property="og:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
@@ -28,7 +28,7 @@
       property="canonical"
       content="https://fix-store.github.io/"
     />
-    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, 2M Elshazly, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
+    <meta property="keywords" content="صيانة بلايستيشن, العاب PS4, العاب PS5, تنزيل العاب, I Fix Store, الهانوفيل, بلايستيشن 5, تحديث سوفتوير" />
     <meta property="robots" content="index, follow" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -40,7 +40,7 @@
       property="twitter:url"
       content="https://fix-store.github.io/"
     />
-    <meta name="twitter:title" content="2M Elshazly | صيانة وتحديث ألعاب بلايستيشن" />
+    <meta name="twitter:title" content="I Fix Store | صيانة وتحديث ألعاب بلايستيشن" />
     <meta
       name="twitter:description"
       content="وجهتك الأولى في الهانوفيل لصيانة البلايستيشن، تنزيل أحدث ألعاب PS4 و PS5، وتحديثات السوفتوير والهاردوير بضمان واحترافية."
@@ -65,15 +65,78 @@
       }
     </style>
 
-<style>
-#welcomeGiftModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:100000;align-items:center;justify-content:center;padding:20px;direction:rtl}
-#welcomeGiftModal .wg-box{width:100%;max-width:520px;background:#171717;border:1px solid #333;border-radius:26px;padding:28px;text-align:center;color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.6);font-family:Cairo,sans-serif}
-#welcomeGiftModal h2{margin:0 0 8px;color:#60a5fa;font-size:1.6rem;font-weight:900}
-#welcomeGiftModal .wg-sub{color:#aaa;line-height:1.7;margin-bottom:20px}
-.wg-option{width:100%;border:1px solid #333;background:#0f0f0f;color:#fff;border-radius:18px;padding:18px;margin-top:12px;cursor:pointer;text-align:right;transition:.2s}
-.wg-option:hover{border-color:#0070d1;transform:translateY(-2px)}
-.wg-option strong{display:block;font-size:1.05rem;margin-bottom:5px}.wg-option span{color:#aaa;font-size:.85rem}
+<style id="2m-header-fix">
+/* ===== 2M Elshazly Header Fix ===== */
+.header .nav{
+  display:flex !important;
+  align-items:center !important;
+  gap:14px !important;
+  flex-wrap:nowrap !important;
+}
+.header .nav_box{
+  flex:0 0 auto !important;
+}
+.header .nav_menu{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+}
+.header .nav_list{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  flex-wrap:nowrap !important;
+}
+.header #userSection{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+}
+.header .nav_btns{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex:0 0 auto !important;
+}
+.header #userProfileBox{
+  display:none;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.header #loginBtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  white-space:nowrap;
+}
+.header #loginBtn img{
+  width:20px;
+  height:20px;
+}
+@media (max-width: 900px){
+  .header .nav{gap:8px !important;}
+  .header .nav_list{gap:7px !important;}
+  .header .nav_link{font-size:.78rem !important;}
+}
+@media (max-width: 767px){
+  .header .nav{
+    justify-content:space-between !important;
+  }
+  .header .nav_menu{
+    position:fixed !important;
+  }
+  .header #userSection{
+    margin-inline-start:auto !important;
+  }
+  .header .nav_btns{
+    gap:6px !important;
+  }
+}
 </style>
+
 </head>
 <body>
 
@@ -121,8 +184,8 @@
               <a href="#top" class="nav_link">Home</a>
             </li>
             <li class="nav_item">
-              <a href="games.html" class="nav_link"
-                >Games</a
+              <a href="soon.html" class="nav_link"
+                >About</a
               >
             </li>
             <li class="nav_item">
@@ -225,10 +288,7 @@
         
         <div class="home_container bd-container bd-grid">
           <div class="home_data">
-            <h1 class="home_title" translate="no">
-              2M Elshazly<br />
-              <span class="home_title-secondary" translate="no">Playstation</span>
-            </h1>
+            
             <div class="hero-social">
     <a
         href="https://wa.me/201103661558"
@@ -266,7 +326,10 @@
         <i class="bx bxl-instagram"></i>
     </a>
 </div>            
-            
+            <h1 class="home_title" translate="no">
+              2M Elshazly<br />
+              <span class="home_title-secondary" translate="no">Playstation</span>
+            </h1>
             <p class="home_subtitle">
               🎮 PS4 & PS5 Games • 🔧 Repairs • 💾 Storage Upgrades
             </p>
@@ -819,30 +882,30 @@
 </div>
 <script type="text/javascript" charset="utf-8">
   // SHOW MENU
-const indexNavMenu = document.getElementById('nav-menu'),
-  indexNavToggle = document.getElementById('nav-toggle'),
-  indexNavClose = document.getElementById('nav-close');
+const navMenu = document.getElementById('nav-menu'),
+  navToggle = document.getElementById('nav-toggle'),
+  navClose = document.getElementById('nav-close');
 
-if (indexNavToggle) {
-  indexNavToggle.addEventListener('click', () => {
-    indexNavMenu.classList.add('show-menu');
+if (navToggle) {
+  navToggle.addEventListener('click', () => {
+    navMenu.classList.add('show-menu');
   });
 }
 
-if (indexNavClose) {
-  indexNavClose.addEventListener('click', () => {
-    indexNavMenu.classList.remove('show-menu');
+if (navClose) {
+  navClose.addEventListener('click', () => {
+    navMenu.classList.remove('show-menu');
   });
 }
 
 // REMOVE MENU MOBILE
-const indexNavLinks = document.querySelectorAll('.nav_link');
+const navLink = document.querySelectorAll('.nav_link');
 
 function linkAction() {
   const navMenu = document.getElementById('nav-menu');
   navMenu.classList.remove('show-menu');
 }
-indexNavLinks.forEach((n) => n.addEventListener('click', linkAction));
+navLink.forEach((n) => n.addEventListener('click', linkAction));
 
 // FAQS
 const accordionItems = document.querySelectorAll('.faqs_item');
@@ -984,44 +1047,82 @@ parameters.forEach(activateProduct);
 
 </script>
 
-<script type="module" src="./firebase-auth.js"></script>
+<script type="module" src="firebase-auth.js"></script>
 
-<!-- مودال هدية أول تسجيل - 2M Elshazly -->
-<div id="welcomeGiftModal">
-  <div class="wg-box">
-    <h2>🎁 هدية تسجيلك من 2M Elshazly</h2>
-    <div class="wg-sub">
-      مبروك! اختار هديتك الترحيبية مرة واحدة فقط:
+<!-- مودال إدخال رقم الواتساب الإجباري -->
+
+<!-- ===== 2M Elshazly Customer Info ===== -->
+<div id="whatsappModal" style="display:none; position:fixed; inset:0; width:100%; height:100%; background:rgba(0,0,0,.92); z-index:99999; justify-content:center; align-items:center; direction:rtl;">
+  <div style="background:#1e1e1e; padding:28px; border-radius:22px; width:92%; max-width:430px; text-align:center; border:1px solid #333; color:#fff; font-family:'Cairo',sans-serif; box-shadow:0 15px 35px rgba(0,0,0,.7);">
+    <h3 style="margin-bottom:10px; color:#60a5fa; font-size:1.3rem;">أهلاً بيك في 2M Elshazly 🎮</h3>
+    <p style="color:#aaa; font-size:.9rem; margin-bottom:18px; line-height:1.7;">
+      قبل ما نكمل، محتاجين بيانات بسيطة عشان نقدر نقدم لك النظام المناسب.
+    </p>
+
+    <input type="tel" id="whatsappInput" placeholder="مثال: 01012345678"
+      style="width:100%; padding:12px; background:#121212; border:1px solid #444; color:#fff; border-radius:10px; font-size:1rem; text-align:right; margin-bottom:16px; outline:none;"
+      dir="ltr">
+
+    <div style="text-align:right; margin-bottom:8px; font-weight:800;">إنت صاحب محل ولا عميل بيت؟</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+      <label class="customer-type-option" style="cursor:pointer;">
+        <input type="radio" name="customerType" value="shop" style="display:none;">
+        <div style="padding:14px 8px; border:1px solid #444; border-radius:12px; text-align:center; background:#121212; transition:.2s;">
+          <div style="font-size:1.5rem;">🏪</div>
+          <b>صاحب محل</b>
+          <small style="display:block;color:#999;margin-top:3px;">عندي محل</small>
+        </div>
+      </label>
+
+      <label class="customer-type-option" style="cursor:pointer;">
+        <input type="radio" name="customerType" value="home" style="display:none;">
+        <div style="padding:14px 8px; border:1px solid #444; border-radius:12px; text-align:center; background:#121212; transition:.2s;">
+          <div style="font-size:1.5rem;">🏠</div>
+          <b>عميل بيت</b>
+          <small style="display:block;color:#999;margin-top:3px;">استخدام شخصي</small>
+        </div>
+      </label>
     </div>
 
-    <button id="chooseDiscountGift" class="wg-option" type="button">
-      <strong>🏷️ خصم 20% على أول طلب</strong>
-      <span>الخصم يتطبق على أول طلب فقط.</span>
+    <button id="saveWhatsappBtn"
+      style="background:#0070d1; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:700; font-size:1rem; cursor:pointer;">
+      حفظ ومتابعة
     </button>
 
-    <button id="chooseFreeGamesGift" class="wg-option" type="button">
-      <strong>🎮 10 ألعاب مجانية</strong>
-      <span>اختار الـ10 ألعاب بنفسك من صفحة الألعاب.</span>
-    </button>
+    <p id="whatsappError" style="color:#f87171; font-size:.85rem; margin-top:10px; display:none;"></p>
   </div>
 </div>
 
-<!-- مودال إدخال رقم الواتساب الإجباري -->
-<div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; direction: rtl;">
-    <div style="background: #1e1e1e; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; color: #fff; font-family: 'Cairo', sans-serif; box-shadow: 0 15px 35px rgba(0,0,0,0.7);">
-        <h3 style="margin-bottom: 10px; color: #60a5fa; font-size: 1.3rem;"> أهلاً بيك  ! 🎮</h3>
-        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">عشان نقدر نتابع معاك طلبات الألعاب ونكلمك وقت التسليم، برجاء إدخال رقم الواتساب الخاص بك:</p>
-        
-        <input type="tel" id="whatsappInput" placeholder="مثال: 01×××××××××" style="width: 100%; padding: 12px; background: #121212; border: 1px solid #444; color: #fff; border-radius: 10px; font-size: 1rem; text-align: right; margin-bottom: 15px; outline: none;" dir="ltr">
-        
-        <button id="saveWhatsappBtn" style="background: #0070d1; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.3s;">حفظ ومتابعة</button>
-        <p id="whatsappError" style="color: #f87171; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
-    </div>
-</div>
+<style>
+.customer-type-option input:checked + div{
+  border-color:#0070d1 !important;
+  background:rgba(0,112,209,.16) !important;
+  box-shadow:0 0 0 1px #0070d1 inset;
+}
+</style>
 
 
+<!-- Old iFix Firebase block disabled: 2M Elshazly uses firebase-auth.js -->
+  
+<script>
+/* 2M Elshazly - customer type UI compatibility */
+document.addEventListener('change', function(e){
+  if(e.target && e.target.name === 'customerType'){
+    document.querySelectorAll('.customer-type-option > div').forEach(function(box){
+      box.style.borderColor = '#444';
+      box.style.background = '#121212';
+    });
+    const box = e.target.nextElementSibling;
+    if(box){
+      box.style.borderColor = '#0070d1';
+      box.style.background = 'rgba(0,112,209,.16)';
+    }
+  }
+});
+</script>
 
-                
-  </body>
+</body>
 </html>
+
 
