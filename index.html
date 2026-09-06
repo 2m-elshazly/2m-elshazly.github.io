@@ -66,77 +66,7 @@
     </style>
 </head>
 <body>
-<!-- Modal أو شاشة إدخال رقم الواتساب الإجبارية -->
-<div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: #1e1e1e; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; color: #fff; font-family: 'Cairo', sans-serif;">
-        <h3 style="margin-bottom: 10px; color: #60a5fa;">أهلاً بيك يا فنان! 🎮</h3>
-        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">لإتمام تسجيل الدخول ومتابعة طلبات الألعاب، برجاء إدخال رقم الواتساب الخاص بك:</p>
-        
-        <input type="tel" id="whatsappInput" placeholder="مثال: 01012345678" style="width: 100%; padding: 12px; background: #121212; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 1rem; text-align: right; margin-bottom: 15px; outline: none;">
-        
-        <button id="saveWhatsappBtn" style="background: #0070d1; color: #white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.3s;">حفظ ومتابعة</button>
-        <p id="whatsappError" style="color: #f87171; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
-    </div>
-</div>
 
-<script type="module">
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-    
-    // (هنا بنفترض إنك عامل import للـ auth و db من فايل إعدادات الـ firebase عندك)
-    const db = getFirestore(app);
-
-    // دالة فحص الواتساب أثناء مراقبة حالة تسجيل الدخول
-    async function checkUserWhatsapp(user) {
-        if (!user) return;
-
-        const userDocRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userDocRef);
-
-        const modal = document.getElementById("whatsappModal");
-
-        if (userSnap.exists() && userSnap.data().whatsapp) {
-            // لو العميل مسجل ومعه واتساب، اخفي المودال وخليها طلق
-            modal.style.display = "none";
-        } else {
-            // لو أول مرة أو ملوش رقم، اظهر له الشاشة الإجبارية
-            modal.style.display = "flex";
-        }
-    }
-
-    // زر حفظ الواتساب
-    document.getElementById("saveWhatsappBtn").addEventListener("click", async () => {
-        const whatsappVal = document.getElementById("whatsappInput").value.trim();
-        const errorP = document.getElementById("whatsappError");
-
-        if (whatsappVal.length < 10) {
-            errorP.style.display = "block";
-            errorP.innerText = "برجاء إدخال رقم واتساب صحيح ومكون من أرقام صحيحة.";
-            return;
-        }
-
-        try {
-            const user = auth.currentUser;
-            if (user) {
-                // حفظ الرقم في مجموعة users برقم الـ UID بتاع العميل
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: user.displayName || "مستخدم",
-                    email: user.email || "",
-                    whatsapp: whatsappVal,
-                    createdAt: new Date()
-                }, { merge: true });
-
-                // إخفاء المودال بعد الحفظ بنجاح
-                document.getElementById("whatsappModal").style.display = "none";
-                location.reload(); // إعادة تحميل خفيفة عشان الموقع يقرأ البيانات الجديدة
-            }
-        } catch (err) {
-            console.error("خطأ أثناء حفظ الواتساب:", err);
-            errorP.style.display = "block";
-            errorP.innerText = "حدث خطأ ما، حاول مرة أخرى.";
-        }
-    });
-</script>
 
 
     
@@ -1046,7 +976,105 @@ parameters.forEach(activateProduct);
 
 <script type="module" src="firebase-auth.js"></script>
 
+<!-- مودال إدخال رقم الواتساب الإجباري -->
+<div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; direction: rtl;">
+    <div style="background: #1e1e1e; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #333; color: #fff; font-family: 'Cairo', sans-serif; box-shadow: 0 15px 35px rgba(0,0,0,0.7);">
+        <h3 style="margin-bottom: 10px; color: #60a5fa; font-size: 1.3rem;">أهلاً بيك يا فنان! 🎮</h3>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">عشان نقدر نتابع معاك طلبات الألعاب ونكلمك وقت التسليم، برجاء إدخال رقم الواتساب الخاص بك:</p>
+        
+        <input type="tel" id="whatsappInput" placeholder="مثال: 01012345678" style="width: 100%; padding: 12px; background: #121212; border: 1px solid #444; color: #fff; border-radius: 10px; font-size: 1rem; text-align: right; margin-bottom: 15px; outline: none;" dir="ltr">
+        
+        <button id="saveWhatsappBtn" style="background: #0070d1; color: #fff; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.3s;">حفظ ومتابعة</button>
+        <p id="whatsappError" style="color: #f87171; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+</div>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
+      authDomain: "ifix-store-eecd9.firebaseapp.com",
+      projectId: "ifix-store-eecd9",
+      storageBucket: "ifix-store-eecd9.firebasestorage.app",
+      messagingSenderId: "862863699996",
+      appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const whatsappModal = document.getElementById("whatsappModal");
+    const loginBtn = document.getElementById("loginBtn");
+
+    // ربط زرار تسجيل الدخول بتاعك الموجود في الكود بنظام جوجل
+    if (loginBtn) {
+        loginBtn.addEventListener("click", async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("خطأ في تسجيل الدخول:", error);
+            }
+        });
+    }
+
+    // مراقبة حالة المستخدم أول ما يفتح الصفحة أو يسجل
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userDocRef);
+
+                // لو العميل مسجل بس ملوش رقم واتساب في الداتابيز -> اظهر المودال فوراً
+                if (!userSnap.exists() || !userSnap.data().whatsapp) {
+                    whatsappModal.style.display = "flex";
+                } else {
+                    whatsappModal.style.display = "none";
+                }
+            } catch (err) {
+                console.error("خطأ:", err);
+            }
+        } else {
+            whatsappModal.style.display = "none";
+        }
+    });
+
+    // زر حفظ رقم الواتساب
+    document.getElementById("saveWhatsappBtn").addEventListener("click", async () => {
+        const whatsappVal = document.getElementById("whatsappInput").value.trim();
+        const errorP = document.getElementById("whatsappError");
+
+        if (whatsappVal.length < 10) {
+            errorP.style.display = "block";
+            errorP.innerText = "برجاء إدخال رقم واتساب صحيح (10 أرقام على الأقل).";
+            return;
+        }
+
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: user.displayName || "مستخدم جديد",
+                    email: user.email || "",
+                    whatsapp: whatsappVal,
+                    createdAt: new Date()
+                }, { merge: true });
+
+                whatsappModal.style.display = "none";
+                location.reload();
+            }
+        } catch (err) {
+            console.error("خطأ أثناء الحفظ:", err);
+            errorP.style.display = "block";
+            errorP.innerText = "حدث خطأ ما، حاول مرة أخرى.";
+        }
+    });
+</script>
   </body>
 </html>
 
