@@ -989,92 +989,9 @@ parameters.forEach(activateProduct);
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBE2-qaGOOlmhn9QA01J5wizJ_CcMMh7qE",
-      authDomain: "ifix-store-eecd9.firebaseapp.com",
-      projectId: "ifix-store-eecd9",
-      storageBucket: "ifix-store-eecd9.firebasestorage.app",
-      messagingSenderId: "862863699996",
-      appId: "1:862863699996:web:7af653f4de7d0baa0fafd9"
-    };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const whatsappModal = document.getElementById("whatsappModal");
-    const loginBtn = document.getElementById("loginBtn");
-
-    // ربط زرار تسجيل الدخول بتاعك الموجود في الكود بنظام جوجل
-    if (loginBtn) {
-        loginBtn.addEventListener("click", async () => {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("خطأ في تسجيل الدخول:", error);
-            }
-        });
-    }
-
-    // مراقبة حالة المستخدم أول ما يفتح الصفحة أو يسجل
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            try {
-                const userDocRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userDocRef);
-
-                // لو العميل مسجل بس ملوش رقم واتساب في الداتابيز -> اظهر المودال فوراً
-                if (!userSnap.exists() || !userSnap.data().whatsapp) {
-                    whatsappModal.style.display = "flex";
-                } else {
-                    whatsappModal.style.display = "none";
-                }
-            } catch (err) {
-                console.error("خطأ:", err);
-            }
-        } else {
-            whatsappModal.style.display = "none";
-        }
-    });
-
-    // زر حفظ رقم الواتساب
-    document.getElementById("saveWhatsappBtn").addEventListener("click", async () => {
-        const whatsappVal = document.getElementById("whatsappInput").value.trim();
-        const errorP = document.getElementById("whatsappError");
-
-        if (whatsappVal.length < 10) {
-            errorP.style.display = "block";
-            errorP.innerText = "برجاء إدخال رقم واتساب صحيح (10 أرقام على الأقل).";
-            return;
-        }
-
-        try {
-            const user = auth.currentUser;
-            if (user) {
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: user.displayName || "مستخدم جديد",
-                    email: user.email || "",
-                    whatsapp: whatsappVal,
-                    createdAt: new Date()
-                }, { merge: true });
-
-                whatsappModal.style.display = "none";
-                location.reload();
-            }
-        } catch (err) {
-            console.error("خطأ أثناء الحفظ:", err);
-            errorP.style.display = "block";
-            errorP.innerText = "حدث خطأ ما، حاول مرة أخرى.";
-        }
-    });
-</script>
+                
   </body>
 </html>
 
