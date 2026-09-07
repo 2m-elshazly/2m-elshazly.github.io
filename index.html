@@ -1187,36 +1187,6 @@ document.addEventListener('change', function(e){
 <h2 style="font-size:1.15rem;margin:0 0 8px;color:#fff;">2M Elshazly في العجمي</h2>
 <p style="margin:0;color:#aaa;font-size:.9rem;">2M Elshazly متخصص في ألعاب البلايستيشن والألعاب المعدلة وخدمات وتجهيز الألعاب في العجمي - الإسكندرية. تصفح مكتبة الألعاب وتابع طلباتك ونقاطك ومكافآتك.</p>
 </div></section>
-<script type="module" id="2m-notifications-script">
-import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-import {getFirestore,collection,query,where,orderBy,limit,onSnapshot,doc,updateDoc} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-const cfg={apiKey:"AIzaSyD7Kk3jZ8HcZ1K4X0dX2P8Q4Y7rK6tM2",authDomain:"m-elshazly-e19a2.firebaseapp.com",projectId:"m-elshazly-e19a2",storageBucket:"m-elshazly-e19a2.firebasestorage.app",messagingSenderId:"785412369012",appId:"1:785412369012:web:2c4f8b7a9d6e5f4a3b2c1d"};
-const app=getApps().length?getApp():initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
-const bell=document.getElementById("notificationBell2M"),btn=document.getElementById("notificationBellBtn2M"),count=document.getElementById("notificationCount2M"),ticker=document.getElementById("notificationTicker2M"),panel=document.getElementById("notificationPanel2M"),list=document.getElementById("notificationList2M"),all=document.getElementById("markAllNotifications2M");
-let pub=[],priv=[],stop1=null,stop2=null;
-
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const time=ts=>{try{return new Intl.DateTimeFormat("ar-EG",{dateStyle:"short",timeStyle:"short"}).format(ts?.toDate?ts.toDate():new Date(ts))}catch{return"الآن"}};
-
-function render(){
- const items=[...new Map([...pub,...priv].map(x=>[x.id,x])).values()].sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,30);
- const unread=items.filter(x=>!x.read); count.textContent=unread.length>99?"99+":unread.length; count.style.display=unread.length?"block":"none";
- if(unread[0]){ticker.textContent=unread[0].title||"عندك إشعار جديد 🔔";ticker.style.display="block";clearTimeout(window.__2mTicker);window.__2mTicker=setTimeout(()=>ticker.style.display="none",6500)}else ticker.style.display="none";
- list.innerHTML=items.length?items.map(n=>`<div class="notification-item-2m ${n.read?"":"unread"}" data-id="${n.id}"><div class="nt-title">${esc(n.title||"إشعار من 2M Elshazly")}</div><div class="nt-message">${esc(n.message||"")}</div><div class="nt-time">${time(n.createdAt)}</div></div>`).join(""):'<div class="notification-empty-2m">لا توجد إشعارات جديدة</div>';
- list.querySelectorAll("[data-id]").forEach(el=>el.onclick=async()=>{const n=items.find(x=>x.id===el.dataset.id);if(!n)return;if(!n.read)await updateDoc(doc(db,"notifications",n.id),{read:true}).catch(console.error);if(n.link)location.href=n.link});
-}
-onAuthStateChanged(auth,user=>{
- if(stop1)stop1();if(stop2)stop2();
- if(!user){bell.style.display="none";pub=[];priv=[];return}
- bell.style.display="flex";
- stop1=onSnapshot(query(collection(db,"notifications"),where("target","==","all"),orderBy("createdAt","desc"),limit(30)),s=>{pub=s.docs.map(d=>({id:d.id,...d.data()}));render()},console.error);
- stop2=onSnapshot(query(collection(db,"notifications"),where("targetUserId","==",user.uid),orderBy("createdAt","desc"),limit(30)),s=>{priv=s.docs.map(d=>({id:d.id,...d.data()}));render()},console.error);
-});
-btn.onclick=e=>{e.stopPropagation();panel.style.display=panel.style.display==="block"?"none":"block"};
-panel.onclick=e=>e.stopPropagation();document.onclick=()=>panel.style.display="none";
-all.onclick=async()=>{const items=[...pub,...priv].filter(x=>!x.read);await Promise.all(items.map(x=>updateDoc(doc(db,"notifications",x.id),{read:true}).catch(console.error)))};
-</script>
 </body>
     </html>
