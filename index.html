@@ -135,6 +135,10 @@
     gap:6px !important;
   }
 }
+/* ===== Notification Bell Position ===== */
+/* ننزل أيقونة الإشعارات والعداد الأحمر معًا قليلًا */
+#m2mNotificationWrap{top:26px !important;}
+
 </style>
 
 
@@ -169,23 +173,6 @@
   "address":{"@type":"PostalAddress","addressLocality":"العجمي","addressRegion":"الإسكندرية","addressCountry":"EG"}
 }
 </script>
-<style id="2m-notifications-style">
-.notification-bell-2m{position:relative;display:flex;align-items:center;margin:0 4px;font-family:Cairo,sans-serif}
-#notificationBellBtn2M{position:relative;width:42px;height:42px;border:0;border-radius:50%;background:#151515;color:#fff;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center}
-#notificationCount2M{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:20px;background:#e11d48;color:#fff;font-size:10px;line-height:18px;font-weight:900;display:none}
-#notificationTicker2M{position:absolute;right:50px;top:50%;transform:translateY(-50%);white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis;background:#0070d1;color:#fff;border-radius:18px;padding:5px 10px;font-size:11px;font-weight:700;display:none;z-index:10001}
-#notificationPanel2M{position:absolute;right:0;top:50px;width:340px;max-width:calc(100vw - 24px);background:#171717;border:1px solid #333;border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.5);display:none;z-index:10000;overflow:hidden;direction:rtl}
-.notification-head-2m{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:1px solid #2b2b2b;color:#fff}
-.notification-head-2m button{background:none;border:0;color:#60a5fa;cursor:pointer;font-family:inherit;font-size:11px}
-.notification-item-2m{padding:13px 14px;border-bottom:1px solid #282828;cursor:pointer;color:#fff}
-.notification-item-2m.unread{background:rgba(0,112,209,.10)}
-.notification-item-2m .nt-title{font-weight:800;font-size:13px;margin-bottom:4px}
-.notification-item-2m .nt-message{color:#aaa;font-size:11px;line-height:1.7}
-.notification-item-2m .nt-time{color:#666;font-size:9px;margin-top:6px}
-.notification-empty-2m{padding:25px;text-align:center;color:#777;font-size:12px}
-@media(max-width:767px){#notificationTicker2M{right:45px;max-width:145px}#notificationPanel2M{right:-65px}}
-</style>
-
 </head>
 <body>
 
@@ -298,17 +285,7 @@
     </div>
 
           
-        <div id="notificationBell2M" class="notification-bell-2m" style="display:none">
-  <button id="notificationBellBtn2M" type="button" aria-label="الإشعارات">
-    <i class="bx bx-bell"></i><span id="notificationCount2M">0</span>
-  </button>
-  <div id="notificationTicker2M"></div>
-  <div id="notificationPanel2M">
-    <div class="notification-head-2m"><b>🔔 الإشعارات</b><button id="markAllNotifications2M" type="button">قراءة الكل</button></div>
-    <div id="notificationList2M"><div class="notification-empty-2m">لا توجد إشعارات جديدة</div></div>
-  </div>
-</div>
-<div class="nav_btns">
+        <div class="nav_btns">
           <i class="bx bx-moon change-theme" id="theme-button"></i>
           <div class="nav_toggle" id="nav-toggle">
             <i class="bx bx-menu"></i>
@@ -1187,6 +1164,5 @@ document.addEventListener('change', function(e){
 <h2 style="font-size:1.15rem;margin:0 0 8px;color:#fff;">2M Elshazly في العجمي</h2>
 <p style="margin:0;color:#aaa;font-size:.9rem;">2M Elshazly متخصص في ألعاب البلايستيشن والألعاب المعدلة وخدمات وتجهيز الألعاب في العجمي - الإسكندرية. تصفح مكتبة الألعاب وتابع طلباتك ونقاطك ومكافآتك.</p>
 </div></section>
-
 </body>
-    </html>
+</html>
