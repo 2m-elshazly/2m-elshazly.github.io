@@ -169,6 +169,23 @@
   "address":{"@type":"PostalAddress","addressLocality":"العجمي","addressRegion":"الإسكندرية","addressCountry":"EG"}
 }
 </script>
+<style id="2m-notifications-style">
+.notification-bell-2m{position:relative;display:flex;align-items:center;margin:0 4px;font-family:Cairo,sans-serif}
+#notificationBellBtn2M{position:relative;width:42px;height:42px;border:0;border-radius:50%;background:#151515;color:#fff;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center}
+#notificationCount2M{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:20px;background:#e11d48;color:#fff;font-size:10px;line-height:18px;font-weight:900;display:none}
+#notificationTicker2M{position:absolute;right:50px;top:50%;transform:translateY(-50%);white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis;background:#0070d1;color:#fff;border-radius:18px;padding:5px 10px;font-size:11px;font-weight:700;display:none;z-index:10001}
+#notificationPanel2M{position:absolute;right:0;top:50px;width:340px;max-width:calc(100vw - 24px);background:#171717;border:1px solid #333;border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.5);display:none;z-index:10000;overflow:hidden;direction:rtl}
+.notification-head-2m{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:1px solid #2b2b2b;color:#fff}
+.notification-head-2m button{background:none;border:0;color:#60a5fa;cursor:pointer;font-family:inherit;font-size:11px}
+.notification-item-2m{padding:13px 14px;border-bottom:1px solid #282828;cursor:pointer;color:#fff}
+.notification-item-2m.unread{background:rgba(0,112,209,.10)}
+.notification-item-2m .nt-title{font-weight:800;font-size:13px;margin-bottom:4px}
+.notification-item-2m .nt-message{color:#aaa;font-size:11px;line-height:1.7}
+.notification-item-2m .nt-time{color:#666;font-size:9px;margin-top:6px}
+.notification-empty-2m{padding:25px;text-align:center;color:#777;font-size:12px}
+@media(max-width:767px){#notificationTicker2M{right:45px;max-width:145px}#notificationPanel2M{right:-65px}}
+</style>
+
 </head>
 <body>
 
@@ -281,7 +298,17 @@
     </div>
 
           
-        <div class="nav_btns">
+        <div id="notificationBell2M" class="notification-bell-2m" style="display:none">
+  <button id="notificationBellBtn2M" type="button" aria-label="الإشعارات">
+    <i class="bx bx-bell"></i><span id="notificationCount2M">0</span>
+  </button>
+  <div id="notificationTicker2M"></div>
+  <div id="notificationPanel2M">
+    <div class="notification-head-2m"><b>🔔 الإشعارات</b><button id="markAllNotifications2M" type="button">قراءة الكل</button></div>
+    <div id="notificationList2M"><div class="notification-empty-2m">لا توجد إشعارات جديدة</div></div>
+  </div>
+</div>
+<div class="nav_btns">
           <i class="bx bx-moon change-theme" id="theme-button"></i>
           <div class="nav_toggle" id="nav-toggle">
             <i class="bx bx-menu"></i>
@@ -1160,5 +1187,36 @@ document.addEventListener('change', function(e){
 <h2 style="font-size:1.15rem;margin:0 0 8px;color:#fff;">2M Elshazly في العجمي</h2>
 <p style="margin:0;color:#aaa;font-size:.9rem;">2M Elshazly متخصص في ألعاب البلايستيشن والألعاب المعدلة وخدمات وتجهيز الألعاب في العجمي - الإسكندرية. تصفح مكتبة الألعاب وتابع طلباتك ونقاطك ومكافآتك.</p>
 </div></section>
+<script type="module" id="2m-notifications-script">
+import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import {getFirestore,collection,query,where,orderBy,limit,onSnapshot,doc,updateDoc} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const cfg={apiKey:"AIzaSyD7Kk3jZ8HcZ1K4X0dX2P8Q4Y7rK6tM2",authDomain:"m-elshazly-e19a2.firebaseapp.com",projectId:"m-elshazly-e19a2",storageBucket:"m-elshazly-e19a2.firebasestorage.app",messagingSenderId:"785412369012",appId:"1:785412369012:web:2c4f8b7a9d6e5f4a3b2c1d"};
+const app=getApps().length?getApp():initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const bell=document.getElementById("notificationBell2M"),btn=document.getElementById("notificationBellBtn2M"),count=document.getElementById("notificationCount2M"),ticker=document.getElementById("notificationTicker2M"),panel=document.getElementById("notificationPanel2M"),list=document.getElementById("notificationList2M"),all=document.getElementById("markAllNotifications2M");
+let pub=[],priv=[],stop1=null,stop2=null;
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const time=ts=>{try{return new Intl.DateTimeFormat("ar-EG",{dateStyle:"short",timeStyle:"short"}).format(ts?.toDate?ts.toDate():new Date(ts))}catch{return"الآن"}};
+
+function render(){
+ const items=[...new Map([...pub,...priv].map(x=>[x.id,x])).values()].sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,30);
+ const unread=items.filter(x=>!x.read); count.textContent=unread.length>99?"99+":unread.length; count.style.display=unread.length?"block":"none";
+ if(unread[0]){ticker.textContent=unread[0].title||"عندك إشعار جديد 🔔";ticker.style.display="block";clearTimeout(window.__2mTicker);window.__2mTicker=setTimeout(()=>ticker.style.display="none",6500)}else ticker.style.display="none";
+ list.innerHTML=items.length?items.map(n=>`<div class="notification-item-2m ${n.read?"":"unread"}" data-id="${n.id}"><div class="nt-title">${esc(n.title||"إشعار من 2M Elshazly")}</div><div class="nt-message">${esc(n.message||"")}</div><div class="nt-time">${time(n.createdAt)}</div></div>`).join(""):'<div class="notification-empty-2m">لا توجد إشعارات جديدة</div>';
+ list.querySelectorAll("[data-id]").forEach(el=>el.onclick=async()=>{const n=items.find(x=>x.id===el.dataset.id);if(!n)return;if(!n.read)await updateDoc(doc(db,"notifications",n.id),{read:true}).catch(console.error);if(n.link)location.href=n.link});
+}
+onAuthStateChanged(auth,user=>{
+ if(stop1)stop1();if(stop2)stop2();
+ if(!user){bell.style.display="none";pub=[];priv=[];return}
+ bell.style.display="flex";
+ stop1=onSnapshot(query(collection(db,"notifications"),where("target","==","all"),orderBy("createdAt","desc"),limit(30)),s=>{pub=s.docs.map(d=>({id:d.id,...d.data()}));render()},console.error);
+ stop2=onSnapshot(query(collection(db,"notifications"),where("targetUserId","==",user.uid),orderBy("createdAt","desc"),limit(30)),s=>{priv=s.docs.map(d=>({id:d.id,...d.data()}));render()},console.error);
+});
+btn.onclick=e=>{e.stopPropagation();panel.style.display=panel.style.display==="block"?"none":"block"};
+panel.onclick=e=>e.stopPropagation();document.onclick=()=>panel.style.display="none";
+all.onclick=async()=>{const items=[...pub,...priv].filter(x=>!x.read);await Promise.all(items.map(x=>updateDoc(doc(db,"notifications",x.id),{read:true}).catch(console.error)))};
+</script>
 </body>
-</html>
+    </html>
