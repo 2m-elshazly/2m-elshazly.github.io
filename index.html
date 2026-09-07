@@ -169,14 +169,6 @@
   "address":{"@type":"PostalAddress","addressLocality":"العجمي","addressRegion":"الإسكندرية","addressCountry":"EG"}
 }
 </script>
-
-<!-- 2M Elshazly - ضبط مكان أيقونة الإشعارات بجانب تسجيل الدخول -->
-<style id="2m-notification-position-fix">
-  #m2mNotificationWrap {
-    top: 16px !important;
-    right: 18px !important;
-  }
-</style>
 </head>
 <body>
 
@@ -1087,7 +1079,7 @@ parameters.forEach(activateProduct);
 
 </script>
 
-<script type="module" src="firebase-auth.js"></script>
+<script type="module" src="firebase-auth.js"></script>\n\n<!-- ===== 2M Elshazly: place notification bell beside PlayStation logo ===== -->\n<style id="2m-notification-header-position">\n  .header .nav_box{\n    display:flex !important;\n    align-items:center !important;\n    gap:12px !important;\n    flex:0 0 auto !important;\n  }\n\n  .header .nav_box #m2mNotificationWrap{\n    position:relative !important;\n    top:auto !important;\n    right:auto !important;\n    left:auto !important;\n    bottom:auto !important;\n    transform:none !important;\n    z-index:99999 !important;\n    display:block !important;\n    margin:0 !important;\n  }\n\n  .header .nav_box #m2mNotificationPanel{\n    top:54px !important;\n    right:0 !important;\n    left:auto !important;\n  }\n\n  @media (max-width:767px){\n    .header .nav_box{gap:8px !important;}\n    .header .nav_box #m2mNotificationBell{\n      width:46px !important;\n      height:46px !important;\n    }\n  }\n</style>\n\n<script>\n(function(){\n  function moveNotificationBell(){\n    const bell = document.getElementById('m2mNotificationWrap');\n    const navBox = document.querySelector('.header .nav_box');\n    const logo = navBox && navBox.querySelector('.nav_logo');\n    if (bell && navBox && logo && bell.parentElement !== navBox) {\n      navBox.appendChild(bell);\n    }\n  }\n\n  moveNotificationBell();\n  const observer = new MutationObserver(moveNotificationBell);\n  observer.observe(document.body, {childList:true, subtree:true});\n})();\n</script>
 
 <!-- مودال إدخال رقم الواتساب الإجباري -->
 
