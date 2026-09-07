@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
@@ -14,7 +15,6 @@ import {
   collection,
   query,
   where,
-  getDocs,
   onSnapshot,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
@@ -22,6 +22,7 @@ import {
 // =====================================================
 // 2M Elshazly - Firebase Authentication + Customer Profile
 // =====================================================
+
 const firebaseConfig = {
   apiKey: "AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
   authDomain: "m-elshazly-e19a2.firebaseapp.com",
@@ -38,10 +39,15 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 // =====================================================
-// 2M Elshazly Settings
+// إعدادات 2M Elshazly
 // =====================================================
+
 const FIRST_LOGIN_BONUS = 0;
 const VIP_THRESHOLD = 10000;
+
+// =====================================================
+// عناصر تسجيل الدخول
+// =====================================================
 
 const loginBtn = document.getElementById("loginBtn");
 const profileBox = document.getElementById("userProfileBox");
@@ -58,7 +64,7 @@ const chooseDiscountGift = document.getElementById("chooseDiscountGift");
 const chooseFreeGamesGift = document.getElementById("chooseFreeGamesGift");
 
 // =====================================================
-// 2M Elshazly - Notification System
+// إشعارات 2M Elshazly
 // =====================================================
 
 let stopNotifications = null;
@@ -74,13 +80,15 @@ function installNotificationUI() {
   style.id = "m2mNotificationStyle";
 
   style.textContent = `
+
     #m2mNotificationWrap{
-      position:fixed;
-      top:16px;
-      right:18px;
+      position:relative;
       z-index:99999;
       font-family:Arial,sans-serif;
-      direction:rtl
+      direction:rtl;
+      display:flex;
+      align-items:center;
+      margin:0;
     }
 
     #m2mNotificationBell{
@@ -93,7 +101,7 @@ function installNotificationUI() {
       cursor:pointer;
       font-size:21px;
       box-shadow:0 8px 25px rgba(0,0,0,.35);
-      position:relative
+      position:relative;
     }
 
     #m2mNotificationBadge{
@@ -111,7 +119,7 @@ function installNotificationUI() {
       display:none;
       align-items:center;
       justify-content:center;
-      border:2px solid #111
+      border:2px solid #111;
     }
 
     #m2mNotificationPanel{
@@ -127,11 +135,11 @@ function installNotificationUI() {
       border:1px solid #2c2c2c;
       border-radius:18px;
       box-shadow:0 18px 60px rgba(0,0,0,.55);
-      padding:12px
+      padding:12px;
     }
 
     #m2mNotificationPanel.open{
-      display:block
+      display:block;
     }
 
     .m2mNotifHead{
@@ -140,11 +148,11 @@ function installNotificationUI() {
       justify-content:space-between;
       padding:4px 4px 10px;
       border-bottom:1px solid #282828;
-      margin-bottom:8px
+      margin-bottom:8px;
     }
 
     .m2mNotifHead b{
-      font-size:15px
+      font-size:15px;
     }
 
     .m2mNotifItem{
@@ -153,40 +161,41 @@ function installNotificationUI() {
       border-radius:13px;
       background:#101010;
       margin-bottom:8px;
-      cursor:pointer
+      cursor:pointer;
     }
 
     .m2mNotifItem.unread{
       border-color:#0070d1;
-      background:rgba(0,112,209,.10)
+      background:rgba(0,112,209,.10);
     }
 
     .m2mNotifItem b{
       display:block;
       font-size:13px;
-      margin-bottom:5px
+      margin-bottom:5px;
     }
 
     .m2mNotifItem p{
       margin:0;
       color:#aaa;
       font-size:12px;
-      line-height:1.7
+      line-height:1.7;
     }
 
     .m2mNotifItem small{
       display:block;
       color:#666;
       margin-top:7px;
-      font-size:10px
+      font-size:10px;
     }
 
     .m2mNotifEmpty{
       padding:20px;
       text-align:center;
       color:#777;
-      font-size:12px
+      font-size:12px;
     }
+
   `;
 
   document.head.appendChild(style);
@@ -196,7 +205,12 @@ function installNotificationUI() {
   wrap.id = "m2mNotificationWrap";
 
   wrap.innerHTML = `
-    <button id="m2mNotificationBell" type="button" aria-label="الإشعارات">
+
+    <button
+      id="m2mNotificationBell"
+      type="button"
+      aria-label="الإشعارات"
+    >
       🔔
       <span id="m2mNotificationBadge">0</span>
     </button>
@@ -214,29 +228,49 @@ function installNotificationUI() {
       </div>
 
     </div>
+
   `;
 
-  document.body.appendChild(wrap);
+  // =====================================================
+  // وضع الجرس داخل Header
+  // =====================================================
 
-  document
-    .getElementById("m2mNotificationBell")
-    .addEventListener("click", e => {
+  const navBtns = document.querySelector(".nav_btns");
 
-      e.stopPropagation();
+  if (navBtns) {
 
-      document
-        .getElementById("m2mNotificationPanel")
-        .classList.toggle("open");
+    navBtns.insertBefore(
+      wrap,
+      navBtns.firstChild
+    );
 
-    });
+  } else {
 
-  document.addEventListener("click", e => {
+    document.body.appendChild(wrap);
+
+  }
+
+  const bell = document.getElementById(
+    "m2mNotificationBell"
+  );
+
+  const panel = document.getElementById(
+    "m2mNotificationPanel"
+  );
+
+  bell.addEventListener("click", function(e){
+
+    e.stopPropagation();
+
+    panel.classList.toggle("open");
+
+  });
+
+  document.addEventListener("click", function(e){
 
     if (!wrap.contains(e.target)) {
 
-      document
-        .getElementById("m2mNotificationPanel")
-        ?.classList.remove("open");
+      panel.classList.remove("open");
 
     }
 
@@ -245,29 +279,31 @@ function installNotificationUI() {
 }
 
 // =====================================================
-// Notification Date
+// تاريخ الإشعار
 // =====================================================
 
-function notificationDate(value) {
+function notificationDate(value){
 
-  try {
+  try{
 
     const d =
       value?.toDate
-        ? value.toDate()
-        : new Date(value);
+      ? value.toDate()
+      : new Date(value);
 
-    return isNaN(d.getTime())
-      ? ""
-      : d.toLocaleString(
-          "ar-EG",
-          {
-            dateStyle:"short",
-            timeStyle:"short"
-          }
-        );
+    if(isNaN(d.getTime())){
+      return "";
+    }
 
-  } catch {
+    return d.toLocaleString(
+      "ar-EG",
+      {
+        dateStyle:"short",
+        timeStyle:"short"
+      }
+    );
+
+  }catch{
 
     return "";
 
@@ -276,272 +312,318 @@ function notificationDate(value) {
 }
 
 // =====================================================
-// Start Notifications
+// تشغيل إشعارات العميل
 // =====================================================
 
-function startNotifications(user, customerData) {
+function startNotifications(
+  user,
+  customerData
+){
 
   installNotificationUI();
 
-  if (stopNotifications) {
+  if(stopNotifications){
     stopNotifications();
   }
 
   const listEl =
-    document.getElementById("m2mNotificationList");
+    document.getElementById(
+      "m2mNotificationList"
+    );
 
   const badgeEl =
-    document.getElementById("m2mNotificationBadge");
+    document.getElementById(
+      "m2mNotificationBadge"
+    );
 
   const customerTypeValue =
     customerData?.customerType || "";
 
   let all = [];
+
   let personal = [];
 
-  // ===================================================
-  // Render Notifications
-  // ===================================================
+  // =====================================================
+  // عرض الإشعارات
+  // =====================================================
 
   const render = () => {
 
-    const merged =
-      [...all, ...personal]
+    const merged = [
 
-        .filter((n,i,a) =>
-          a.findIndex(x => x.id === n.id) === i
-        )
+      ...all,
+      ...personal
 
-        .filter(n => {
+    ]
 
-          // إشعار شخصي
-          if (n.targetUserId === user.uid) {
-            return true;
-          }
+    .filter(
+      (n,i,a) =>
+        a.findIndex(
+          x => x.id === n.id
+        ) === i
+    )
 
-          // مش إشعار عام
-          if (n.target !== "all") {
-            return false;
-          }
+    .filter(n => {
 
-          // عام لكل العملاء
-          if (!n.customerType) {
-            return true;
-          }
+      if(n.targetUserId === user.uid){
 
-          // حسب نوع العميل
-          return n.customerType === customerTypeValue;
+        return true;
 
-        })
+      }
 
-        .sort((a,b) => {
+      if(n.target !== "all"){
 
-          const ad =
-            a.createdAt?.toMillis?.() || 0;
+        return false;
 
-          const bd =
-            b.createdAt?.toMillis?.() || 0;
+      }
 
-          return bd - ad;
+      if(!n.customerType){
 
-        })
+        return true;
 
-        .slice(0,30);
+      }
 
-    // =================================================
-    // Unread Count
-    // =================================================
+      return (
+        n.customerType ===
+        customerTypeValue
+      );
+
+    })
+
+    .sort((a,b) => {
+
+      const ad =
+        a.createdAt?.toMillis?.() || 0;
+
+      const bd =
+        b.createdAt?.toMillis?.() || 0;
+
+      return bd - ad;
+
+    })
+
+    .slice(0,30);
 
     const unread =
-      merged.filter(n => n.read !== true);
+      merged.filter(
+        n => n.read !== true
+      );
 
     badgeEl.textContent =
       unread.length > 99
-        ? "99+"
-        : String(unread.length);
+      ? "99+"
+      : String(unread.length);
 
     badgeEl.style.display =
       unread.length
-        ? "flex"
-        : "none";
+      ? "flex"
+      : "none";
 
-    // =================================================
-    // List
-    // =================================================
+    // =====================================================
+    // HTML الإشعارات
+    // =====================================================
 
     listEl.innerHTML =
-
       merged.length
 
-        ? merged.map(n => `
+      ?
 
-          <div
-            class="m2mNotifItem ${n.read ? "" : "unread"}"
-            data-notif-id="${n.id}"
-          >
+      merged.map(n => `
 
-            <b>
-              ${escapeNotificationText(
-                n.title || "إشعار جديد"
-              )}
-            </b>
+        <div
+          class="m2mNotifItem ${
+            n.read ? "" : "unread"
+          }"
+          data-notif-id="${n.id}"
+        >
 
-            <p>
-              ${escapeNotificationText(
-                n.message || ""
-              )}
-            </p>
+          <b>
+            ${escapeNotificationText(
+              n.title || "إشعار جديد"
+            )}
+          </b>
 
-            <small>
-              ${notificationDate(n.createdAt)}
-            </small>
+          <p>
+            ${escapeNotificationText(
+              n.message || ""
+            )}
+          </p>
 
-          </div>
+          <small>
+            ${notificationDate(
+              n.createdAt
+            )}
+          </small>
 
-        `).join("")
+        </div>
 
-        :
+      `).join("")
 
-        `
+      :
+
+      `
         <div class="m2mNotifEmpty">
           لا توجد إشعارات حتى الآن.
         </div>
-        `;
+      `;
 
-    // =================================================
-    // Click Notification
-    // =================================================
+    // =====================================================
+    // الضغط على إشعار
+    // =====================================================
 
     listEl
-      .querySelectorAll("[data-notif-id]")
+      .querySelectorAll(
+        "[data-notif-id]"
+      )
       .forEach(item => {
 
-        item.addEventListener("click", async () => {
+        item.addEventListener(
+          "click",
+          async () => {
 
-          const id =
-            item.dataset.notifId;
+            const id =
+              item.dataset.notifId;
 
-          const n =
-            merged.find(x => x.id === id);
+            const n =
+              merged.find(
+                x => x.id === id
+              );
 
-          try {
+            try{
 
-            if (n && n.read !== true) {
+              if(
+                n &&
+                n.read !== true
+              ){
 
-              await updateDoc(
-                doc(
-                  db,
-                  "notifications",
-                  id
-                ),
-                {
-                  read:true
-                }
+                await updateDoc(
+                  doc(
+                    db,
+                    "notifications",
+                    id
+                  ),
+                  {
+                    read:true
+                  }
+                );
+
+              }
+
+              if(n?.link){
+
+                window.location.href =
+                  n.link;
+
+              }
+
+            }catch(error){
+
+              console.error(
+                "2M notification read error:",
+                error
               );
 
             }
 
-            if (n?.link) {
-
-              window.location.href =
-                n.link;
-
-            }
-
-          } catch(error) {
-
-            console.error(
-              "2M notification read error:",
-              error
-            );
-
           }
-
-        });
+        );
 
       });
 
   };
 
-  // ===================================================
-  // ALL CUSTOMERS
-  // ===================================================
+  // =====================================================
+  // إشعارات للجميع
+  // =====================================================
 
-  const stopAll = onSnapshot(
+  const stopAll =
+    onSnapshot(
 
-    query(
-      collection(db,"notifications"),
-      where("target","==","all")
-    ),
+      query(
+        collection(
+          db,
+          "notifications"
+        ),
+        where(
+          "target",
+          "==",
+          "all"
+        )
+      ),
 
-    snapshot => {
+      snapshot => {
 
-      all =
-        snapshot.docs.map(
-          d => ({
-            id:d.id,
-            ...d.data()
-          })
+        all =
+          snapshot.docs.map(
+            d => ({
+              id:d.id,
+              ...d.data()
+            })
+          );
+
+        render();
+
+      },
+
+      error => {
+
+        console.error(
+          "2M public notifications listener error:",
+          error
         );
 
-      render();
+      }
 
-    },
+    );
 
-    error => {
+  // =====================================================
+  // إشعارات شخصية
+  // =====================================================
 
-      console.error(
-        "2M public notifications listener error:",
-        error
-      );
+  const stopPersonal =
+    onSnapshot(
 
-    }
+      query(
+        collection(
+          db,
+          "notifications"
+        ),
+        where(
+          "targetUserId",
+          "==",
+          user.uid
+        )
+      ),
 
-  );
+      snapshot => {
 
-  // ===================================================
-  // PERSONAL
-  // ===================================================
+        personal =
+          snapshot.docs.map(
+            d => ({
+              id:d.id,
+              ...d.data()
+            })
+          );
 
-  const stopPersonal = onSnapshot(
+        render();
 
-    query(
-      collection(db,"notifications"),
-      where(
-        "targetUserId",
-        "==",
-        user.uid
-      )
-    ),
+      },
 
-    snapshot => {
+      error => {
 
-      personal =
-        snapshot.docs.map(
-          d => ({
-            id:d.id,
-            ...d.data()
-          })
+        console.error(
+          "2M personal notifications listener error:",
+          error
         );
 
-      render();
+      }
 
-    },
-
-    error => {
-
-      console.error(
-        "2M personal notifications listener error:",
-        error
-      );
-
-    }
-
-  );
+    );
 
   stopNotifications = () => {
 
     stopAll();
+
     stopPersonal();
 
   };
@@ -549,43 +631,53 @@ function startNotifications(user, customerData) {
 }
 
 // =====================================================
-// Escape Notification Text
+// حماية نصوص الإشعارات
 // =====================================================
 
-function escapeNotificationText(value) {
+function escapeNotificationText(value){
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[c])
-    );
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    c => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    }[c])
+  );
 
 }
 
 // =====================================================
-// Show Profile
+// عرض حساب العميل
 // =====================================================
 
-function showProfile(user) {
+function showProfile(user){
 
-  if (loginBtn) {
-    loginBtn.style.display = "none";
+  if(loginBtn){
+
+    loginBtn.style.display =
+      "none";
+
   }
 
-  if (profileBox) {
-    profileBox.style.display = "flex";
+  if(profileBox){
+
+    profileBox.style.display =
+      "flex";
+
   }
 
   const displayName =
-    user.displayName || "مستخدم";
+    user.displayName ||
+    "مستخدم";
 
-  if (user.photoURL) {
+  if(user.photoURL){
 
     let cleanUrl =
       user.photoURL.replace(
@@ -593,11 +685,11 @@ function showProfile(user) {
         "https://"
       );
 
-    if (
+    if(
       cleanUrl.includes(
         "googleusercontent.com"
       )
-    ) {
+    ){
 
       cleanUrl =
         cleanUrl.replace(
@@ -607,24 +699,33 @@ function showProfile(user) {
 
     }
 
-    if (photoEl) {
+    if(photoEl){
 
-      photoEl.src = cleanUrl;
-      photoEl.style.display = "block";
+      photoEl.src =
+        cleanUrl;
+
+      photoEl.style.display =
+        "block";
 
     }
 
-    if (letterEl) {
-      letterEl.style.display = "none";
+    if(letterEl){
+
+      letterEl.style.display =
+        "none";
+
     }
 
-  } else {
+  }else{
 
-    if (photoEl) {
-      photoEl.style.display = "none";
+    if(photoEl){
+
+      photoEl.style.display =
+        "none";
+
     }
 
-    if (letterEl) {
+    if(letterEl){
 
       letterEl.innerText =
         displayName
@@ -642,81 +743,105 @@ function showProfile(user) {
 }
 
 // =====================================================
-// Show Login
+// إظهار تسجيل الدخول
 // =====================================================
 
-function showLogin() {
+function showLogin(){
 
-  if (loginBtn) {
+  if(loginBtn){
 
-    loginBtn.style.display = "flex";
-    loginBtn.disabled = false;
+    loginBtn.style.display =
+      "flex";
+
+    loginBtn.disabled =
+      false;
 
   }
 
-  if (profileBox) {
-    profileBox.style.display = "none";
+  if(profileBox){
+
+    profileBox.style.display =
+      "none";
+
   }
 
-  if (whatsappModal) {
-    whatsappModal.style.display = "none";
+  if(whatsappModal){
+
+    whatsappModal.style.display =
+      "none";
+
   }
 
-  if (welcomeGiftModal) {
-    welcomeGiftModal.style.display = "none";
+  if(welcomeGiftModal){
+
+    welcomeGiftModal.style.display =
+      "none";
+
   }
 
 }
 
 // =====================================================
-// Auth Error
+// أخطاء Firebase
 // =====================================================
 
-function explainAuthError(error) {
+function explainAuthError(error){
 
   const code =
     error?.code || "";
 
-  if (
+  if(
     code ===
     "auth/popup-closed-by-user"
-  ) {
+  ){
+
     return "تم إغلاق نافذة تسجيل الدخول.";
+
   }
 
-  if (
+  if(
     code ===
     "auth/popup-blocked"
-  ) {
+  ){
+
     return "المتصفح منع نافذة Google. اسمح بالنوافذ المنبثقة للموقع ثم حاول مرة أخرى.";
+
   }
 
-  if (
+  if(
     code ===
     "auth/unauthorized-domain"
-  ) {
+  ){
+
     return "الدومين الحالي غير مضاف في Firebase. أضف دومين الموقع من Authentication > Settings > Authorized domains.";
+
   }
 
-  if (
+  if(
     code ===
     "auth/operation-not-allowed"
-  ) {
+  ){
+
     return "تسجيل الدخول بواسطة Google غير مفعّل في Firebase Authentication.";
+
   }
 
-  if (
+  if(
     code ===
     "auth/network-request-failed"
-  ) {
+  ){
+
     return "مشكلة في الإنترنت. حاول مرة أخرى.";
+
   }
 
-  if (
+  if(
     code ===
     "auth/cancelled-popup-request"
-  ) {
+  ){
+
     return "تم إلغاء نافذة تسجيل الدخول السابقة.";
+
   }
 
   return "حصل خطأ أثناء تسجيل الدخول. افتح Console لو استمرت المشكلة.";
@@ -724,16 +849,17 @@ function explainAuthError(error) {
 }
 
 // =====================================================
-// Google Login
+// تسجيل الدخول Google
 // =====================================================
 
-if (loginBtn) {
+if(loginBtn){
 
   loginBtn.addEventListener(
     "click",
     async () => {
 
-      loginBtn.disabled = true;
+      loginBtn.disabled =
+        true;
 
       const oldText =
         loginBtn.innerText;
@@ -741,17 +867,14 @@ if (loginBtn) {
       loginBtn.innerText =
         "جاري تسجيل الدخول...";
 
-      try {
+      try{
 
         await signInWithPopup(
           auth,
           provider
         );
 
-        // onAuthStateChanged
-        // يتولى باقي الخطوات
-
-      } catch (error) {
+      }catch(error){
 
         console.error(
           "2M Elshazly Google Login Error:",
@@ -762,8 +885,11 @@ if (loginBtn) {
           explainAuthError(error)
         );
 
-        loginBtn.disabled = false;
-        loginBtn.innerText = oldText;
+        loginBtn.disabled =
+          false;
+
+        loginBtn.innerText =
+          oldText;
 
       }
 
@@ -773,22 +899,28 @@ if (loginBtn) {
 }
 
 // =====================================================
-// Prepare User Document
+// إنشاء / تجهيز حساب العميل
 // =====================================================
 
-async function prepareUserDocument(user) {
+async function prepareUserDocument(user){
 
   const userRef =
-    doc(db,"users",user.uid);
+    doc(
+      db,
+      "users",
+      user.uid
+    );
 
   const snap =
-    await getDoc(userRef);
+    await getDoc(
+      userRef
+    );
 
-  // ===================================================
-  // New User
-  // ===================================================
+  // =====================================================
+  // عميل جديد
+  // =====================================================
 
-  if (!snap.exists()) {
+  if(!snap.exists()){
 
     await runTransaction(
       db,
@@ -799,8 +931,10 @@ async function prepareUserDocument(user) {
             userRef
           );
 
-        if (fresh.exists()) {
+        if(fresh.exists()){
+
           return;
+
         }
 
         transaction.set(
@@ -814,10 +948,12 @@ async function prepareUserDocument(user) {
               "مستخدم جديد",
 
             email:
-              user.email || "",
+              user.email ||
+              "",
 
             photoURL:
-              user.photoURL || "",
+              user.photoURL ||
+              "",
 
             whatsapp:"",
 
@@ -831,7 +967,8 @@ async function prepareUserDocument(user) {
 
             firstLoginBonusAwarded:false,
 
-            welcomeGiftStatus:"available",
+            welcomeGiftStatus:
+              "available",
 
             welcomeGiftType:"",
 
@@ -864,22 +1001,26 @@ async function prepareUserDocument(user) {
 
   }
 
-  // ===================================================
-  // Existing User
-  // ===================================================
+  // =====================================================
+  // حساب موجود
+  // =====================================================
 
   const d =
     snap.data();
 
   const patch = {};
 
-  if (d.points === undefined) {
+  if(
+    d.points === undefined
+  ){
+
     patch.points = 0;
+
   }
 
-  if (
+  if(
     d.lifetimePoints === undefined
-  ) {
+  ){
 
     patch.lifetimePoints =
       Number(
@@ -890,9 +1031,9 @@ async function prepareUserDocument(user) {
 
   }
 
-  if (
+  if(
     d.totalPointsEarned === undefined
-  ) {
+  ){
 
     patch.totalPointsEarned =
       Number(
@@ -903,7 +1044,9 @@ async function prepareUserDocument(user) {
 
   }
 
-  if (d.level === undefined) {
+  if(
+    d.level === undefined
+  ){
 
     const lifetime =
       Number(
@@ -915,22 +1058,24 @@ async function prepareUserDocument(user) {
 
     patch.level =
       lifetime >= VIP_THRESHOLD
-        ? "VIP"
-        : "NORMAL";
+      ? "VIP"
+      : "NORMAL";
 
   }
 
-  // الحسابات القديمة لا تحصل على هدية تسجيل بأثر رجعي
-  if (
+  // الحسابات القديمة لا تحصل على الهدية بأثر رجعي
+  if(
     d.welcomeGiftStatus === undefined
-  ) {
+  ){
 
     patch.welcomeGiftStatus =
       "used";
 
   }
 
-  if (Object.keys(patch).length) {
+  if(
+    Object.keys(patch).length
+  ){
 
     await runTransaction(
       db,
@@ -961,54 +1106,67 @@ async function prepareUserDocument(user) {
 }
 
 // =====================================================
-// Phone + Welcome Gift
+// فحص رقم الهاتف والهدية
 // =====================================================
 
-async function checkPhoneAndGift(user) {
+async function checkPhoneAndGift(user){
 
   const data =
-    await prepareUserDocument(user);
+    await prepareUserDocument(
+      user
+    );
 
   const phone =
     String(
       data?.whatsapp || ""
     ).trim();
 
-  if (!phone) {
+  if(!phone){
 
-    if (whatsappInput) {
-      whatsappInput.value = "";
+    if(whatsappInput){
+
+      whatsappInput.value =
+        "";
+
     }
 
-    if (whatsappModal) {
+    if(whatsappModal){
+
       whatsappModal.style.display =
         "flex";
+
     }
 
     return;
 
   }
 
-  if (whatsappModal) {
+  if(whatsappModal){
+
     whatsappModal.style.display =
       "none";
+
   }
 
-  if (
+  if(
     data?.welcomeGiftStatus ===
     "available"
-  ) {
+  ){
 
-    if (welcomeGiftModal) {
+    if(welcomeGiftModal){
+
       welcomeGiftModal.style.display =
         "flex";
+
     }
 
-  } else {
+  }else{
 
-    if (welcomeGiftModal) {
+    if(welcomeGiftModal){
+
       welcomeGiftModal.style.display =
         "none";
+
     }
 
   }
@@ -1016,14 +1174,14 @@ async function checkPhoneAndGift(user) {
 }
 
 // =====================================================
-// Auth State
+// مراقبة حالة تسجيل الدخول
 // =====================================================
 
 onAuthStateChanged(
   auth,
   async user => {
 
-    if (!user) {
+    if(!user){
 
       showLogin();
 
@@ -1033,7 +1191,7 @@ onAuthStateChanged(
 
     showProfile(user);
 
-    try {
+    try{
 
       const userData =
         await prepareUserDocument(
@@ -1049,19 +1207,21 @@ onAuthStateChanged(
         user
       );
 
-    } catch (error) {
+    }catch(error){
 
       console.error(
         "2M Elshazly account setup error:",
         error
       );
 
-      if (whatsappModal) {
+      if(whatsappModal){
+
         whatsappModal.style.display =
           "flex";
+
       }
 
-      if (whatsappError) {
+      if(whatsappError){
 
         whatsappError.style.display =
           "block";
@@ -1077,10 +1237,10 @@ onAuthStateChanged(
 );
 
 // =====================================================
-// Save Phone
+// حفظ رقم الهاتف
 // =====================================================
 
-if (saveWhatsappBtn) {
+if(saveWhatsappBtn){
 
   saveWhatsappBtn.addEventListener(
     "click",
@@ -1098,13 +1258,13 @@ if (saveWhatsappBtn) {
           ""
         );
 
-      if (
+      if(
         !/^01[0125][0-9]{8}$/.test(
           cleanNumber
         )
-      ) {
+      ){
 
-        if (whatsappError) {
+        if(whatsappError){
 
           whatsappError.style.display =
             "block";
@@ -1121,8 +1281,10 @@ if (saveWhatsappBtn) {
       const user =
         auth.currentUser;
 
-      if (!user) {
+      if(!user){
+
         return;
+
       }
 
       saveWhatsappBtn.disabled =
@@ -1131,7 +1293,7 @@ if (saveWhatsappBtn) {
       saveWhatsappBtn.innerText =
         "جاري الحفظ... ⏳";
 
-      try {
+      try{
 
         const userRef =
           doc(
@@ -1151,8 +1313,8 @@ if (saveWhatsappBtn) {
 
             const old =
               snap.exists()
-                ? snap.data()
-                : {};
+              ? snap.data()
+              : {};
 
             const lifetime =
               Number(
@@ -1202,8 +1364,8 @@ if (saveWhatsappBtn) {
                 level:
                   lifetime >=
                   VIP_THRESHOLD
-                    ? "VIP"
-                    : "NORMAL",
+                  ? "VIP"
+                  : "NORMAL",
 
                 updatedAt:
                   serverTimestamp()
@@ -1217,26 +1379,32 @@ if (saveWhatsappBtn) {
           }
         );
 
-        if (whatsappError) {
+        if(whatsappError){
+
           whatsappError.style.display =
             "none";
+
         }
 
-        if (whatsappModal) {
+        if(whatsappModal){
+
           whatsappModal.style.display =
             "none";
+
         }
 
         const fresh =
-          await getDoc(userRef);
+          await getDoc(
+            userRef
+          );
 
-        if (
+        if(
           fresh.exists() &&
           fresh.data()?.welcomeGiftStatus ===
-            "available"
-        ) {
+          "available"
+        ){
 
-          if (welcomeGiftModal) {
+          if(welcomeGiftModal){
 
             welcomeGiftModal.style.display =
               "flex";
@@ -1245,14 +1413,14 @@ if (saveWhatsappBtn) {
 
         }
 
-      } catch (error) {
+      }catch(error){
 
         console.error(
           "2M Elshazly phone save error:",
           error
         );
 
-        if (whatsappError) {
+        if(whatsappError){
 
           whatsappError.style.display =
             "block";
@@ -1262,7 +1430,7 @@ if (saveWhatsappBtn) {
 
         }
 
-      } finally {
+      }finally{
 
         saveWhatsappBtn.disabled =
           false;
@@ -1278,29 +1446,35 @@ if (saveWhatsappBtn) {
 }
 
 // =====================================================
-// Welcome Gift
+// اختيار الهدية الترحيبية
 // =====================================================
 
-async function chooseWelcomeGift(type) {
+async function chooseWelcomeGift(type){
 
   const user =
     auth.currentUser;
 
-  if (!user) {
+  if(!user){
+
     return;
+
   }
 
-  if (chooseDiscountGift) {
+  if(chooseDiscountGift){
+
     chooseDiscountGift.disabled =
       true;
+
   }
 
-  if (chooseFreeGamesGift) {
+  if(chooseFreeGamesGift){
+
     chooseFreeGamesGift.disabled =
       true;
+
   }
 
-  try {
+  try{
 
     const userRef =
       doc(
@@ -1318,19 +1492,21 @@ async function chooseWelcomeGift(type) {
             userRef
           );
 
-        if (!snap.exists()) {
+        if(!snap.exists()){
+
           throw new Error(
             "حساب العميل غير موجود"
           );
+
         }
 
         const d =
           snap.data();
 
-        if (
+        if(
           d.welcomeGiftStatus !==
           "available"
-        ) {
+        ){
 
           throw new Error(
             "الهدية تم استخدامها بالفعل"
@@ -1344,8 +1520,8 @@ async function chooseWelcomeGift(type) {
 
             welcomeGiftStatus:
               type === "discount20"
-                ? "discount20"
-                : "free10_pending",
+              ? "discount20"
+              : "free10_pending",
 
             welcomeGiftType:
               type,
@@ -1364,17 +1540,19 @@ async function chooseWelcomeGift(type) {
       }
     );
 
-    if (welcomeGiftModal) {
+    if(welcomeGiftModal){
+
       welcomeGiftModal.style.display =
         "none";
+
     }
 
-    if (type === "free10") {
+    if(type === "free10"){
 
       window.location.href =
         "games.html?welcomeGift=free10";
 
-    } else {
+    }else{
 
       alert(
         "🎉 تم تفعيل خصم 20% على أول طلب لك من 2M Elshazly!"
@@ -1382,7 +1560,7 @@ async function chooseWelcomeGift(type) {
 
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "2M Elshazly welcome gift error:",
@@ -1394,21 +1572,27 @@ async function chooseWelcomeGift(type) {
       "حصل خطأ أثناء اختيار الهدية."
     );
 
-    if (welcomeGiftModal) {
+    if(welcomeGiftModal){
+
       welcomeGiftModal.style.display =
         "flex";
+
     }
 
-  } finally {
+  }finally{
 
-    if (chooseDiscountGift) {
+    if(chooseDiscountGift){
+
       chooseDiscountGift.disabled =
         false;
+
     }
 
-    if (chooseFreeGamesGift) {
+    if(chooseFreeGamesGift){
+
       chooseFreeGamesGift.disabled =
         false;
+
     }
 
   }
@@ -1416,10 +1600,10 @@ async function chooseWelcomeGift(type) {
 }
 
 // =====================================================
-// Welcome Gift Buttons
+// أزرار الهدايا
 // =====================================================
 
-if (chooseDiscountGift) {
+if(chooseDiscountGift){
 
   chooseDiscountGift.addEventListener(
     "click",
@@ -1431,7 +1615,7 @@ if (chooseDiscountGift) {
 
 }
 
-if (chooseFreeGamesGift) {
+if(chooseFreeGamesGift){
 
   chooseFreeGamesGift.addEventListener(
     "click",
@@ -1444,7 +1628,7 @@ if (chooseFreeGamesGift) {
 }
 
 // =====================================================
-// Exports
+// Export
 // =====================================================
 
 export {
