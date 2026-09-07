@@ -135,10 +135,6 @@
     gap:6px !important;
   }
 }
-/* ===== Notification Bell Position ===== */
-/* ننزل أيقونة الإشعارات والعداد الأحمر معًا قليلًا */
-#m2mNotificationWrap{top:26px !important;}
-
 </style>
 
 
@@ -173,6 +169,14 @@
   "address":{"@type":"PostalAddress","addressLocality":"العجمي","addressRegion":"الإسكندرية","addressCountry":"EG"}
 }
 </script>
+
+<!-- 2M Elshazly - ضبط مكان أيقونة الإشعارات بجانب تسجيل الدخول -->
+<style id="2m-notification-position-fix">
+  #m2mNotificationWrap {
+    top: 16px !important;
+    right: 18px !important;
+  }
+</style>
 </head>
 <body>
 
@@ -1166,3 +1170,4 @@ document.addEventListener('change', function(e){
 </div></section>
 </body>
 </html>
+
