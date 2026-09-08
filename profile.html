@@ -1,354 +1,2606 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الملف الشخصي | 2M Elshazly Store</title>
-    
-    <!-- خطوط و أيكونات -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
 
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+  <meta charset="UTF-8">
 
-        .profile-card {
-            background: #1e1e1e;
-            width: 100%;
-            max-width: 420px;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            border: 1px solid #333;
-        }
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-        .back-home {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #0070d1;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
+  <title>حسابي | 2M Elshazly</title>
 
-        .profile-img-container {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px auto;
-        }
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
 
-        #userAvatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #0070d1;
-            display: none;
-        }
+  <!-- Boxicons -->
+  <link
+    href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+    rel="stylesheet"
+  >
 
-        #userLetter {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #0070d1;
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            border: 3px solid #0070d1;
-        }
+  <style>
 
-        .profile-info {
-            margin-bottom: 25px;
-        }
+    /* ==========================================
+       RESET
+    ========================================== */
 
-        .profile-info h2 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-            color: #fff;
-        }
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:'Cairo',sans-serif;
+    }
 
-        .profile-info p {
-            color: #aaa;
-            font-size: 0.95rem;
-            word-break: break-all;
-        }
 
-        .logout-btn {
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+    /* ==========================================
+       BODY
+    ========================================== */
 
-        .logout-btn:hover {
-            background-color: #c9302c;
-        }
+    body{
 
-        .loading-text {
-            color: #777;
-            font-size: 1.1rem;
-        }
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(255,132,0,.12),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at bottom left,
+          rgba(0,112,209,.08),
+          transparent 35%
+        ),
+        #090909;
 
-        .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
-        .stat-box{background:#121212;border:1px solid #333;border-radius:14px;padding:14px}
-        .stat-box .label{color:#999;font-size:.78rem}
-        .stat-box .value{font-size:1.25rem;font-weight:800;margin-top:4px}
-        .gift-card{margin:18px 0;background:linear-gradient(145deg,#171717,#222);border:1px solid #0070d1;border-radius:16px;padding:18px;text-align:right}
-        .gift-card h3{margin-bottom:7px;color:#60a5fa}
-        .gift-card p{color:#aaa;font-size:.86rem;line-height:1.7;margin-bottom:12px}
-        .gift-status{display:inline-block;padding:5px 9px;border-radius:20px;background:#123b1e;color:#7ee2a8;font-size:.76rem;margin-bottom:10px}
-        .gift-actions{display:grid;grid-template-columns:1fr;gap:8px}
-        .gift-actions button{border:0;border-radius:10px;padding:11px;font-family:inherit;font-weight:700;cursor:pointer}
-        .discount-btn{background:#0070d1;color:#fff}
-        .games-btn{background:#2b2b2b;color:#fff;border:1px solid #444 !important}
-        .later-btn{background:transparent;color:#aaa;border:1px solid #444 !important}
-        .orders-card{margin:18px 0;text-align:right}
-        .orders-title{font-size:1.1rem;margin-bottom:10px}
-        .order-item{background:#121212;border:1px solid #333;border-radius:13px;padding:12px;margin-bottom:9px}
-        .order-item strong{display:block;margin-bottom:5px}
-        .order-meta{color:#999;font-size:.78rem;line-height:1.7}
-        .customer-badge{display:inline-block;margin-top:8px;padding:5px 9px;border-radius:20px;background:#252525;color:#ddd;font-size:.75rem}
-        .profile-section-btn{display:block;text-decoration:none;text-align:center;background:#252525;color:#fff;padding:11px;border-radius:10px;margin-top:10px}
-    </style>
+      color:#fff;
+
+      min-height:100vh;
+
+      padding:18px 12px 40px;
+
+    }
+
+
+    /* ==========================================
+       PAGE
+    ========================================== */
+
+    .page{
+
+      width:100%;
+
+      max-width:850px;
+
+      margin:auto;
+
+    }
+
+
+    /* ==========================================
+       TOP BAR
+    ========================================== */
+
+    .topbar{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:12px;
+
+      margin-bottom:18px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.05),
+          rgba(255,255,255,.015)
+        );
+
+      border:1px solid #282828;
+
+      border-radius:18px;
+
+      padding:12px;
+
+      backdrop-filter:blur(12px);
+
+    }
+
+
+    .back-home{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:6px;
+
+      color:#fff;
+
+      text-decoration:none;
+
+      background:#181818;
+
+      border:1px solid #333;
+
+      padding:9px 13px;
+
+      border-radius:12px;
+
+      font-weight:800;
+
+      transition:.2s;
+
+    }
+
+
+    .back-home:hover{
+
+      border-color:#ff8500;
+
+      transform:translateY(-1px);
+
+    }
+
+
+    .back-home i{
+
+      font-size:20px;
+
+    }
+
+
+    .brand{
+
+      font-size:1.05rem;
+
+      font-weight:900;
+
+      color:#ff9200;
+
+      letter-spacing:.3px;
+
+    }
+
+
+    /* ==========================================
+       CARDS
+    ========================================== */
+
+    .card{
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(28,28,28,.96),
+          rgba(15,15,15,.96)
+        );
+
+      border:1px solid #2d2d2d;
+
+      border-radius:24px;
+
+      padding:22px;
+
+      margin-bottom:16px;
+
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.35);
+
+    }
+
+
+    /* ==========================================
+       PROFILE HEADER
+    ========================================== */
+
+    .profile-head{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:17px;
+
+    }
+
+
+    .avatar{
+
+      width:92px;
+
+      height:92px;
+
+      border-radius:50%;
+
+      border:3px solid #ff8500;
+
+      object-fit:cover;
+
+      flex:none;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ff8500,
+          #0070d1
+        );
+
+      box-shadow:
+        0 0 25px rgba(255,133,0,.18);
+
+    }
+
+
+    #userLetter{
+
+      display:none;
+
+      align-items:center;
+
+      justify-content:center;
+
+      color:#fff;
+
+      font-size:2.2rem;
+
+      font-weight:900;
+
+    }
+
+
+    .name{
+
+      font-size:1.45rem;
+
+      font-weight:900;
+
+      margin-bottom:3px;
+
+    }
+
+
+    .email,
+    .phone{
+
+      color:#aaa;
+
+      font-size:.9rem;
+
+      word-break:break-word;
+
+      line-height:1.8;
+
+    }
+
+
+    .badge{
+
+      display:inline-flex;
+
+      align-items:center;
+
+      gap:5px;
+
+      margin-top:8px;
+
+      padding:5px 11px;
+
+      border-radius:999px;
+
+      font-size:.78rem;
+
+      font-weight:900;
+
+      background:#202020;
+
+      border:1px solid #3a3a3a;
+
+    }
+
+
+    .badge.vip{
+
+      background:#302400;
+
+      border-color:#806500;
+
+      color:#ffd84d;
+
+    }
+
+
+    /* ==========================================
+       STATS
+    ========================================== */
+
+    .stats{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:11px;
+
+      margin-top:22px;
+
+    }
+
+
+    .stat{
+
+      position:relative;
+
+      overflow:hidden;
+
+      background:
+        linear-gradient(
+          145deg,
+          #171717,
+          #101010
+        );
+
+      border:1px solid #2b2b2b;
+
+      border-radius:18px;
+
+      padding:17px 10px;
+
+      text-align:center;
+
+      transition:.2s;
+
+    }
+
+
+    .stat:hover{
+
+      transform:translateY(-2px);
+
+      border-color:#454545;
+
+    }
+
+
+    .stat i{
+
+      font-size:1.7rem;
+
+      color:#ff8a00;
+
+    }
+
+
+    .stat-value{
+
+      font-size:1.45rem;
+
+      font-weight:900;
+
+      margin-top:4px;
+
+    }
+
+
+    .stat-label{
+
+      font-size:.75rem;
+
+      color:#999;
+
+      margin-top:2px;
+
+    }
+
+
+    .note{
+
+      color:#777;
+
+      font-size:.77rem;
+
+      margin-top:13px;
+
+      text-align:center;
+
+    }
+
+
+    /* ==========================================
+       SECTION TITLE
+    ========================================== */
+
+    .section-title{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:8px;
+
+      font-size:1.12rem;
+
+      font-weight:900;
+
+      margin-bottom:14px;
+
+    }
+
+
+    .section-title i{
+
+      color:#ff8a00;
+
+      font-size:23px;
+
+    }
+
+
+    /* ==========================================
+       GIFT
+    ========================================== */
+
+    .gift{
+
+      position:relative;
+
+      overflow:hidden;
+
+      border:1px solid #493617;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,140,0,.13),
+          rgba(255,140,0,.025)
+        );
+
+      border-radius:18px;
+
+      padding:18px;
+
+    }
+
+
+    .gift-title{
+
+      font-weight:900;
+
+      font-size:1rem;
+
+      color:#ffad42;
+
+    }
+
+
+    .gift-text{
+
+      color:#aaa;
+
+      font-size:.86rem;
+
+      margin-top:6px;
+
+      line-height:1.8;
+
+    }
+
+
+    /* ==========================================
+       ORDERS HEADER
+    ========================================== */
+
+    .orders-head{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:10px;
+
+      margin-bottom:14px;
+
+    }
+
+
+    .orders-count{
+
+      background:#222;
+
+      border:1px solid #383838;
+
+      color:#ff9a24;
+
+      border-radius:999px;
+
+      padding:4px 10px;
+
+      font-size:.76rem;
+
+      font-weight:900;
+
+    }
+
+
+    /* ==========================================
+       ORDERS
+    ========================================== */
+
+    .orders{
+
+      display:flex;
+
+      flex-direction:column;
+
+      gap:12px;
+
+    }
+
+
+    .order{
+
+      position:relative;
+
+      overflow:hidden;
+
+      background:
+        linear-gradient(
+          145deg,
+          #171717,
+          #101010
+        );
+
+      border:1px solid #2d2d2d;
+
+      border-radius:19px;
+
+      padding:17px;
+
+      transition:.2s;
+
+    }
+
+
+    .order:hover{
+
+      border-color:#484848;
+
+    }
+
+
+    .order::before{
+
+      content:"";
+
+      position:absolute;
+
+      right:0;
+
+      top:0;
+
+      bottom:0;
+
+      width:3px;
+
+      background:#ff8500;
+
+    }
+
+
+    .order-top{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      gap:10px;
+
+      align-items:center;
+
+    }
+
+
+    .order-id{
+
+      font-weight:900;
+
+      font-size:.95rem;
+
+    }
+
+
+    .status{
+
+      padding:5px 10px;
+
+      border-radius:999px;
+
+      font-size:.72rem;
+
+      font-weight:900;
+
+      white-space:nowrap;
+
+    }
+
+
+    .status.pending{
+
+      background:#2c2500;
+
+      color:#ffd84d;
+
+      border:1px solid #574c00;
+
+    }
+
+
+    .status.completed{
+
+      background:#092d18;
+
+      color:#63e69a;
+
+      border:1px solid #165a32;
+
+    }
+
+
+    .status.cancelled{
+
+      background:#351010;
+
+      color:#ff8c8c;
+
+      border:1px solid #632020;
+
+    }
+
+
+    .status.other{
+
+      background:#252525;
+
+      color:#ccc;
+
+      border:1px solid #383838;
+
+    }
+
+
+    /* ==========================================
+       ORDER SUMMARY
+    ========================================== */
+
+    .order-summary{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:8px;
+
+      margin-top:13px;
+
+    }
+
+
+    .order-box{
+
+      background:#0c0c0c;
+
+      border:1px solid #242424;
+
+      border-radius:12px;
+
+      padding:10px;
+
+    }
+
+
+    .order-box-label{
+
+      color:#777;
+
+      font-size:.7rem;
+
+      margin-bottom:2px;
+
+    }
+
+
+    .order-box-value{
+
+      color:#eee;
+
+      font-size:.82rem;
+
+      font-weight:800;
+
+    }
+
+
+    .price-value{
+
+      color:#ff9a24;
+
+      font-size:.95rem;
+
+      font-weight:900;
+
+    }
+
+
+    /* ==========================================
+       GAMES
+    ========================================== */
+
+    .games-title{
+
+      color:#aaa;
+
+      font-size:.78rem;
+
+      font-weight:800;
+
+      margin-top:13px;
+
+      margin-bottom:7px;
+
+    }
+
+
+    .games{
+
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:6px;
+
+    }
+
+
+    .game{
+
+      background:#202020;
+
+      border:1px solid #333;
+
+      border-radius:9px;
+
+      padding:5px 9px;
+
+      color:#ddd;
+
+      font-size:.72rem;
+
+      font-weight:700;
+
+    }
+
+
+    /* ==========================================
+       ORDER FOOTER
+    ========================================== */
+
+    .order-footer{
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      gap:10px;
+
+      margin-top:13px;
+
+      padding-top:11px;
+
+      border-top:1px solid #242424;
+
+    }
+
+
+    .points-earned{
+
+      color:#70d69a;
+
+      font-size:.76rem;
+
+      font-weight:800;
+
+    }
+
+
+    .points-used{
+
+      color:#d9a85b;
+
+      font-size:.76rem;
+
+      font-weight:800;
+
+    }
+
+
+    /* ==========================================
+       EMPTY
+    ========================================== */
+
+    .empty{
+
+      color:#777;
+
+      text-align:center;
+
+      padding:25px 10px;
+
+      background:#111;
+
+      border:1px dashed #303030;
+
+      border-radius:15px;
+
+      line-height:2;
+
+    }
+
+
+    /* ==========================================
+       LOGOUT
+    ========================================== */
+
+    .logout-btn{
+
+      width:100%;
+
+      border:1px solid #602323;
+
+      background:
+        linear-gradient(
+          135deg,
+          #351313,
+          #241010
+        );
+
+      color:#ff9a9a;
+
+      padding:13px;
+
+      border-radius:14px;
+
+      font-size:.95rem;
+
+      font-weight:900;
+
+      cursor:pointer;
+
+      transition:.2s;
+
+    }
+
+
+    .logout-btn:hover{
+
+      background:#431717;
+
+    }
+
+
+    /* ==========================================
+       LOADING
+    ========================================== */
+
+    .loading{
+
+      text-align:center;
+
+      color:#999;
+
+      padding:35px 20px;
+
+    }
+
+
+    .loading i{
+
+      color:#ff8a00;
+
+      font-size:24px;
+
+      vertical-align:middle;
+
+    }
+
+
+    /* ==========================================
+       MOBILE
+    ========================================== */
+
+    @media(max-width:650px){
+
+      body{
+
+        padding:
+          10px
+          10px
+          30px;
+
+      }
+
+
+      .card{
+
+        padding:16px;
+
+        border-radius:20px;
+
+      }
+
+
+      .topbar{
+
+        padding:10px;
+
+      }
+
+
+      .brand{
+
+        font-size:.92rem;
+
+      }
+
+
+      .back-home{
+
+        font-size:.78rem;
+
+        padding:8px 10px;
+
+      }
+
+
+      .profile-head{
+
+        align-items:flex-start;
+
+      }
+
+
+      .avatar{
+
+        width:76px;
+
+        height:76px;
+
+      }
+
+
+      .name{
+
+        font-size:1.15rem;
+
+      }
+
+
+      .email,
+      .phone{
+
+        font-size:.78rem;
+
+      }
+
+
+      .stats{
+
+        grid-template-columns:
+          repeat(3,1fr);
+
+        gap:7px;
+
+      }
+
+
+      .stat{
+
+        padding:
+          13px
+          5px;
+
+        border-radius:14px;
+
+      }
+
+
+      .stat i{
+
+        font-size:1.35rem;
+
+      }
+
+
+      .stat-value{
+
+        font-size:1.05rem;
+
+      }
+
+
+      .stat-label{
+
+        font-size:.64rem;
+
+      }
+
+
+      .order-top{
+
+        align-items:flex-start;
+
+      }
+
+
+      .order-id{
+
+        font-size:.82rem;
+
+      }
+
+
+      .status{
+
+        font-size:.64rem;
+
+        padding:4px 7px;
+
+      }
+
+
+      .order-summary{
+
+        grid-template-columns:
+          repeat(2,1fr);
+
+      }
+
+
+      .game{
+
+        font-size:.67rem;
+
+      }
+
+    }
+
+
+    @media(max-width:380px){
+
+      .stats{
+
+        grid-template-columns:1fr;
+
+      }
+
+
+      .profile-head{
+
+        flex-direction:column;
+
+        align-items:center;
+
+        text-align:center;
+
+      }
+
+
+      .badge{
+
+        margin-top:6px;
+
+      }
+
+    }
+
+  </style>
+
 </head>
+
+
 <body>
 
-    <div class="profile-card">
-        <a href="index.html" class="back-home">
-            <i class='bx bx-right-arrow-alt'></i> العودة للرئيسية
-        </a>
 
-        <div id="profileContent">
-            <p class="loading-text">جاري تحميل بيانات الحساب...</p>
-        </div>
+<div class="page">
+
+
+  <!-- ==========================================
+       TOP BAR
+  ========================================== -->
+
+  <div class="topbar">
+
+    <a
+      href="index.html"
+      class="back-home"
+    >
+
+      <i class="bx bx-right-arrow-alt"></i>
+
+      الرئيسية
+
+    </a>
+
+
+    <div class="brand">
+
+      2M Elshazly
+
     </div>
 
-    <!-- جافاسكريبت لربط الفايربيس وعرض البيانات -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+  </div>
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
-          authDomain: "m-elshazly-e19a2.firebaseapp.com",
-          projectId: "m-elshazly-e19a2",
-          storageBucket: "m-elshazly-e19a2.firebasestorage.app",
-          messagingSenderId: "1006926908276",
-          appId: "1:1006926908276:web:ff1274fcea961f251afa21",
-          measurementId: "G-HWXPWBVB75"
-        };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        const profileContent = document.getElementById("profileContent");
+  <!-- ==========================================
+       LOADING
+  ========================================== -->
 
-        async function chooseGiftFromProfile(type) {
-            const user = auth.currentUser;
-            if (!user) return;
+  <div
+    id="loading"
+    class="card loading"
+  >
 
-            const userRef = doc(db, "users", user.uid);
+    <i class="bx bx-loader-alt bx-spin"></i>
 
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const snap = await transaction.get(userRef);
-                    if (!snap.exists()) throw new Error("حساب العميل غير موجود");
+    جاري تحميل بيانات حسابك...
 
-                    const d = snap.data();
-                    const status = d.welcomeGiftStatus || "used";
-                    if (status !== "available" && status !== "deferred") {
-                        throw new Error("الهدية تم اختيارها أو استخدامها بالفعل");
+  </div>
+
+
+
+  <!-- ==========================================
+       PROFILE
+  ========================================== -->
+
+  <main
+    id="profilePage"
+    style="display:none"
+  >
+
+
+    <!-- PROFILE CARD -->
+
+    <section class="card">
+
+      <div class="profile-head">
+
+
+        <img
+          id="userAvatar"
+          class="avatar"
+          alt="صورة العميل"
+        >
+
+
+        <div
+          id="userLetter"
+          class="avatar"
+        ></div>
+
+
+        <div>
+
+          <div
+            id="userName"
+            class="name"
+          >
+            -
+          </div>
+
+
+          <div
+            id="userEmail"
+            class="email"
+          >
+            -
+          </div>
+
+
+          <div
+            id="userPhone"
+            class="phone"
+          >
+            📱 لم يتم تسجيل رقم الهاتف
+          </div>
+
+
+          <div
+            id="levelBadge"
+            class="badge"
+          >
+            ⭐ NORMAL
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- STATS -->
+
+      <div class="stats">
+
+
+        <div class="stat">
+
+          <i class="bx bx-coin-stack"></i>
+
+          <div
+            id="pointsValue"
+            class="stat-value"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            النقاط المتاحة
+          </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+          <i class="bx bx-trophy"></i>
+
+          <div
+            id="lifetimeValue"
+            class="stat-value"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            إجمالي النقاط
+          </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+          <i class="bx bx-receipt"></i>
+
+          <div
+            id="ordersCount"
+            class="stat-value"
+          >
+            0
+          </div>
+
+          <div class="stat-label">
+            الطلبات
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="note">
+
+        💰 كل 100 نقطة = 5 جنيه خصم
+        — أقل استبدال 1000 نقطة = 50 جنيه
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         WELCOME GIFT
+    ========================================== -->
+
+    <section class="card">
+
+      <div class="section-title">
+
+        <i class="bx bx-gift"></i>
+
+        هدية التسجيل
+
+      </div>
+
+
+      <div
+        id="giftBox"
+        class="gift"
+      ></div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         ORDERS
+    ========================================== -->
+
+    <section class="card">
+
+
+      <div class="orders-head">
+
+        <div class="section-title">
+
+          <i class="bx bx-shopping-bag"></i>
+
+          طلباتي
+
+        </div>
+
+
+        <div
+          id="ordersBadge"
+          class="orders-count"
+        >
+
+          0 طلب
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="ordersList"
+        class="orders"
+      ></div>
+
+
+    </section>
+
+
+
+    <!-- ==========================================
+         LOGOUT
+    ========================================== -->
+
+    <section class="card">
+
+      <button
+        id="logoutBtn"
+        class="logout-btn"
+      >
+
+        <i class="bx bx-log-out"></i>
+
+        تسجيل خروج
+
+      </button>
+
+    </section>
+
+
+  </main>
+
+</div>
+
+
+
+<script type="module">
+
+
+  /* ==========================================
+     FIREBASE
+  ========================================== */
+
+  import {
+    initializeApp
+  }
+  from
+  "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
+
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  }
+  from
+  "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+
+  import {
+
+    getFirestore,
+
+    doc,
+
+    getDoc,
+
+    collection,
+
+    query,
+
+    where,
+
+    getDocs
+
+  }
+  from
+  "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+
+
+  /* ==========================================
+     FIREBASE CONFIG
+  ========================================== */
+
+  const firebaseConfig = {
+
+    apiKey:
+      "AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
+
+    authDomain:
+      "m-elshazly-e19a2.firebaseapp.com",
+
+    projectId:
+      "m-elshazly-e19a2",
+
+    storageBucket:
+      "m-elshazly-e19a2.firebasestorage.app",
+
+    messagingSenderId:
+      "1006926908276",
+
+    appId:
+      "1:1006926908276:web:ff1274fcea961f251afa21",
+
+    measurementId:
+      "G-HWXPWBVB75"
+
+  };
+
+
+
+  const app =
+    initializeApp(firebaseConfig);
+
+
+  const auth =
+    getAuth(app);
+
+
+  const db =
+    getFirestore(app);
+
+
+
+  /* ==========================================
+     HELPERS
+  ========================================== */
+
+  const $ =
+    id =>
+      document.getElementById(id);
+
+
+
+  function money(value){
+
+    return Number(value || 0)
+      .toLocaleString(
+        "ar-EG",
+        {
+          maximumFractionDigits:2
+        }
+      );
+
+  }
+
+
+
+  function escapeHtml(value){
+
+    return String(value ?? "")
+      .replace(
+        /[&<>"']/g,
+        c => ({
+
+          "&":"&amp;",
+          "<":"&lt;",
+          ">":"&gt;",
+          '"':"&quot;",
+          "'":"&#039;"
+
+        }[c])
+      );
+
+  }
+
+
+
+  function formatDate(value){
+
+    if(!value)
+      return "التاريخ غير متاح";
+
+
+    try{
+
+      const date =
+        value?.toDate
+          ? value.toDate()
+          : new Date(value);
+
+
+      if(
+        isNaN(
+          date.getTime()
+        )
+      ){
+
+        return "التاريخ غير متاح";
+
+      }
+
+
+      return date.toLocaleString(
+        "ar-EG",
+        {
+
+          year:"numeric",
+
+          month:"short",
+
+          day:"numeric",
+
+          hour:"2-digit",
+
+          minute:"2-digit"
+
+        }
+      );
+
+    }
+
+    catch{
+
+      return "التاريخ غير متاح";
+
+    }
+
+  }
+
+
+
+  /* ==========================================
+     STATUS
+  ========================================== */
+
+  function statusInfo(status){
+
+    const s =
+      String(
+        status || "pending"
+      ).toLowerCase();
+
+
+    if(
+      s === "completed" ||
+      s === "complete" ||
+      s === "done"
+    ){
+
+      return [
+        "completed",
+        "تم تنفيذ الطلب ✅"
+      ];
+
+    }
+
+
+    if(
+      s === "cancelled" ||
+      s === "canceled"
+    ){
+
+      return [
+        "cancelled",
+        "تم إلغاء الطلب ❌"
+      ];
+
+    }
+
+
+    if(
+      s === "pending" ||
+      s === "new" ||
+      s === "processing"
+    ){
+
+      return [
+        "pending",
+        "الطلب قيد المراجعة ⏳"
+      ];
+
+    }
+
+
+    return [
+      "other",
+      escapeHtml(
+        status || "قيد المراجعة"
+      )
+    ];
+
+  }
+
+
+
+  /* ==========================================
+     WELCOME GIFT
+  ========================================== */
+
+  function giftText(data){
+
+    const status =
+      data.welcomeGiftStatus || "used";
+
+
+    const type =
+      data.welcomeGiftType || "";
+
+
+
+    /* AVAILABLE */
+
+    if(
+      status === "available"
+    ){
+
+      return `
+
+        <div class="gift-title">
+
+          🎉 هديتك الترحيبية جاهزة!
+
+        </div>
+
+        <div class="gift-text">
+
+          اختار هديتك من الموقع:
+
+          <br>
+
+          🏷️ خصم 20% على أول طلب
+
+          <br>
+
+          🎮 أو 10 ألعاب مجانية
+
+          <br>
+
+          <b>
+            الهدية لم تُستخدم بعد.
+          </b>
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    /* DISCOUNT */
+
+    if(
+      type === "discount20" ||
+      status === "discount20"
+    ){
+
+      return `
+
+        <div class="gift-title">
+
+          🏷️ تم اختيار خصم 20%
+
+        </div>
+
+        <div class="gift-text">
+
+          تم تسجيل خصم 20% كهدية التسجيل.
+
+          <br>
+
+          الخصم مرتبط بأول طلب لك.
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    /* FREE GAMES */
+
+    if(
+      type === "free10" ||
+      status === "free10_pending"
+    ){
+
+      const count =
+        Array.isArray(
+          data.welcomeGiftGames
+        )
+          ? data.welcomeGiftGames.length
+          : 0;
+
+
+      return `
+
+        <div class="gift-title">
+
+          🎮 هدية 10 ألعاب مجانية
+
+        </div>
+
+        <div class="gift-text">
+
+          ${
+            count
+              ? `تم اختيار ${count} من 10 ألعاب.`
+              : "الهدية مفعلة ويمكنك إكمال اختيار الألعاب من صفحة الألعاب."
+          }
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    /* USED */
+
+    if(
+      status === "used"
+    ){
+
+      return `
+
+        <div class="gift-title">
+
+          ✅ تم استخدام هدية التسجيل
+
+        </div>
+
+        <div class="gift-text">
+
+          استمتع بنظام النقاط والمكافآت
+          والعروض الخاصة من 2M Elshazly 🎮
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    return `
+
+      <div class="gift-title">
+
+        🎁 هدية التسجيل
+
+      </div>
+
+      <div class="gift-text">
+
+        خصم 20% أو 10 ألعاب مجانية
+        — مرة واحدة فقط.
+
+      </div>
+
+    `;
+
+  }
+
+
+
+  /* ==========================================
+     GET GAME NAME
+  ========================================== */
+
+  function getGameName(game){
+
+    if(typeof game === "string")
+      return game;
+
+
+    if(!game)
+      return "";
+
+
+    return (
+      game.name ||
+      game.gameName ||
+      game.title ||
+      game.game ||
+      ""
+    );
+
+  }
+
+
+
+  /* ==========================================
+     LOAD PROFILE
+  ========================================== */
+
+  async function loadProfile(user){
+
+
+    /* USER */
+
+    const userRef =
+      doc(
+        db,
+        "users",
+        user.uid
+      );
+
+
+    const userSnap =
+      await getDoc(userRef);
+
+
+    const data =
+      userSnap.exists()
+        ? userSnap.data()
+        : {};
+
+
+
+    /* ========================================
+       POINTS
+    ======================================== */
+
+    const points =
+      Number(
+        data.points || 0
+      );
+
+
+    const lifetime =
+      Number(
+        data.lifetimePoints ??
+        data.totalPointsEarned ??
+        0
+      );
+
+
+    const level =
+      String(
+        data.level ||
+        (
+          lifetime >= 10000
+            ? "VIP"
+            : "NORMAL"
+        )
+      ).toUpperCase();
+
+
+
+    /* ========================================
+       USER INFO
+    ======================================== */
+
+    $("userName").textContent =
+      data.name ||
+      user.displayName ||
+      "مستخدم 2M";
+
+
+    $("userEmail").textContent =
+      data.email ||
+      user.email ||
+      "لا يوجد بريد إلكتروني";
+
+
+    $("userPhone").textContent =
+      data.whatsapp
+        ? `📱 ${data.whatsapp}`
+        : "📱 لم يتم تسجيل رقم الهاتف";
+
+
+    $("pointsValue").textContent =
+      money(points);
+
+
+    $("lifetimeValue").textContent =
+      money(lifetime);
+
+
+    $("levelBadge").textContent =
+      level === "VIP"
+        ? "🏆 VIP"
+        : "⭐ NORMAL";
+
+
+    $("levelBadge").className =
+      `badge ${
+        level === "VIP"
+          ? "vip"
+          : ""
+      }`;
+
+
+    $("giftBox").innerHTML =
+      giftText(data);
+
+
+
+    /* ========================================
+       AVATAR
+    ======================================== */
+
+    const photo =
+      user.photoURL ||
+      data.photoURL ||
+      "";
+
+
+    if(photo){
+
+      $("userAvatar").src =
+        photo.replace(
+          "http://",
+          "https://"
+        );
+
+      $("userAvatar").style.display =
+        "block";
+
+      $("userLetter").style.display =
+        "none";
+
+    }
+
+    else{
+
+      $("userAvatar").style.display =
+        "none";
+
+
+      $("userLetter").textContent =
+        (
+          data.name ||
+          user.displayName ||
+          "2M"
+        )
+        .trim()
+        .charAt(0)
+        .toUpperCase();
+
+
+      $("userLetter").style.display =
+        "flex";
+
+    }
+
+
+
+    /* ========================================
+       ORDERS
+    ======================================== */
+
+    let orders = [];
+
+
+    try{
+
+      const ordersQuery =
+        query(
+          collection(
+            db,
+            "orders"
+          ),
+          where(
+            "userId",
+            "==",
+            user.uid
+          )
+        );
+
+
+      const snapshot =
+        await getDocs(
+          ordersQuery
+        );
+
+
+      snapshot.forEach(
+        orderDoc => {
+
+          orders.push({
+
+            id:
+              orderDoc.id,
+
+            ...orderDoc.data()
+
+          });
+
+        }
+      );
+
+    }
+
+    catch(error){
+
+      console.error(
+        "2M Elshazly - خطأ في تحميل الطلبات:",
+        error
+      );
+
+
+      $("ordersList").innerHTML = `
+
+        <div class="empty">
+
+          ⚠️ تعذر تحميل الطلبات حاليًا.
+
+          <br>
+
+          حاول تحديث الصفحة مرة أخرى.
+
+        </div>
+
+      `;
+
+
+      $("ordersCount").textContent =
+        "0";
+
+
+      $("ordersBadge").textContent =
+        "0 طلب";
+
+
+      return;
+
+    }
+
+
+
+    /* ========================================
+       SORT
+    ======================================== */
+
+    orders.sort(
+      (a,b) => {
+
+        const ad =
+          a.createdAt?.toMillis
+            ? a.createdAt.toMillis()
+            : new Date(
+                a.createdAt || 0
+              ).getTime();
+
+
+        const bd =
+          b.createdAt?.toMillis
+            ? b.createdAt.toMillis()
+            : new Date(
+                b.createdAt || 0
+              ).getTime();
+
+
+        return bd - ad;
+
+      }
+    );
+
+
+
+    /* ========================================
+       COUNT
+    ======================================== */
+
+    $("ordersCount").textContent =
+      orders.length;
+
+
+    $("ordersBadge").textContent =
+      `${orders.length} ${
+        orders.length === 1
+          ? "طلب"
+          : "طلبات"
+      }`;
+
+
+
+    /* ========================================
+       EMPTY
+    ======================================== */
+
+    if(!orders.length){
+
+      $("ordersList").innerHTML = `
+
+        <div class="empty">
+
+          🛒 لسه مفيش طلبات.
+
+          <br>
+
+          ابدأ باختيار ألعابك واستمتع 🎮
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+
+    /* ========================================
+       RENDER ORDERS
+    ======================================== */
+
+    $("ordersList").innerHTML =
+
+      orders.map(
+        (order,index) => {
+
+
+          /* STATUS */
+
+          const [
+            statusClass,
+            statusText
+          ] =
+            statusInfo(
+              order.status
+            );
+
+
+
+          /* GAMES */
+
+          const games =
+            Array.isArray(
+              order.games
+            )
+              ? order.games
+              : [];
+
+
+          const gameNames =
+            games
+              .map(
+                getGameName
+              )
+              .filter(Boolean);
+
+
+
+          /* PRICES */
+
+          const original =
+            Number(
+              order.originalPrice ??
+              order.totalPrice ??
+              order.total ??
+              0
+            );
+
+
+          const finalPrice =
+            Number(
+              order.finalPrice ??
+              order.total ??
+              order.totalPrice ??
+              0
+            );
+
+
+          const discount =
+            Number(
+              order.discountAmount ||
+              0
+            );
+
+
+          const pointsUsed =
+            Number(
+              order.pointsUsed ||
+              0
+            );
+
+
+          const pointsEarned =
+            Number(
+              order.pointsEarned ||
+              order.earnedPoints ||
+              0
+            );
+
+
+
+          /* ORDER NUMBER */
+
+          const orderNumber =
+            String(
+              orders.length - index
+            ).padStart(
+              2,
+              "0"
+            );
+
+
+
+          /* HTML */
+
+          return `
+
+            <article class="order">
+
+
+              <!-- TOP -->
+
+              <div class="order-top">
+
+
+                <div class="order-id">
+
+                  🧾 طلب #${orderNumber}
+
+                </div>
+
+
+                <div
+                  class="status ${statusClass}"
+                >
+
+                  ${statusText}
+
+                </div>
+
+
+              </div>
+
+
+
+              <!-- SUMMARY -->
+
+              <div class="order-summary">
+
+
+                <div class="order-box">
+
+                  <div class="order-box-label">
+
+                    📅 التاريخ
+
+                  </div>
+
+                  <div class="order-box-value">
+
+                    ${escapeHtml(
+                      formatDate(
+                        order.createdAt
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+
+
+
+                <div class="order-box">
+
+                  <div class="order-box-label">
+
+                    🎮 الألعاب
+
+                  </div>
+
+                  <div class="order-box-value">
+
+                    ${gameNames.length}
+
+                    لعبة
+
+                  </div>
+
+                </div>
+
+
+
+                <div class="order-box">
+
+                  <div class="order-box-label">
+
+                    💰 الإجمالي
+
+                  </div>
+
+                  <div class="price-value">
+
+                    ${money(
+                      finalPrice
+                    )}
+
+                    جنيه
+
+                  </div>
+
+                </div>
+
+
+
+                <div class="order-box">
+
+                  <div class="order-box-label">
+
+                    🏷️ الخصم
+
+                  </div>
+
+                  <div class="order-box-value">
+
+                    ${
+                      discount > 0
+                        ? `${money(discount)} جنيه`
+                        : "لا يوجد"
                     }
 
-                    transaction.set(userRef, {
-                        welcomeGiftStatus: type === "discount20" ? "discount20" : "free10_pending",
-                        welcomeGiftType: type,
-                        welcomeGiftGames: [],
-                        updatedAt: serverTimestamp()
-                    }, {merge:true});
-                });
+                  </div>
 
-                if (type === "free10") {
-                    window.location.href = "games.html?welcomeGift=free10";
-                } else {
-                    await loadProfile(user);
-                    alert("🎉 تم تفعيل خصم 20% لأول طلب لك في 2M Elshazly!");
-                }
-            } catch (error) {
-                console.error(error);
-                alert(error.message || "حصل خطأ أثناء اختيار العرض.");
-            }
-        }
+                </div>
 
-        async function loadProfile(user) {
-            const userRef = doc(db, "users", user.uid);
-            const snap = await getDoc(userRef);
 
-            if (!snap.exists()) {
-                profileContent.innerHTML = `<p class="loading-text">لم يتم العثور على بيانات الحساب.</p>`;
-                return;
-            }
+              </div>
 
-            const d = snap.data();
-            const displayName = user.displayName || d.name || "مستخدم 2M";
-            const email = user.email || d.email || "لا يوجد بريد إلكتروني";
-            const photoURL = user.photoURL || d.photoURL || "";
-            const firstLetter = displayName.trim().charAt(0).toUpperCase();
 
-            const points = Number(d.points || 0);
-            const lifetime = Number(d.lifetimePoints ?? d.totalPointsEarned ?? points);
-            const level = d.level || (lifetime >= 10000 ? "VIP" : "NORMAL");
-            const customerType = d.customerType === "shop" ? "🏪 صاحب محل" : d.customerType === "home" ? "🏠 عميل بيت" : "نوع العميل غير محدد";
 
-            let giftHTML = "";
-            const giftStatus = d.welcomeGiftStatus || "used";
+              <!-- GAMES -->
 
-            if (giftStatus === "available" || giftStatus === "deferred") {
-                giftHTML = `
-                  <div class="gift-card">
-                    <span class="gift-status">${giftStatus === "deferred" ? "العرض محفوظ لك" : "عرض ترحيبي متاح"}</span>
-                    <h3>🎁 هديتك من 2M Elshazly</h3>
-                    <p>لو لسه ما اخترتش هديتك، تقدر تختار من هنا: خصم 20% على أول طلب أو 10 ألعاب مجانية.</p>
-                    <div class="gift-actions">
-                      <button class="discount-btn" id="profileDiscountBtn">🏷️ خصم 20% على أول طلب</button>
-                      <button class="games-btn" id="profileGamesBtn">🎮 10 ألعاب مجانية</button>
+              ${
+                gameNames.length
+                  ? `
+
+                    <div class="games-title">
+
+                      🎮 الألعاب المطلوبة
+
                     </div>
-                  </div>`;
-            } else if (giftStatus === "discount20") {
-                giftHTML = `
-                  <div class="gift-card" style="border-color:#1f8f4d">
-                    <span class="gift-status">الخصم مفعل</span>
-                    <h3>🏷️ خصم 20% متاح</h3>
-                    <p>خصمك الترحيبي محفوظ لأول طلب.</p>
-                  </div>`;
-            } else if (giftStatus === "free10_pending") {
-                giftHTML = `
-                  <div class="gift-card" style="border-color:#1f8f4d">
-                    <span class="gift-status">الهدية محفوظة</span>
-                    <h3>🎮 10 ألعاب مجانية</h3>
-                    <p>هدية التسجيل الخاصة بك محفوظة.</p>
-                  </div>`;
-            }
 
-            profileContent.innerHTML = `
-                <div class="profile-img-container">
-                    <img id="userAvatar" src="" alt="صورة البروفايل">
-                    <div id="userLetter">${firstLetter}</div>
-                </div>
 
-                <div class="profile-info">
-                    <h2 id="userName">${displayName}</h2>
-                    <p id="userEmail">${email}</p>
-                    <span class="customer-badge">${customerType}</span>
-                </div>
+                    <div class="games">
 
-                <div class="stats-grid">
-                    <div class="stat-box"><div class="label">النقاط الحالية</div><div class="value">🎯 ${points}</div></div>
-                    <div class="stat-box"><div class="label">إجمالي النقاط</div><div class="value">🏆 ${lifetime}</div></div>
-                    <div class="stat-box"><div class="label">المستوى</div><div class="value">${level === "VIP" ? "👑 VIP" : "⭐ NORMAL"}</div></div>
-                    <div class="stat-box"><div class="label">رقم الهاتف</div><div class="value" style="font-size:.9rem">${d.whatsapp || "غير مسجل"}</div></div>
-                </div>
+                      ${gameNames
+                        .map(
+                          name => `
 
-                ${giftHTML}
+                            <span class="game">
 
-                <div class="orders-card">
-                  <div class="orders-title">🛒 طلباتي</div>
-                  <div id="ordersList"><p class="loading-text">جاري تحميل الطلبات...</p></div>
-                </div>
+                              ${escapeHtml(
+                                name
+                              )}
 
-                <a href="index.html" class="profile-section-btn">العودة للرئيسية</a>
-                <button id="logoutBtn" class="logout-btn" style="margin-top:10px;">
-                    <i class='bx bx-log-out'></i> تسجيل خروج
-                </button>
-            `;
+                            </span>
 
-            const avatarImg = document.getElementById("userAvatar");
-            const letterDiv = document.getElementById("userLetter");
-            if (photoURL) {
-                avatarImg.src = photoURL.replace("http://", "https://");
-                avatarImg.style.display = "block";
-                letterDiv.style.display = "none";
-            } else {
-                avatarImg.style.display = "none";
-                letterDiv.style.display = "flex";
-            }
+                          `
+                        )
+                        .join("")
+                      }
 
-            document.getElementById("logoutBtn").addEventListener("click", async () => {
-                await signOut(auth);
-                window.location.href = "index.html";
-            });
+                    </div>
 
-            document.getElementById("profileDiscountBtn")?.addEventListener("click", () => chooseGiftFromProfile("discount20"));
-            document.getElementById("profileGamesBtn")?.addEventListener("click", () => chooseGiftFromProfile("free10"));
+                  `
+                  : ""
+              }
 
-            // عرض الطلبات لو كانت محفوظة داخل users.orders.
-            // لا نفترض بنية مختلفة لقاعدة البيانات.
-            const ordersList = document.getElementById("ordersList");
-            const orders = Array.isArray(d.orders) ? d.orders : [];
-            if (!orders.length) {
-                ordersList.innerHTML = `<div class="order-item"><span class="order-meta">لا توجد طلبات مسجلة حتى الآن.</span></div>`;
-            } else {
-                ordersList.innerHTML = orders.slice().reverse().map((o, i) => `
-                    <div class="order-item">
-                      <strong>طلب #${orders.length - i}</strong>
-                      <div class="order-meta">
-                        الحالة: ${o.status || "قيد المراجعة"}<br>
-                        الألعاب: ${o.itemsCount ?? o.gameCount ?? "—"}<br>
-                        الإجمالي: ${o.total ?? o.totalPrice ?? "—"} جنيه
+
+
+              <!-- FOOTER -->
+
+              ${
+                pointsEarned ||
+                pointsUsed
+                  ? `
+
+                    <div class="order-footer">
+
+
+                      <div>
+
+                        ${
+                          pointsEarned
+                            ? `
+                              <span class="points-earned">
+
+                                ⭐ كسبت
+                                ${money(pointsEarned)}
+                                نقطة
+
+                              </span>
+                            `
+                            : ""
+                        }
+
                       </div>
+
+
+                      <div>
+
+                        ${
+                          pointsUsed
+                            ? `
+                              <span class="points-used">
+
+                                🎯 استخدمت
+                                ${money(pointsUsed)}
+                                نقطة
+
+                              </span>
+                            `
+                            : ""
+                        }
+
+                      </div>
+
+
                     </div>
-                `).join("");
-            }
+
+                  `
+                  : ""
+              }
+
+
+            </article>
+
+          `;
+
+        }
+      )
+      .join("");
+
+  }
+
+
+
+  /* ==========================================
+     AUTH
+  ========================================== */
+
+  onAuthStateChanged(
+    auth,
+    async user => {
+
+
+      if(!user){
+
+        window.location.href =
+          "index.html";
+
+        return;
+
+      }
+
+
+      try{
+
+        await loadProfile(
+          user
+        );
+
+
+        $("loading").style.display =
+          "none";
+
+
+        $("profilePage").style.display =
+          "block";
+
+      }
+
+
+      catch(error){
+
+        console.error(
+          "2M Elshazly - خطأ في صفحة الحساب:",
+          error
+        );
+
+
+        $("loading").innerHTML = `
+
+          ⚠️ حصل خطأ أثناء تحميل الحساب.
+
+          <br>
+
+          حاول تحديث الصفحة.
+
+        `;
+
+      }
+
+    }
+  );
+
+
+
+  /* ==========================================
+     LOGOUT
+  ========================================== */
+
+  $("logoutBtn")
+    .addEventListener(
+      "click",
+      async () => {
+
+        try{
+
+          await signOut(
+            auth
+          );
+
+
+          window.location.href =
+            "index.html";
+
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    await loadProfile(user);
-                } catch (error) {
-                    console.error(error);
-                    profileContent.innerHTML = `<p class="loading-text">حصل خطأ في تحميل بيانات الحساب.</p>`;
-                }
-            } else {
-                window.location.href = "index.html";
-            }
-        });
+        catch(error){
 
-    </script>
+          console.error(
+            "خطأ في تسجيل الخروج:",
+            error
+          );
+
+
+          alert(
+            "حصل خطأ أثناء تسجيل الخروج."
+          );
+
+        }
+
+      }
+    );
+
+
+</script>
+
+
 </body>
-</html>
+
+    </html>
