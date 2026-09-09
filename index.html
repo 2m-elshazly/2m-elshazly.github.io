@@ -1179,38 +1179,223 @@ html, body{
     bottom:78px !important;
   }
 }
-    /* =========================================
-   2M - ضبط أزرار الدردشة والرجوع للموبايل
-   ========================================= */
+</style>
 
-@media (max-width: 767px){
 
-  /* زر الرجوع لأعلى - بعيد عن الحافة */
-  .scrollup{
-    right: 22px !important;
-    bottom: 78px !important;
-    width: 54px !important;
-    height: 54px !important;
-    border-radius: 17px !important;
-    z-index: 9997 !important;
-  }
-
-  /* زر الدردشة - بجانبه بمسافة بسيطة */
+<style id="2m-floating-buttons-left-fix">
+/* الأزرار العائمة ناحية الشمال بدل اليمين */
+@media (max-width:767px){
   #supportChatFab{
-    right: 88px !important;
-    bottom: 78px !important;
-    width: 54px !important;
-    height: 54px !important;
-    border-radius: 17px !important;
-    z-index: 9998 !important;
+    left:14px !important;
+    right:auto !important;
+    bottom:77px !important;
+  }
+  .scrollup{
+    left:78px !important;
+    right:auto !important;
+    bottom:77px !important;
+  }
+}
+@media (min-width:768px){
+  #supportChatFab{
+    left:18px !important;
+    right:auto !important;
+    bottom:30px !important;
+  }
+  .scrollup{
+    left:86px !important;
+    right:auto !important;
+    bottom:30px !important;
+  }
+}
+</style>
+
+<style id="2m-no-horizontal-overflow-fix">
+/* FINAL MOBILE WIDTH FIX — prevent cards/content from escaping the screen */
+html, body {
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+
+@media (max-width:767px){
+  .container,
+  .home_container,
+  .store-cards,
+  .highlights-grid,
+  .store-section-head,
+  .store-services,
+  .store-highlights,
+  .store-faq {
+    box-sizing:border-box !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
   }
 
-  /* منع أي عنصر من كسر حدود الشاشة */
-  #supportChatFab,
-  .scrollup{
-    box-sizing: border-box !important;
+  .store-cards,
+  .highlights-grid {
+    grid-template-columns:minmax(0,1fr) !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
   }
-      }
+
+  .store-card,
+  .highlight-item,
+  .highlight-intro {
+    box-sizing:border-box !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+  }
+
+  .store-card > div,
+  .highlight-item > div {
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  .store-card p,
+  .highlight-item span,
+  .store-card h3,
+  .highlight-item b {
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+
+  /* Keep the floating buttons fully inside the viewport */
+  #supportChatFab {
+    left:18px !important;
+    right:auto !important;
+  }
+  .scrollup {
+    left:82px !important;
+    right:auto !important;
+  }
+}
+</style>
+
+
+<style id="2m-card-precision-final">
+/* ===== FINAL CARD WIDTH / ALIGNMENT FIX ===== */
+@media (max-width:767px){
+  /* امنع أي كارت من الخروج بره شاشة الموبايل */
+  .store-services,
+  .store-highlights,
+  .store-faq{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .store-section-head{
+    width:100% !important;
+    max-width:100% !important;
+    padding:0 18px !important;
+    box-sizing:border-box !important;
+  }
+
+  .store-cards,
+  .highlights-grid{
+    width:calc(100% - 28px) !important;
+    max-width:calc(100% - 28px) !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding:0 !important;
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
+
+  .store-card,
+  .highlight-item,
+  .highlight-intro{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    transform:none !important;
+    overflow:hidden !important;
+  }
+
+  .store-card{
+    display:grid !important;
+    grid-template-columns:48px minmax(0,1fr) 30px !important;
+    align-items:center !important;
+    gap:10px !important;
+    padding:18px 14px !important;
+    direction:ltr !important;
+  }
+
+  .store-card > div{
+    min-width:0 !important;
+    width:auto !important;
+    max-width:100% !important;
+    text-align:right !important;
+    direction:rtl !important;
+  }
+
+  .store-card > i:first-child{
+    grid-column:1 !important;
+    justify-self:center !important;
+    margin:0 !important;
+  }
+
+  .store-card > i:last-child{
+    grid-column:3 !important;
+    justify-self:center !important;
+    margin:0 !important;
+  }
+
+  .store-card h3,
+  .store-card p{
+    max-width:100% !important;
+    overflow-wrap:break-word !important;
+    word-break:normal !important;
+  }
+
+  .highlight-item{
+    display:grid !important;
+    grid-template-columns:42px minmax(0,1fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+    padding:18px 14px !important;
+    direction:ltr !important;
+  }
+
+  .highlight-item > i{
+    justify-self:center !important;
+    margin:0 !important;
+  }
+
+  .highlight-item > div{
+    min-width:0 !important;
+    text-align:right !important;
+    direction:rtl !important;
+  }
+
+  .highlight-intro{
+    padding:24px 18px !important;
+    direction:rtl !important;
+  }
+
+  /* الأزرار العائمة تفضل جوه الشاشة وبعيد عن الكروت */
+  #supportChatFab{
+    left:14px !important;
+    right:auto !important;
+    bottom:77px !important;
+  }
+  .scrollup{
+    left:76px !important;
+    right:auto !important;
+    bottom:77px !important;
+  }
+}
 </style>
 
 </head>
@@ -2018,3 +2203,357 @@ onAuthStateChanged(auth,user=>startChat(user));
 </script>
 </body>
 </html>
+
+
+<style id="2m-final-mobile-width-fix">
+/* 2M FINAL MOBILE WIDTH / SPACING FIX */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important;box-sizing:border-box}
+*,*:before,*:after{box-sizing:border-box}
+
+@media(max-width:767px){
+  /* الهيدر: اللوجو ياخد مساحته، والأزرار تفضل بالكامل داخل الشاشة */
+  .header .nav{
+    width:100%!important;
+    max-width:100%!important;
+    padding-left:14px!important;
+    padding-right:14px!important;
+    gap:10px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    align-items:center!important;
+  }
+
+  .header .nav_box{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  .header .nav_logo{
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    white-space:nowrap!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .header .nav_logo img{
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+  }
+  .header .nav_logo{font-size:.82rem!important}
+
+  /* مجموعة اليمين لا تخرج من الشاشة */
+  .header #userSection{
+    flex:0 0 auto!important;
+    width:auto!important;
+    max-width:52vw!important;
+    min-width:0!important;
+    margin:0!important;
+    gap:7px!important;
+    display:flex!important;
+    align-items:center!important;
+    overflow:visible!important;
+  }
+  .header #loginBtn{
+    max-width:145px!important;
+    padding:7px 9px!important;
+    gap:5px!important;
+    font-size:.72rem!important;
+    white-space:nowrap!important;
+  }
+  .header #loginBtn span{white-space:nowrap!important}
+  .header .nav_btns{gap:7px!important;flex:0 0 auto!important}
+  .header .nav_toggle,
+  .header #m2mNotificationBell{
+    width:42px!important;
+    min-width:42px!important;
+    height:42px!important;
+    flex:0 0 42px!important;
+  }
+
+  /* لو فيه لوجو 2m دائري في الهيدر، ما يطلعش برا */
+  .header img{max-width:100%!important}
+
+  /* بانر الصورة */
+  .mobile-hero-only{
+    width:100%!important;
+    max-width:100%!important;
+    padding:0 14px 8px!important;
+    margin-top:12px!important;
+    overflow:hidden!important;
+  }
+  .mobile-hero-only img{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    display:block!important;
+  }
+
+  /* الكارت الرئيسي 2M Elshazly: لا يخرج ناحية اليمين */
+  .home,
+  .home_container,
+  .home_data{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .home_container{padding-left:14px!important;padding-right:14px!important}
+  .home_data{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    padding:24px 17px 20px!important;
+    overflow:hidden!important;
+  }
+
+  /* كل أقسام الصفحة والكروت داخل حدود الشاشة */
+  .store-services,.store-highlights,.store-faq,
+  .store-section-head,.store-cards,.highlights-grid,.faq-modern{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .store-cards,.highlights-grid{padding-left:14px!important;padding-right:14px!important}
+  .store-card,.highlight-intro,.highlight-item,.faq-modern details{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+
+  /* النصوص الطويلة لا توسّع الكارت */
+  .home_title,.home_subtitle,.store-section-head h2,.store-section-head p,
+  .store-card h3,.store-card p,.highlight-intro h2,.highlight-intro p,
+  .highlight-item b,.highlight-item span{
+    max-width:100%!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+  }
+
+  /* أزرار الدردشة والصعود: داخل الشاشة وبعيدين عن الحافة */
+  #supportChatFab{left:14px!important;right:auto!important;bottom:82px!important}
+  .scrollup{left:82px!important;right:auto!important;bottom:82px!important}
+}
+</style>
+
+
+<style id="2m-clean-centered-mobile-final">
+/* =========================================================
+   FINAL MOBILE ALIGNMENT — centered header + centered main card
+   ========================================================= */
+@media (max-width: 767px){
+  html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;}
+  *,*:before,*:after{box-sizing:border-box!important;}
+
+  /* HEADER: no element may hang outside the viewport */
+  .header{width:100%!important;max-width:100%!important;overflow:visible!important;}
+  .header .nav{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:78px!important;
+    padding:0 12px!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:14px!important;
+    direction:ltr!important;
+    overflow:visible!important;
+  }
+
+  /* Logo block: fixed natural size and vertically centered */
+  .header .nav_box{
+    flex:0 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:46%!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .header .nav_logo{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    font-size:.86rem!important;
+    line-height:1!important;
+  }
+  .header .nav_logo img{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    object-fit:contain!important;
+  }
+
+  /* Right-side controls are kept as one centered group */
+  .header #userSection{
+    flex:0 1 auto!important;
+    width:auto!important;
+    max-width:54%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:10px!important;
+    direction:ltr!important;
+    overflow:visible!important;
+  }
+  .header #userSection .nav_btns{
+    order:1!important;
+    flex:0 0 auto!important;
+    width:auto!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  .header .nav_toggle{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex:0 0 44px!important;
+  }
+  .header #loginBtn{
+    order:2!important;
+    flex:0 1 auto!important;
+    width:auto!important;
+    max-width:150px!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:8px 11px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px!important;
+    white-space:nowrap!important;
+  }
+  .header #loginBtn span{white-space:nowrap!important;overflow:visible!important;}
+  .header #userProfileBox{flex:0 0 auto!important;margin:0!important;}
+
+  /* Notification, when present, stays in the same centered group */
+  .header #m2mNotificationWrap{
+    position:static!important;
+    flex:0 0 auto!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  .header #m2mNotificationBell{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+  }
+
+  /* Banner: centered and never wider than the viewport */
+  .mobile-hero-only{
+    width:100%!important;
+    max-width:100%!important;
+    margin:12px auto 0!important;
+    padding:0 14px 8px!important;
+    display:flex!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+  }
+  .mobile-hero-only img{
+    width:100%!important;
+    max-width:680px!important;
+    height:auto!important;
+    margin:0 auto!important;
+    display:block!important;
+  }
+
+  /* Main 2M card: centered, equal side margins, no skew */
+  .home{
+    width:100%!important;
+    max-width:100%!important;
+    padding:24px 0 30px!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+  .home_container{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0 auto!important;
+    padding:0 14px!important;
+    display:block!important;
+  }
+  .home_data{
+    width:100%!important;
+    max-width:680px!important;
+    margin:0 auto!important;
+    padding:26px 20px 24px!important;
+    border-radius:25px!important;
+    overflow:hidden!important;
+    text-align:left!important;
+  }
+  .home_title,
+  .home_subtitle,
+  .home_buttons,
+  .hero-social,
+  .home_data > *{
+    max-width:100%!important;
+  }
+
+  /* Keep the social row and title aligned inside the card */
+  .hero-social{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:10px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+  .home_title{margin-left:0!important;margin-right:0!important;}
+  .home_subtitle{margin-left:0!important;margin-right:0!important;}
+
+  /* Lower cards: same width and exact center */
+  .store-services,.store-highlights,.store-faq{
+    width:100%!important;
+    max-width:100%!important;
+    padding-left:0!important;
+    padding-right:0!important;
+    overflow:hidden!important;
+  }
+  .store-cards,.highlights-grid,.faq-modern{
+    width:100%!important;
+    max-width:680px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left:14px!important;
+    padding-right:14px!important;
+    box-sizing:border-box!important;
+  }
+  .store-card,.highlight-intro,.highlight-item,.faq-modern details{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    transform:none!important;
+  }
+
+  /* Floating buttons remain completely inside the screen */
+  #supportChatFab{left:14px!important;right:auto!important;bottom:78px!important;}
+  .scrollup{left:76px!important;right:auto!important;bottom:78px!important;}
+}
+
+@media (min-width:768px){
+  .home_data{margin-left:auto!important;margin-right:auto!important;}
+}
+</style>
