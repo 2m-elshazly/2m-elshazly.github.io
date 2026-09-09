@@ -1179,6 +1179,38 @@ html, body{
     bottom:78px !important;
   }
 }
+    /* =========================================
+   2M - ضبط أزرار الدردشة والرجوع للموبايل
+   ========================================= */
+
+@media (max-width: 767px){
+
+  /* زر الرجوع لأعلى - بعيد عن الحافة */
+  .scrollup{
+    right: 22px !important;
+    bottom: 78px !important;
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 17px !important;
+    z-index: 9997 !important;
+  }
+
+  /* زر الدردشة - بجانبه بمسافة بسيطة */
+  #supportChatFab{
+    right: 88px !important;
+    bottom: 78px !important;
+    width: 54px !important;
+    height: 54px !important;
+    border-radius: 17px !important;
+    z-index: 9998 !important;
+  }
+
+  /* منع أي عنصر من كسر حدود الشاشة */
+  #supportChatFab,
+  .scrollup{
+    box-sizing: border-box !important;
+  }
+      }
 </style>
 
 </head>
