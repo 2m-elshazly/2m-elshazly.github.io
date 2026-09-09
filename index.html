@@ -2142,6 +2142,33 @@ function startChat(user){
  currentUser=user;
  loginBox.style.display=user?'none':'block';
  compose.style.display=user?'block':'none';
+
+ // مزامنة حالة تسجيل الدخول مع هيدر الصفحة
+ const headerLoginBtn=document.getElementById('loginBtn');
+ const headerProfileBox=document.getElementById('userProfileBox');
+ const headerPhoto=document.getElementById('headerUserPhoto');
+ const headerLetter=document.getElementById('headerUserLetter');
+ if(headerLoginBtn && headerProfileBox){
+   if(user){
+     headerLoginBtn.style.setProperty('display','none','important');
+     headerProfileBox.style.setProperty('display','flex','important');
+     const photo=user.photoURL || '';
+     if(photo && headerPhoto){
+       headerPhoto.src=photo;
+       headerPhoto.style.setProperty('display','block','important');
+       if(headerLetter) headerLetter.style.setProperty('display','none','important');
+     }else if(headerLetter){
+       headerLetter.textContent=(user.displayName||user.email||'2M').trim().charAt(0).toUpperCase();
+       headerLetter.style.setProperty('display','flex','important');
+       if(headerPhoto) headerPhoto.style.setProperty('display','none','important');
+     }
+   }else{
+     headerLoginBtn.style.setProperty('display','flex','important');
+     headerProfileBox.style.setProperty('display','none','important');
+     if(headerPhoto) headerPhoto.style.setProperty('display','none','important');
+     if(headerLetter) headerLetter.style.setProperty('display','none','important');
+   }
+ }
  if(unsub){unsub();unsub=null;}
  if(!user){
    msgs.innerHTML='';
