@@ -137,7 +137,23 @@
 }
 /* ===== Notification Bell Position ===== */
 /* ننزل أيقونة الإشعارات والعداد الأحمر معًا قليلًا */
-#m2mNotificationWrap{top:26px !important;}
+#m2mNotificationWrap{top:auto !important;right:auto !important;}
+
+/* ترتيب الموبايل: القائمة ← الإشعارات ← تسجيل الدخول */
+@media (max-width:767px){
+  .header .nav_box{order:1!important;}
+  .header .nav_btns{order:2!important;display:flex!important;align-items:center!important;gap:8px!important;}
+  .header #userSection{order:3!important;margin-inline-start:0!important;}
+  .header .nav{justify-content:flex-start!important;}
+  .header .nav_menu{order:4!important;}
+}
+
+.header #m2mNotificationWrap{position:static!important;display:flex!important;align-items:center!important;margin:0!important;}
+.header #m2mNotificationBell{width:44px!important;height:44px!important;}
+@media (max-width:767px){
+  .header #m2mNotificationBell{width:42px!important;height:42px!important;font-size:19px!important;}
+  .header #m2mNotificationBadge{top:-3px!important;left:-3px!important;}
+}
 
 </style>
 
@@ -448,7 +464,7 @@ body{background:radial-gradient(circle at 90% 5%,rgba(255,138,0,.07),transparent
 .nav_link:hover{color:var(--2m-orange)!important;}
 #loginBtn{background:linear-gradient(135deg,#ffb347,#ff8a00)!important;color:#140d05!important;border:0!important;border-radius:14px!important;padding:9px 14px!important;font-weight:800!important;box-shadow:0 8px 22px rgba(255,138,0,.15);}
 #userProfileBox img,#userProfileBox div{border-color:var(--2m-orange)!important;}
-.change-theme,.nav_toggle{color:#ddd!important;}
+.nav_toggle{color:#ddd!important;}
 .mobile-hero-only{padding:18px 14px 8px!important;}
 .mobile-hero-only img{border-radius:22px!important;border:1px solid rgba(255,138,0,.18)!important;box-shadow:0 20px 55px rgba(0,0,0,.45)!important;}
 .home{padding-top:24px!important;padding-bottom:52px!important;background:transparent!important;}
@@ -508,6 +524,472 @@ body{background:radial-gradient(circle at 90% 5%,rgba(255,138,0,.07),transparent
  .store-section-head h2{font-size:1.8rem;}
 }
 </style>
+
+<style id="2m-support-chat-style">
+/* ===== 2M Elshazly Support Chat ===== */
+#supportChatFab{
+  position:fixed;right:18px;bottom:82px;width:58px;height:58px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;z-index:9998;
+  color:#fff;background:rgba(20,15,10,.82);border:1px solid rgba(255,138,0,.45);
+  box-shadow:0 12px 32px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.04) inset;
+  backdrop-filter:blur(14px);cursor:pointer;transition:.25s;
+}
+#supportChatFab:hover{transform:translateY(-3px);border-color:#ff8a00;background:rgba(35,24,13,.94)}
+#supportChatFab i{font-size:28px}
+#supportChatUnread{
+ position:absolute;top:-5px;left:-5px;min-width:21px;height:21px;padding:0 5px;border-radius:99px;
+ display:none;align-items:center;justify-content:center;background:#ef4444;color:#fff;font:800 11px Arial;
+ border:2px solid #0b0907;
+}
+#supportChatPanel{
+ position:fixed;right:18px;bottom:150px;width:min(380px,calc(100vw - 28px));height:520px;
+ display:none;flex-direction:column;z-index:10000;overflow:hidden;
+ background:#11100e;border:1px solid rgba(255,138,0,.28);border-radius:22px;
+ box-shadow:0 25px 70px rgba(0,0,0,.65);direction:rtl;
+}
+.support-chat-head{display:flex;align-items:center;gap:10px;padding:15px 16px;background:#17130f;border-bottom:1px solid #29231d}
+.support-chat-head .chat-avatar{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(255,138,0,.14);color:#ff9a24;font-size:22px}
+.support-chat-head b{display:block;color:#fff;font-size:.9rem}.support-chat-head small{color:#8e8881}
+#supportChatClose{margin-right:auto;border:0;background:transparent;color:#aaa;font-size:24px;cursor:pointer}
+#supportChatMessages{flex:1;overflow-y:auto;padding:15px;background:radial-gradient(circle at top right,rgba(255,138,0,.06),transparent 35%),#0d0c0a}
+.support-msg{max-width:82%;padding:9px 11px;margin:7px 0;border-radius:14px;font-size:.8rem;line-height:1.7;word-break:break-word}
+.support-msg.user{margin-right:auto;background:#2b2115;border:1px solid #49331a;color:#fff;border-top-right-radius:4px}
+.support-msg.admin{margin-left:auto;background:#172516;border:1px solid #29432b;color:#eaffea;border-top-left-radius:4px}
+.support-msg time{display:block;color:#777;font-size:.62rem;margin-top:3px}
+.support-msg img{max-width:100%;border-radius:10px;margin-top:5px;display:block}
+.support-chat-login{padding:25px;text-align:center;color:#aaa;line-height:1.9}
+.support-chat-login i{font-size:40px;color:#ff8a00;display:block;margin-bottom:8px}
+.support-chat-login button,.support-send{
+ border:0;border-radius:12px;background:linear-gradient(135deg,#ffb347,#ff8a00);color:#140d05;font-weight:900;cursor:pointer;
+}
+.support-chat-login button{padding:10px 18px;margin-top:12px}
+.support-chat-compose{display:flex;align-items:flex-end;gap:7px;padding:10px;border-top:1px solid #29231d;background:#15120f}
+#supportChatInput{flex:1;min-height:42px;max-height:100px;resize:none;border:1px solid #34302b;border-radius:12px;background:#0c0b09;color:#fff;padding:10px;outline:none;font-family:Cairo,sans-serif}
+#supportChatInput:focus{border-color:#ff8a00}
+.support-file-label{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#24201b;color:#ff9a24;cursor:pointer;font-size:21px}
+#supportChatFile{display:none}.support-send{width:42px;height:42px;font-size:19px}
+.support-chat-note{padding:5px 10px 8px;background:#15120f;color:#6f6962;font-size:.62rem;text-align:center}
+@media(max-width:767px){
+ #supportChatFab{right:14px;bottom:78px;width:54px;height:54px;border-radius:17px}
+ #supportChatPanel{right:8px;bottom:140px;width:calc(100vw - 16px);height:min(70vh,540px);border-radius:20px}
+}
+</style>
+
+<style id="2m-final-ui-fix">
+html,body{background:#0b0907!important;color:#eee!important}
+body{color-scheme:dark!important}
+@media(max-width:767px){
+ .header .nav_box{order:1!important}
+ .header .nav_btns{order:2!important;display:flex!important;gap:12px!important}
+ .header #userSection{order:3!important;margin-inline-start:0!important}
+ .header .nav{justify-content:flex-start!important}
+ .header #userSection{margin-right:4px!important}
+ #m2mNotificationWrap{margin-right:0!important;margin-left:4px!important}
+ .scrollup{bottom:145px!important;right:82px!important}
+}
+@media(min-width:768px){.scrollup{bottom:30px!important}}
+</style>
+
+<style id="2m-final-layout-fix">
+/* ==========================================
+   2M ELSHAZLY — FINAL MOBILE LAYOUT
+   ========================================== */
+
+/* 1) Banner: نزوله سنة لتحت */
+.mobile-hero-only{
+  padding-top:28px !important;
+}
+
+/* 2) Header controls: القائمة + الإشعارات + الدخول ناحية اليمين */
+@media (max-width:767px){
+
+  .header .nav{
+    position:relative !important;
+    min-height:74px !important;
+    direction:ltr !important;
+  }
+
+  /* اللوجو يفضل بعيد ناحية اليسار */
+  .header .nav_box{
+    order:1 !important;
+    margin-right:auto !important;
+  }
+
+  /* مجموعة الحساب/القائمة كلها ناحية اليمين */
+  .header #userSection{
+    order:2 !important;
+    margin:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:10px !important;
+    direction:rtl !important;
+    flex:0 0 auto !important;
+  }
+
+  /* التلت شرط */
+  .header #userSection .nav_btns{
+    order:1 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:0 !important;
+    margin:0 !important;
+  }
+
+  .header .nav_toggle{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:13px !important;
+    background:rgba(255,255,255,.045) !important;
+    border:1px solid rgba(255,138,0,.18) !important;
+    color:#eee !important;
+    font-size:23px !important;
+  }
+
+  /* تسجيل الدخول */
+  .header #userSection #loginBtn{
+    order:3 !important;
+    margin:0 !important;
+  }
+
+  /* لو الإشعارات محقونة داخل الهيدر */
+  .header #m2mNotificationWrap{
+    order:2 !important;
+    margin:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  .header #m2mNotificationBell{
+    width:42px !important;
+    height:42px !important;
+    border-radius:13px !important;
+  }
+
+  /* مسافة واضحة بين العناصر */
+  .header #userSection{
+    gap:10px !important;
+  }
+
+  /* إخفاء القائمة النصية من مكانها القديم في الموبايل */
+  .header .nav_menu{
+    z-index:10001 !important;
+  }
+}
+
+/* 3) قائمة التلت شرط نفسها Dark + Orange بدل الألوان القديمة */
+.nav_menu{
+  background:#0d0b09 !important;
+}
+
+.nav_menu .nav_link{
+  color:#eee !important;
+}
+
+.nav_menu .nav_link:hover,
+.nav_menu .nav_link.active{
+  color:#ff8a00 !important;
+}
+
+.nav_menu .nav_close{
+  color:#ff8a00 !important;
+  background:rgba(255,138,0,.08) !important;
+  border-color:rgba(255,138,0,.18) !important;
+}
+
+@media(max-width:767px){
+  .nav_menu{
+    background:
+      linear-gradient(145deg,#17120d,#0b0907) !important;
+    border-color:rgba(255,138,0,.18) !important;
+    box-shadow:0 20px 60px rgba(0,0,0,.65) !important;
+  }
+
+  .nav_list{
+    background:transparent !important;
+  }
+
+  .nav_item,
+  .nav_link{
+    background:transparent !important;
+  }
+}
+
+/* 4) الشريط السفلي: نفس هوية التصميم الجديدة */
+.bottom-nav{
+  background:rgba(11,9,7,.96) !important;
+  border-top:1px solid rgba(255,138,0,.13) !important;
+  box-shadow:0 -12px 35px rgba(0,0,0,.38) !important;
+  backdrop-filter:blur(16px) !important;
+  -webkit-backdrop-filter:blur(16px) !important;
+}
+
+.bottom-nav a{
+  color:#8e8881 !important;
+  background:transparent !important;
+}
+
+.bottom-nav a i{
+  color:#9b948c !important;
+}
+
+.bottom-nav a:hover,
+.bottom-nav a:focus,
+.bottom-nav a.active{
+  color:#ff9a24 !important;
+}
+
+.bottom-nav a:hover i,
+.bottom-nav a:focus i,
+.bottom-nav a.active i{
+  color:#ff8a00 !important;
+}
+
+/* 5) زر الدردشة + زر الرجوع لأعلى جنب بعض
+      Scroll Up ناحية اليمين، Chat ناحية الشمال */
+#supportChatFab{
+  right:84px !important;
+  bottom:82px !important;
+  width:58px !important;
+  height:58px !important;
+  border-radius:18px !important;
+  background:rgba(20,15,10,.88) !important;
+  border:1px solid rgba(255,138,0,.42) !important;
+  color:#fff !important;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.04) inset !important;
+}
+
+#supportChatFab:hover{
+  background:rgba(35,24,13,.96) !important;
+  border-color:#ff8a00 !important;
+}
+
+.scrollup{
+  right:18px !important;
+  bottom:82px !important;
+  width:58px !important;
+  height:58px !important;
+  z-index:9997 !important;
+  border-radius:18px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(20,15,10,.88) !important;
+  border:1px solid rgba(255,138,0,.42) !important;
+  color:#fff !important;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.04) inset !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+
+.scrollup:hover{
+  transform:translateY(-3px) !important;
+  background:rgba(35,24,13,.96) !important;
+  border-color:#ff8a00 !important;
+}
+
+.scrollup_icon{
+  color:#ff9a24 !important;
+  font-size:25px !important;
+}
+
+/* 6) لوحة الشات تفضل فوق الزرين */
+#supportChatPanel{
+  right:18px !important;
+  bottom:151px !important;
+}
+
+/* 7) موبايل أصغر */
+@media(max-width:767px){
+
+  .mobile-hero-only{
+    padding-top:26px !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+
+  #supportChatFab,
+  .scrollup{
+    width:53px !important;
+    height:53px !important;
+    border-radius:16px !important;
+    bottom:77px !important;
+  }
+
+  #supportChatFab{
+    right:78px !important;
+  }
+
+  .scrollup{
+    right:14px !important;
+  }
+
+  #supportChatPanel{
+    right:8px !important;
+    bottom:140px !important;
+  }
+}
+</style>
+
+
+<style id="2m-header-banner-final-fix">
+/* =========================================================
+   2M ELSHAZLY — HEADER + NOTIFICATION + BANNER FINAL FIX
+   ========================================================= */
+.header{
+  position:relative !important;
+  z-index:10050 !important;
+  margin-bottom:12px !important;
+}
+
+.header .nav{
+  min-height:76px !important;
+  display:flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+}
+
+/* مجموعة أزرار الهيدر: الجرس + القائمة بدون تداخل */
+.header .nav_btns{
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+}
+
+.header #m2mNotificationWrap{
+  position:relative !important;
+  inset:auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  z-index:10051 !important;
+}
+
+.header #m2mNotificationBell{
+  width:46px !important;
+  height:46px !important;
+  min-width:46px !important;
+  padding:0 !important;
+  margin:0 !important;
+  border-radius:50% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  position:relative !important;
+  background:linear-gradient(145deg,#21180e,#12100d) !important;
+  border:1px solid rgba(255,138,0,.42) !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.38), inset 0 0 0 1px rgba(255,255,255,.035) !important;
+  font-size:22px !important;
+  line-height:1 !important;
+}
+
+.header #m2mNotificationBell:hover{
+  transform:translateY(-2px) !important;
+  border-color:#ff8a00 !important;
+  box-shadow:0 10px 28px rgba(255,138,0,.16), inset 0 0 0 1px rgba(255,255,255,.05) !important;
+}
+
+.header #m2mNotificationBadge{
+  top:-4px !important;
+  left:-4px !important;
+  min-width:21px !important;
+  height:21px !important;
+  border:2px solid #0b0907 !important;
+  background:#e11d48 !important;
+}
+
+/* قائمة الإشعارات تظهر تحت الجرس بدل ما تدخل في الهيدر */
+.header #m2mNotificationPanel{
+  top:calc(100% + 10px) !important;
+  right:0 !important;
+  z-index:10060 !important;
+  border-color:rgba(255,138,0,.25) !important;
+  background:#11100e !important;
+}
+
+.header #m2mNotificationPanel .m2mNotifItem.unread{
+  border-color:rgba(255,138,0,.48) !important;
+  background:rgba(255,138,0,.09) !important;
+}
+
+/* زر الثلاث شرط مستقل وبمسافة واضحة عن الجرس */
+.header .nav_toggle{
+  width:46px !important;
+  height:46px !important;
+  min-width:46px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.035) !important;
+  border:1px solid rgba(255,138,0,.20) !important;
+  color:#eee !important;
+  font-size:25px !important;
+  line-height:1 !important;
+}
+
+.header .nav_toggle:hover{
+  color:#ff9a24 !important;
+  border-color:rgba(255,138,0,.45) !important;
+  background:rgba(255,138,0,.08) !important;
+}
+
+/* مسافة بسيطة ونظيفة بين الهيدر وبانر الصورة */
+.mobile-hero-only{
+  margin-top:14px !important;
+  padding-top:0 !important;
+}
+
+.mobile-hero-only img{
+  display:block !important;
+}
+
+@media(max-width:767px){
+  .header{
+    margin-bottom:10px !important;
+  }
+  .header .nav{
+    min-height:74px !important;
+    padding:0 10px !important;
+    gap:8px !important;
+  }
+  .header .nav_btns{
+    gap:10px !important;
+  }
+  .header #m2mNotificationBell,
+  .header .nav_toggle{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+  }
+  .header #m2mNotificationBell{font-size:20px !important;}
+  .header .nav_toggle{font-size:23px !important;border-radius:13px !important;}
+  .header #m2mNotificationPanel{
+    right:-4px !important;
+    width:min(350px,calc(100vw - 24px)) !important;
+  }
+  .mobile-hero-only{
+    margin-top:12px !important;
+    padding:0 14px 8px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -621,8 +1103,7 @@ body{background:radial-gradient(circle at 90% 5%,rgba(255,138,0,.07),transparent
 
           
         <div class="nav_btns">
-          <i class="bx bx-moon change-theme" id="theme-button"></i>
-          <div class="nav_toggle" id="nav-toggle">
+          <div class="nav_toggle" id="nav-toggle" aria-label="القائمة">
             <i class="bx bx-menu"></i>
           </div>
         </div>
@@ -644,7 +1125,7 @@ body{background:radial-gradient(circle at 90% 5%,rgba(255,138,0,.07),transparent
     <!--========== MAIN ===========-->
     
 <div class="mobile-hero-only" id="top">
-  <img src="background.png" alt="Mobile Banner">
+  <img src="background.jpeg" alt="Mobile Banner">
 </div>
 
 
@@ -708,8 +1189,8 @@ body{background:radial-gradient(circle at 90% 5%,rgba(255,138,0,.07),transparent
               <a
                 href="soon.html"
                 class="button"
-                 translate="no">About 2M Elshazly</a>
-              
+                >عن 2M Elshazly</a>
+              >
               <a href="soon.html" class="button_secondary"
                 >استكشف الألعاب
                 <i class="bx bx-right-arrow-alt button_icon"></i
@@ -1026,33 +1507,7 @@ function scrollUp() {
 }
 window.addEventListener('scroll', scrollUp);
 
-// DARK MODE
-const themeButton = document.getElementById('theme-button');
-const darkTheme = 'dark-theme';
-const iconTheme = 'ri-sun-line';
-const selectedTheme = localStorage.getItem('selected-theme');
-const selectedIcon = localStorage.getItem('selected-icon');
-
-const getCurrentTheme = () =>
-  document.body.classList.contains(darkTheme) ? 'dark' : 'light';
-const getCurrentIcon = () =>
-  themeButton.classList.contains(iconTheme) ? 'ri-moon-line' : 'ri-sun-line';
-
-if (selectedTheme) {
-  document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](
-    darkTheme
-  );
-  themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove'](
-    iconTheme
-  );
-}
-
-themeButton.addEventListener('click', () => {
-  document.body.classList.toggle(darkTheme);
-  themeButton.classList.toggle(iconTheme);
-  localStorage.setItem('selected-theme', getCurrentTheme());
-  localStorage.setItem('selected-icon', getCurrentIcon());
-});
+// DARK MODE DISABLED - 2M Elshazly uses the permanent dark brand theme.
 
 // SCROLL REVEAL
 const sr = ScrollReveal({
@@ -1182,14 +1637,6 @@ parameters.forEach(activateProduct);
   background:rgba(0,112,209,.16) !important;
   box-shadow:0 0 0 1px #0070d1 inset;
 }
-
-/* ===== 2M SUPPORT CHAT ===== */
-#m2mSupportFab{position:fixed;right:18px;bottom:88px;z-index:9998;width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,145,0,.5);background:rgba(18,18,18,.86);backdrop-filter:blur(12px);color:#ff9200;display:flex;align-items:center;justify-content:center;font-size:27px;box-shadow:0 10px 28px rgba(0,0,0,.45);cursor:pointer}
-#m2mSupportFab .chat-badge{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;border-radius:50%;background:#e53935;color:#fff;font:800 11px Arial;display:none;align-items:center;justify-content:center;padding:0 5px}
-#m2mSupportPanel{position:fixed;right:18px;bottom:156px;width:min(370px,calc(100vw - 28px));height:min(560px,calc(100vh - 190px));z-index:9999;background:#101010;border:1px solid #303030;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.65);display:none;overflow:hidden}
-#m2mSupportPanel.open{display:flex;flex-direction:column}
-.m2m-chat-head{padding:14px 16px;background:linear-gradient(135deg,#191919,#101010);border-bottom:1px solid #2b2b2b;display:flex;align-items:center;justify-content:space-between}.m2m-chat-title{font-weight:900;color:#fff}.m2m-chat-sub{font-size:11px;color:#888;margin-top:2px}.m2m-chat-close{border:0;background:#222;color:#ccc;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:20px}.m2m-chat-msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:9px}.m2m-msg{max-width:82%;padding:9px 11px;border-radius:14px;font-size:13px;line-height:1.65;word-break:break-word}.m2m-msg.user{align-self:flex-start;background:#ff8500;color:#111;border-bottom-left-radius:4px}.m2m-msg.admin{align-self:flex-end;background:#252525;color:#eee;border-bottom-right-radius:4px}.m2m-msg img{max-width:220px;border-radius:10px;display:block;margin-top:5px}.m2m-chat-form{border-top:1px solid #2b2b2b;padding:9px;display:flex;gap:7px;align-items:center;background:#151515}.m2m-chat-input{flex:1;background:#0c0c0c;border:1px solid #333;color:#fff;border-radius:12px;padding:10px;outline:none}.m2m-chat-btn{width:42px;height:42px;border:0;border-radius:12px;background:#ff8500;color:#111;font-size:20px;cursor:pointer}.m2m-chat-file{display:none}.m2m-chat-note{text-align:center;color:#777;font-size:11px;padding:5px 10px}
-@media(max-width:600px){#m2mSupportFab{right:14px;bottom:78px;width:54px;height:54px}#m2mSupportPanel{right:8px;bottom:140px;width:calc(100vw - 16px);height:min(570px,calc(100vh - 160px))}}
 </style>
 
 
@@ -1219,28 +1666,133 @@ document.addEventListener('change', function(e){
 <p style="margin:0;color:#aaa;font-size:.9rem;">2M Elshazly متخصص في ألعاب البلايستيشن والألعاب المعدلة وخدمات وتجهيز الألعاب في العجمي - الإسكندرية. تصفح مكتبة الألعاب وتابع طلباتك ونقاطك ومكافآتك.</p>
 </div></section>
 
-<!-- ===== 2M EL SHAZLY SUPPORT CHAT ===== -->
-<button id="m2mSupportFab" aria-label="الدعم الفني" title="الدعم الفني">💬<span class="chat-badge" id="m2mChatBadge">0</span></button>
-<div id="m2mSupportPanel">
-  <div class="m2m-chat-head"><div><div class="m2m-chat-title">الدعم الفني</div><div class="m2m-chat-sub">تواصل مباشرة مع 2M Elshazly</div></div><button class="m2m-chat-close" id="m2mChatClose">×</button></div>
-  <div class="m2m-chat-msgs" id="m2mChatMessages"><div class="m2m-chat-note">ابدأ رسالتك، وفريق 2M Elshazly هيرد عليك في أسرع وقت.</div></div>
-  <div class="m2m-chat-form"><label class="m2m-chat-btn" style="display:flex;align-items:center;justify-content:center;cursor:pointer">📷<input id="m2mChatFile" class="m2m-chat-file" type="file" accept="image/*"></label><input id="m2mChatInput" class="m2m-chat-input" placeholder="اكتب رسالتك..." autocomplete="off"><button id="m2mChatSend" class="m2m-chat-btn">➤</button></div>
+<!-- ===== 2M ELSHAZLY SUPPORT CHAT ===== -->
+<button id="supportChatFab" aria-label="الدعم الفني" title="الدعم الفني">
+  <i class="bx bx-message-rounded-dots"></i>
+  <span id="supportChatUnread">0</span>
+</button>
+
+<div id="supportChatPanel" role="dialog" aria-label="الدعم الفني">
+  <div class="support-chat-head">
+    <div class="chat-avatar"><i class="bx bx-headphone"></i></div>
+    <div><b>دعم 2M Elshazly</b><small>تواصل مباشرة مع المحل</small></div>
+    <button id="supportChatClose" aria-label="إغلاق">×</button>
+  </div>
+  <div id="supportChatMessages"></div>
+  <div id="supportChatLogin" class="support-chat-login" style="display:none">
+    <i class="bx bx-lock-alt"></i>
+    <div>لازم تسجل دخول الأول عشان نقدر نعرف حسابك ونساعدك بشكل أسرع.</div>
+    <button id="supportChatLoginBtn">تسجيل الدخول</button>
+  </div>
+  <div id="supportChatCompose" style="display:none">
+    <div class="support-chat-compose">
+      <label class="support-file-label" title="إرسال صورة">
+        <i class="bx bx-image-add"></i>
+        <input id="supportChatFile" type="file" accept="image/*">
+      </label>
+      <textarea id="supportChatInput" placeholder="اكتب رسالتك..." rows="1"></textarea>
+      <button class="support-send" id="supportChatSend" aria-label="إرسال"><i class="bx bx-send"></i></button>
+    </div>
+    <div class="support-chat-note">الدعم الفني الخاص بعملاء 2M Elshazly</div>
+  </div>
 </div>
-<script type="module">
-const chatFab=document.getElementById('m2mSupportFab'), chatPanel=document.getElementById('m2mSupportPanel'), chatClose=document.getElementById('m2mChatClose'), chatInput=document.getElementById('m2mChatInput'), chatSend=document.getElementById('m2mChatSend'), chatMsgs=document.getElementById('m2mChatMessages'), chatFile=document.getElementById('m2mChatFile');
-let m2mChatReady=false, m2mUnsub=null, m2mAdd=null, m2mStorage=null, m2mUser=null;
-try{
- const {getAuth,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js');
- const {getFirestore,doc,setDoc,collection,query,orderBy,onSnapshot,addDoc,serverTimestamp}=await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
- const {getStorage,ref,uploadBytes,getDownloadURL}=await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js');
- const auth=getAuth(); const db=getFirestore(); m2mStorage=getStorage();
- onAuthStateChanged(auth,u=>{m2mUser=u;m2mChatReady=!!u;if(!u){if(m2mUnsub)m2mUnsub();m2mUnsub=null;}});
- function render(snap){chatMsgs.innerHTML='';snap.forEach(d=>{const x=d.data(), el=document.createElement('div');el.className='m2m-msg '+(x.sender==='admin'?'admin':'user');el.textContent=x.text||'';if(x.imageUrl){const im=document.createElement('img');im.src=x.imageUrl;el.appendChild(im)}chatMsgs.appendChild(el)});chatMsgs.scrollTop=chatMsgs.scrollHeight;}
- async function openChat(){if(!m2mUser){alert('من فضلك سجل الدخول أولاً عشان نقدر نعرف حسابك ونتابع معاك.');return;}chatPanel.classList.add('open');if(m2mUnsub)return;const q=query(collection(db,'supportChats',m2mUser.uid,'messages'),orderBy('createdAt','asc'));m2mUnsub=onSnapshot(q,render);}
- chatFab.onclick=openChat; chatClose.onclick=()=>chatPanel.classList.remove('open');
- async function send(){if(!m2mUser)return alert('سجل الدخول أولاً.');const text=chatInput.value.trim();const file=chatFile.files[0];if(!text&&!file)return;let imageUrl='';if(file){const r=ref(m2mStorage,'supportChats/'+m2mUser.uid+'/'+Date.now()+'_'+file.name);await uploadBytes(r,file);imageUrl=await getDownloadURL(r);}await addDoc(collection(db,'supportChats',m2mUser.uid,'messages'),{text,sender:'user',userId:m2mUser.uid,imageUrl,createdAt:serverTimestamp()});await setDoc(doc(db,'supportChats',m2mUser.uid),{userId:m2mUser.uid,userName:m2mUser.displayName||'عميل',email:m2mUser.email||'',updatedAt:serverTimestamp(),lastMessage:text||'📷 صورة'},{merge:true});chatInput.value='';chatFile.value='';}
- chatSend.onclick=send;chatInput.addEventListener('keydown',e=>{if(e.key==='Enter')send()});
-}catch(e){console.warn('2M support chat init:',e)}
+
+<script type="module" id="2m-support-chat-script">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithRedirect, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
+
+const firebaseConfig = {
+ apiKey:"AIzaSyAeYbBx4yMyDCXhGAQS_X7KDhiKGPDZvWY",
+ authDomain:"m-elshazly-e19a2.firebaseapp.com",
+ projectId:"m-elshazly-e19a2",
+ storageBucket:"m-elshazly-e19a2.firebasestorage.app",
+ messagingSenderId:"1006926908276",
+ appId:"1:1006926908276:web:ff1274fcea961f251afa21",
+ measurementId:"G-HWXPWBVB75"
+};
+const app=getApps().length?getApp():initializeApp(firebaseConfig);
+const auth=getAuth(app), db=getFirestore(app), storage=getStorage(app);
+const fab=document.getElementById('supportChatFab'), panel=document.getElementById('supportChatPanel');
+const close=document.getElementById('supportChatClose'), msgs=document.getElementById('supportChatMessages');
+const loginBox=document.getElementById('supportChatLogin'), compose=document.getElementById('supportChatCompose');
+const loginBtn=document.getElementById('supportChatLoginBtn'), input=document.getElementById('supportChatInput');
+const send=document.getElementById('supportChatSend'), file=document.getElementById('supportChatFile'), unread=document.getElementById('supportChatUnread');
+let currentUser=null, unsub=null, open=false;
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function fmt(ts){try{return (ts?.toDate?ts.toDate():new Date(ts)).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});}catch{return ''}}
+function renderMessage(m){
+ const cls=m.senderRole==='admin'?'admin':'user';
+ let body='';
+ if(m.type==='image'&&m.url) body=`<img src="${esc(m.url)}" alt="صورة مرسلة">`;
+ else body=esc(m.text||'');
+ return `<div class="support-msg ${cls}">${body}<time>${fmt(m.createdAt)}</time></div>`;
+}
+function startChat(user){
+ currentUser=user;
+ loginBox.style.display=user?'none':'block';
+ compose.style.display=user?'block':'none';
+ if(unsub){unsub();unsub=null;}
+ if(!user){
+   msgs.innerHTML='';
+   return;
+ }
+ const q=query(collection(db,'supportChats',user.uid,'messages'),orderBy('createdAt','asc'));
+ unsub=onSnapshot(q,snap=>{
+   msgs.innerHTML=snap.docs.map(d=>renderMessage(d.data())).join('');
+   msgs.scrollTop=msgs.scrollHeight;
+   if(open) unread.style.display='none';
+ });
+}
+fab.addEventListener('click',()=>{
+ open=!open; panel.style.display=open?'flex':'none';
+ if(open){unread.style.display='none'; if(currentUser) msgs.scrollTop=msgs.scrollHeight;}
+});
+close.addEventListener('click',()=>{open=false;panel.style.display='none';});
+loginBtn.addEventListener('click',async()=>{
+ try{await signInWithRedirect(auth,new GoogleAuthProvider());}catch(e){console.error(e);alert('تعذر فتح تسجيل الدخول');}
+});
+async function sendText(){
+ const text=input.value.trim(); if(!text||!currentUser)return;
+ input.value='';
+ await addDoc(collection(db,'supportChats',currentUser.uid,'messages'),{
+   text,senderRole:'user',senderUid:currentUser.uid,
+   senderName:currentUser.displayName||'',senderPhone:'',type:'text',createdAt:serverTimestamp()
+ });
+ await setDoc(doc(db,'supportChats',currentUser.uid),{
+   userId:currentUser.uid,userName:currentUser.displayName||'عميل',
+   userEmail:currentUser.email||'',lastMessage:text,lastMessageAt:serverTimestamp(),
+   updatedAt:serverTimestamp()
+ },{merge:true});
+}
+send.addEventListener('click',sendText);
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendText();}});
+file.addEventListener('change',async()=>{
+ const f=file.files?.[0]; if(!f||!currentUser)return;
+ if(!f.type.startsWith('image/')){alert('مسموح بإرسال الصور فقط حاليًا.');file.value='';return;}
+ if(f.size>8*1024*1024){alert('الصورة كبيرة جدًا. الحد الأقصى 8MB.');file.value='';return;}
+ try{
+  send.disabled=true;
+  const path=`supportChats/${currentUser.uid}/${Date.now()}_${f.name.replace(/[^\w.-]/g,'_')}`;
+  const storageRef=ref(storage,path);
+  await uploadBytes(storageRef,f);
+  const url=await getDownloadURL(storageRef);
+  await addDoc(collection(db,'supportChats',currentUser.uid,'messages'),{
+    text:'📷 صورة',url,type:'image',senderRole:'user',senderUid:currentUser.uid,
+    senderName:currentUser.displayName||'',createdAt:serverTimestamp()
+  });
+  await setDoc(doc(db,'supportChats',currentUser.uid),{
+    userId:currentUser.uid,userName:currentUser.displayName||'عميل',
+    userEmail:currentUser.email||'',lastMessage:'📷 صورة',lastMessageAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+  },{merge:true});
+ }catch(e){console.error(e);alert('حصل خطأ أثناء إرسال الصورة.');}
+ finally{send.disabled=false;file.value='';}
+});
+onAuthStateChanged(auth,user=>startChat(user));
 </script>
 </body>
 </html>
+
