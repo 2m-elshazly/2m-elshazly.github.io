@@ -990,6 +990,197 @@ body{color-scheme:dark!important}
 }
 </style>
 
+
+<style id="2m-mobile-precision-fix">
+/* =========================================================
+   2M ELSHAZLY — MOBILE PRECISION FIX
+   يمنع انكماش الصفحة عند فتح قائمة الثلاث شرط
+   ========================================================= */
+html, body{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+
+@media (max-width:767px){
+  body{
+    min-width:0 !important;
+    margin:0 !important;
+    padding-top:0 !important;
+  }
+
+  /* الهيدر ياخد عرض الشاشة كله */
+  .header{
+    width:100% !important;
+    max-width:100% !important;
+    margin-top:0 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  .header .nav{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+    min-height:72px !important;
+  }
+
+  /* اللوجو لا يتضغط */
+  .header .nav_box{
+    flex:1 1 auto !important;
+    min-width:0 !important;
+    margin:0 !important;
+  }
+  .header .nav_logo{
+    display:flex !important;
+    align-items:center !important;
+    gap:7px !important;
+    white-space:nowrap !important;
+  }
+  .header .nav_logo img{
+    width:40px !important;
+    height:auto !important;
+    flex:0 0 auto !important;
+  }
+
+  /* عناصر الهيدر في مساحة ثابتة ومنظمة */
+  .header #userSection{
+    flex:0 0 auto !important;
+    width:auto !important;
+    max-width:none !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:9px !important;
+    margin:0 !important;
+  }
+
+  .header .nav_btns{
+    flex:0 0 auto !important;
+    width:auto !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:9px !important;
+    margin:0 !important;
+  }
+
+  .header .nav_toggle,
+  .header #m2mNotificationBell{
+    flex:0 0 42px !important;
+    width:42px !important;
+    min-width:42px !important;
+    height:42px !important;
+    box-sizing:border-box !important;
+  }
+
+  /* لو المستخدم مسجل: الصورة/الحساب لا تعمل مساحة زائدة */
+  .header #userProfileBox{
+    flex:0 0 auto !important;
+  }
+
+  /* ==============================
+     القائمة الجانبية: Overlay حقيقي
+     لا تصغر الصفحة ولا تزق المحتوى
+     ============================== */
+  .header .nav_menu{
+    position:fixed !important;
+    top:0 !important;
+    right:0 !important;
+    left:auto !important;
+    width:min(82vw,330px) !important;
+    max-width:330px !important;
+    min-width:0 !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    margin:0 !important;
+    padding:86px 24px 30px !important;
+    box-sizing:border-box !important;
+    z-index:100000 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    transform:translateX(100%) !important;
+    transition:transform .28s ease !important;
+  }
+
+  .header .nav_menu.show-menu{
+    transform:translateX(0) !important;
+  }
+
+  .header .nav_menu .nav_list{
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    gap:4px !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .header .nav_menu .nav_item,
+  .header .nav_menu .nav_link{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .header .nav_menu .nav_link{
+    display:block !important;
+    padding:13px 12px !important;
+    text-align:right !important;
+    border-radius:12px !important;
+  }
+
+  /* زر X داخل القائمة */
+  .header .nav_menu .nav_close{
+    position:absolute !important;
+    top:20px !important;
+    right:18px !important;
+    width:42px !important;
+    height:42px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    z-index:2 !important;
+  }
+
+  /* المحتوى يظل بعرض الشاشة بالكامل */
+  .main,
+  .home,
+  .mobile-hero-only,
+  .mobile-hero-only img{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .mobile-hero-only{
+    margin-top:12px !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+
+  .mobile-hero-only img{
+    height:auto !important;
+    object-fit:cover !important;
+  }
+
+  /* منع أي عنصر قديم من عمل عرض 50% للمحتوى */
+  .container{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  /* أزرار الشات والرجوع يفضلوا فوق الشريط السفلي */
+  #supportChatFab,
+  .scrollup{
+    bottom:78px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -1795,4 +1986,3 @@ onAuthStateChanged(auth,user=>startChat(user));
 </script>
 </body>
 </html>
-
