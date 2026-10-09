@@ -1240,209 +1240,127 @@ onAuthStateChanged(
 // حفظ رقم الهاتف
 // =====================================================
 
-if(saveWhatsappBtn){
+          
+if (saveWhatsappBtn) {
+  saveWhatsappBtn.addEventListener("click", async () => {
+    const raw = (whatsappInput?.value || "").trim();
+    const cleanNumber = raw.replace(/\D/g, "");
 
-  saveWhatsappBtn.addEventListener(
-    "click",
-    async () => {
-
-      const raw =
-        (
-          whatsappInput?.value ||
-          ""
-        ).trim();
-
-      const cleanNumber =
-        raw.replace(
-          /\D/g,
-          ""
-        );
-
-      if(
-        !/^01[0125][0-9]{8}$/.test(
-          cleanNumber
-        )
-      ){
-
-        if(whatsappError){
-
-          whatsappError.style.display =
-            "block";
-
-          whatsappError.innerText =
-            "اكتب رقم موبايل مصري صحيح مثل: 01012345678";
-
-        }
-
-        return;
-
+    if (!/^01[0125][0-9]{8}$/.test(cleanNumber)) {
+      if (whatsappError) {
+        whatsappError.style.display = "block";
+        whatsappError.innerText =
+          "اكتب رقم موبايل مصري صحيح مثل: 01012345678";
       }
-
-      const user =
-        auth.currentUser;
-
-      if(!user){
-
-        return;
-
-      }
-
-      saveWhatsappBtn.disabled =
-        true;
-
-      saveWhatsappBtn.innerText =
-        "جاري الحفظ... ⏳";
-
-      try{
-
-        const userRef =
-          doc(
-            db,
-            "users",
-            user.uid
-          );
-
-        await runTransaction(
-          db,
-          async transaction => {
-
-            const snap =
-              await transaction.get(
-                userRef
-              );
-
-            const old =
-              snap.exists()
-              ? snap.data()
-              : {};
-
-            const lifetime =
-              Number(
-                old.lifetimePoints ??
-                old.totalPointsEarned ??
-                0
-              );
-
-            transaction.set(
-              userRef,
-              {
-
-                uid:user.uid,
-
-                name:
-                  user.displayName ||
-                  old.name ||
-                  "مستخدم جديد",
-
-                email:
-                  user.email ||
-                  old.email ||
-                  "",
-
-                photoURL:
-                  user.photoURL ||
-                  old.photoURL ||
-                  "",
-
-                whatsapp:
-                  cleanNumber,
-
-                points:
-                  Number(
-                    old.points || 0
-                  ),
-
-                lifetimePoints:
-                  lifetime,
-
-                totalPointsEarned:
-                  Number(
-                    old.totalPointsEarned ??
-                    lifetime
-                  ),
-
-                level:
-                  lifetime >=
-                  VIP_THRESHOLD
-                  ? "VIP"
-                  : "NORMAL",
-
-                updatedAt:
-                  serverTimestamp()
-
-              },
-              {
-                merge:true
-              }
-            );
-
-          }
-        );
-
-        if(whatsappError){
-
-          whatsappError.style.display =
-            "none";
-
-        }
-
-        if(whatsappModal){
-
-          whatsappModal.style.display =
-            "none";
-
-        }
-
-        const fresh =
-          await getDoc(
-            userRef
-          );
-
-        if(
-          fresh.exists() &&
-          fresh.data()?.welcomeGiftStatus ===
-          "available"
-        ){
-
-          if(welcomeGiftModal){
-
-            welcomeGiftModal.style.display =
-              "flex";
-
-          }
-
-        }
-
-      }catch(error){
-
-        console.error(
-          "2M Elshazly phone save error:",
-          error
-        );
-
-        if(whatsappError){
-
-          whatsappError.style.display =
-            "block";
-
-          whatsappError.innerText =
-            "حصل خطأ أثناء حفظ الرقم. تأكد من Firestore Rules وحاول مرة أخرى.";
-
-        }
-
-      }finally{
-
-        saveWhatsappBtn.disabled =
-          false;
-
-        saveWhatsappBtn.innerText =
-          "حفظ ومتابعة";
-
-      }
-
+      return;
     }
-  );
 
+    const selectedCustomerType =
+      document.querySelector(
+        'input[name="customerType"]:checked'
+      )?.value || "";
+
+    if (!["shop", "home"].includes(selectedCustomerType)) {
+      if (whatsappError) {
+        whatsappError.style.display = "block";
+        whatsappError.innerText =
+          "اختار الأول: صاحب محل أو عميل بيت.";
+      }
+      return;
+    }
+
+    const user = auth.currentUser;
+
+    if (!user) {
+      if (whatsappError) {
+        whatsappError.style.display = "block";
+        whatsappError.innerText =
+          "سجّل الدخول الأول وبعدها جرّب تاني.";
+      }
+      return;
+    }
+
+    saveWhatsappBtn.disabled = true;
+    saveWhatsappBtn.innerText = "جاري الحفظ... ⏳";
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+
+      await runTransaction(db, async (transaction) => {
+        const snap = await transaction.get(userRef);
+        const old = snap.exists() ? snap.data() : {};
+
+        const lifetime = Number(
+          old.lifetimePoints ??
+          old.totalPointsEarned ??
+          0
+        );
+
+        transaction.set(
+          userRef,
+          {
+            uid: user.uid,
+            name: user.displayName || old.name || "مستخدم جديد",
+            email: user.email || old.email || "",
+            photoURL: user.photoURL || old.photoURL || "",
+            whatsapp: cleanNumber,
+            customerType: selectedCustomerType,
+
+            points: Number(old.points || 0),
+            lifetimePoints: lifetime,
+            totalPointsEarned: Number(
+              old.totalPointsEarned ?? lifetime
+            ),
+
+            level: lifetime >= VIP_THRESHOLD ? "VIP" : "NORMAL",
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+      });
+
+      if (whatsappError) {
+        whatsappError.style.display = "none";
+      }
+
+      if (whatsappModal) {
+        whatsappModal.style.display = "none";
+      }
+
+      const fresh = await getDoc(userRef);
+
+      if (
+        fresh.exists() &&
+        fresh.data()?.welcomeGiftStatus === "available" &&
+        welcomeGiftModal
+      ) {
+        welcomeGiftModal.style.display = "flex";
+      }
+
+    } catch (error) {
+      console.error("2M Elshazly phone save error:", error);
+
+      if (whatsappError) {
+        whatsappError.style.display = "block";
+
+        if (
+          error?.code === "permission-denied" ||
+          error?.code === "firestore/permission-denied"
+        ) {
+          whatsappError.innerText =
+            "Firebase رفض الحفظ بسبب صلاحيات Firestore Rules.";
+        } else {
+          whatsappError.innerText =
+            "فشل حفظ البيانات: " +
+            (error?.code || error?.message || "خطأ غير معروف");
+        }
+      }
+
+    } finally {
+      saveWhatsappBtn.disabled = false;
+      saveWhatsappBtn.innerText = "حفظ ومتابعة";
+    }
+  });
 }
 
 // =====================================================
